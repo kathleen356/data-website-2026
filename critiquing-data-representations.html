@@ -1,0 +1,798 @@
+<!-- Critiquing Data Representations — interactive Grade 5/6 lesson (VC2M6ST02) -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Critiquing Data Representations · Grade 5/6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16243A; --ink-soft:#4a5a72; --paper:#EAEFF6; --card:#ffffff; --line:#D7DEEA;
+  --detective:#E11D74;          /* magenta = the detective's pen: errors & key controls */
+  --good:#0E8C86;               /* teal = trustworthy / correct */
+  --green:#1F9D57; --green-bg:#e6f5ec;
+  --amber:#E0820A; --amber-bg:#fbf0dd;
+  --red:#D6453D;   --red-bg:#fbe7e5;
+  --display:'Space Grotesk',ui-rounded,'Segoe UI',system-ui,sans-serif;
+  --body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'Space Mono',ui-monospace,Menlo,Consolas,monospace;
+  --shadow:0 1px 2px rgba(22,36,58,.06),0 8px 24px rgba(22,36,58,.07);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.12;margin:0}
+.num{font-family:var(--mono)}
+button{font-family:var(--body);cursor:pointer}
+a{color:var(--good)}
+
+/* ---------- layout ---------- */
+.shell{display:grid;grid-template-columns:268px 1fr;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--ink);color:#fff;padding:20px 16px 32px}
+.brandmark{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#9fb2cc}
+.brandtitle{font-family:var(--display);font-weight:700;font-size:21px;margin:6px 0 2px;color:#fff}
+.brandsub{font-size:12.5px;color:#9fb2cc;margin-bottom:18px}
+.navlist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:2px}
+.navlist button{display:flex;gap:11px;align-items:center;width:100%;text-align:left;background:transparent;border:0;color:#cdd8ea;
+  padding:9px 11px;border-radius:9px;font-size:13.7px;font-weight:500;transition:background .12s,color .12s}
+.navlist button:hover{background:rgba(255,255,255,.07);color:#fff}
+.navlist button.active{background:var(--detective);color:#fff}
+.navlist .ix{font-family:var(--mono);font-size:11px;width:20px;flex:none;color:inherit;opacity:.8}
+.legend{margin-top:22px;border-top:1px solid rgba(255,255,255,.13);padding-top:16px;font-size:12px;color:#aebfd6}
+.legend b{color:#fff;font-weight:600}
+.legend .row{display:flex;align-items:center;gap:8px;margin:7px 0}
+.dot{width:11px;height:11px;border-radius:50%;flex:none}
+
+.main{min-width:0}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(234,239,246,.86);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:11px 26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.04em;background:var(--ink);color:#fff;padding:5px 9px;border-radius:6px}
+.topbar .spacer{flex:1}
+.ctrl{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px}
+.ctrl label{font-size:11.5px;font-weight:600;color:var(--ink-soft);padding:0 6px}
+.pill{border:0;background:transparent;border-radius:7px;padding:5px 10px;font-size:12.5px;font-weight:600;color:var(--ink-soft)}
+.pill[aria-pressed="true"]{background:var(--ink);color:#fff}
+.pill.g[aria-pressed="true"]{background:var(--green)} .pill.o[aria-pressed="true"]{background:var(--amber)} .pill.r[aria-pressed="true"]{background:var(--red)}
+.tswitch{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--ink-soft)}
+.toggle{width:42px;height:24px;border-radius:99px;background:var(--line);border:0;position:relative;transition:background .15s}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.toggle[aria-pressed="true"]{background:var(--detective)} .toggle[aria-pressed="true"]::after{left:21px}
+
+.canvas{padding:30px 34px 90px;max-width:1080px;margin:0 auto}
+section.view{display:none;animation:rise .32s ease both}
+section.view.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.eyebrow{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--detective);margin-bottom:9px}
+.eyebrow.good{color:var(--good)}
+.h-title{font-size:clamp(28px,4vw,42px);font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+.lede{font-size:16.5px;color:var(--ink-soft);max-width:64ch;margin-bottom:22px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow);margin:18px 0}
+.card h3{font-size:19px;margin-bottom:6px}
+.card .sub{color:var(--ink-soft);font-size:14px;margin-bottom:14px}
+
+/* graph block */
+.graphwrap{display:grid;grid-template-columns:1.15fr .85fr;gap:20px;align-items:start}
+@media(max-width:760px){.graphwrap{grid-template-columns:1fr}}
+.chart{background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:8px}
+.chart svg{display:block;width:100%;height:auto}
+.modes{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.mode{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:7px 12px;font-size:12.7px;font-weight:600;color:var(--ink-soft);transition:.12s}
+.mode:hover{border-color:#b9c4d6}
+.mode[aria-pressed="true"]{background:var(--detective);border-color:var(--detective);color:#fff}
+.mode.good[aria-pressed="true"]{background:var(--good);border-color:var(--good)}
+.findings{margin-top:4px}
+.finding{display:flex;gap:10px;align-items:flex-start;font-size:13.6px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.finding:last-child{border-bottom:0}
+.fbadge{flex:none;width:22px;height:22px;border-radius:50%;background:var(--detective);color:#fff;font-family:var(--mono);font-weight:700;font-size:12px;display:grid;place-items:center}
+.fbadge.ok{background:var(--good)}
+.note{background:var(--detective);color:#fff;border-radius:10px;padding:10px 13px;font-size:13.3px;font-weight:500;margin-top:12px}
+.note.good{background:var(--good)}
+
+/* tally */
+table.tally{border-collapse:collapse;width:100%;font-size:14px}
+table.tally th,table.tally td{border:1px solid var(--line);padding:7px 10px;text-align:left}
+table.tally th{background:var(--paper);font-family:var(--display);font-size:13px}
+table.tally td.f{font-family:var(--mono);font-weight:700}
+table.tally tr.total td{background:#fbfcfe;font-weight:700}
+
+/* scenario quote */
+.scenario{border-left:4px solid var(--detective);background:#fff;border:1px solid var(--line);border-left-width:4px;border-radius:12px;padding:16px 18px;margin:16px 0}
+.scenario .who{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--detective);margin-bottom:6px}
+.scenario q{font-size:15.5px;font-style:italic;color:var(--ink)}
+.scenario .truth{margin-top:11px;font-size:13.5px;color:var(--ink-soft)}
+.scenario .truth b{color:var(--ink)}
+
+/* tiered tasks */
+.tier{border:1px solid var(--line);border-left-width:5px;border-radius:13px;padding:16px 18px;margin:14px 0;background:var(--card)}
+.tier.g{border-left-color:var(--green)} .tier.o{border-left-color:var(--amber)} .tier.r{border-left-color:var(--red)}
+.tierhd{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.chip{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#fff;padding:4px 9px;border-radius:6px}
+.chip.g{background:var(--green)} .chip.o{background:var(--amber)} .chip.r{background:var(--red)}
+.tierhd .label{font-family:var(--display);font-weight:600;font-size:14.5px;color:var(--ink)}
+.q{margin:11px 0}
+.q .qn{font-family:var(--mono);font-weight:700;color:var(--detective);font-size:13px}
+.q p{margin:2px 0}
+.q .qtext{font-size:14.5px}
+.q .hint{font-size:13px;color:var(--ink-soft);background:var(--paper);border-radius:8px;padding:6px 10px;margin-top:5px;display:inline-block}
+.hint::before{content:"Hint  ";font-family:var(--mono);font-weight:700;font-size:10.5px;color:var(--detective);letter-spacing:.05em}
+
+.answers{margin-top:12px}
+.revealbtn{border:0;background:var(--ink);color:#fff;border-radius:9px;padding:8px 14px;font-size:12.7px;font-weight:600;display:inline-flex;gap:7px;align-items:center}
+.revealbtn:hover{background:#22344f}
+.apanel{overflow:hidden;max-height:0;transition:max-height .3s ease;border-radius:10px}
+.apanel .inner{background:var(--green-bg);border:1px solid #bfe2cd;border-radius:10px;padding:13px 15px;margin-top:10px;font-size:14px}
+.apanel.open{max-height:1400px}
+.apanel .inner h5{font-family:var(--display);font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--green);margin:0 0 7px}
+.apanel .inner p{margin:6px 0}
+.apanel .inner .an{font-family:var(--mono);font-weight:700;color:var(--green)}
+
+/* checklist + steps */
+.check{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.check{grid-template-columns:1fr}}
+.check li{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);border-radius:11px;padding:11px 13px;cursor:pointer;transition:.12s;background:var(--card)}
+.check li:hover{border-color:var(--good)}
+.check li .box{flex:none;width:22px;height:22px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;color:#fff;font-weight:700;transition:.12s}
+.check li.done{background:#f0faf8;border-color:var(--good)}
+.check li.done .box{background:var(--good);border-color:var(--good)}
+.check li .t{font-size:13.7px}.check li .t b{font-family:var(--display);font-size:13.7px}
+.steps{counter-reset:s;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.steps li{counter-increment:s;position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px 13px 56px}
+.steps li::before{content:counter(s);position:absolute;left:15px;top:13px;font-family:var(--mono);font-weight:700;color:#fff;background:var(--ink);width:28px;height:28px;border-radius:8px;display:grid;place-items:center}
+.steps li b{font-family:var(--display)}
+
+/* success criteria */
+.sc{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed var(--line)}
+.sc:last-child{border-bottom:0}
+.sc .tag{font-family:var(--mono);font-size:10.5px;font-weight:700;color:#fff;border-radius:5px;padding:4px 7px;flex:none;min-width:38px;text-align:center}
+.tag.all{background:var(--ink)} .tag.gg{background:var(--green)} .tag.oo{background:var(--amber)} .tag.rr{background:var(--red)}
+
+/* videos */
+.vids{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:760px){.vids{grid-template-columns:1fr}}
+.vid{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:13px;padding:16px;background:var(--card)}
+.vid .play{width:40px;height:40px;border-radius:11px;background:var(--detective);color:#fff;display:grid;place-items:center;font-size:16px;margin-bottom:10px}
+.vid h4{font-size:15.5px;margin-bottom:5px}.vid p{font-size:13px;color:var(--ink-soft);flex:1}
+.vid a{margin-top:10px;font-weight:600;font-size:13.5px;text-decoration:none}
+
+/* nav buttons */
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:30px}
+.pager button{border:1px solid var(--line);background:var(--card);border-radius:11px;padding:11px 16px;font-size:13.5px;font-weight:600;color:var(--ink);box-shadow:var(--shadow)}
+.pager button:hover{border-color:var(--detective);color:var(--detective)}
+.pager button:disabled{opacity:.35;cursor:default}
+.pager button:disabled:hover{border-color:var(--line);color:var(--ink)}
+
+/* hero / welcome */
+.hero{background:linear-gradient(135deg,#16243A,#243a5e);color:#fff;border-radius:20px;padding:40px 36px;box-shadow:var(--shadow)}
+.hero .eyebrow{color:#ff8ec2}
+.hero h1{font-size:clamp(30px,5vw,52px);letter-spacing:-.015em;margin-bottom:14px}
+.hero p{font-size:17px;color:#cdd8ea;max-width:60ch}
+.hero .tiles{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.hero .tile{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:13px;padding:14px 16px;flex:1;min-width:150px}
+.hero .tile .k{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9fb2cc}
+.hero .tile .v{font-family:var(--display);font-weight:700;font-size:16px;margin-top:4px}
+.startbtn{margin-top:26px;border:0;background:var(--detective);color:#fff;font-family:var(--display);font-weight:700;font-size:15px;padding:13px 22px;border-radius:12px}
+.startbtn:hover{background:#c11362}
+
+.bigidea{background:var(--detective);color:#fff;border-radius:20px;padding:40px 36px;text-align:center}
+.bigidea h2{font-size:clamp(26px,4.5vw,40px);margin-bottom:12px}
+.bigidea p{font-size:17px;max-width:60ch;margin:0 auto;color:#ffe1ef}
+
+/* mobile sidebar */
+.menutoggle{display:none}
+@media(max-width:880px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{position:fixed;z-index:60;width:280px;left:-300px;transition:left .25s;box-shadow:0 0 40px rgba(0,0,0,.4)}
+  .sidebar.open{left:0}
+  .menutoggle{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:7px 12px;font-weight:700;font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* tier filtering */
+body.flt-g .tier:not(.g),body.flt-o .tier:not(.o),body.flt-r .tier:not(.r){display:none}
+</style>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brandmark">Statistics · Grade 5/6</div>
+    <div class="brandtitle">Graph Detective</div>
+    <div class="brandsub">Can you trust this graph?</div>
+    <nav><ul class="navlist" id="nav"></ul></nav>
+    <div class="legend">
+      <b>Work through your colour</b>
+      <div class="row"><span class="dot" style="background:var(--green)"></span>Green — getting started</div>
+      <div class="row"><span class="dot" style="background:var(--amber)"></span>Orange — most students</div>
+      <div class="row"><span class="dot" style="background:var(--red)"></span>Red — full challenge</div>
+      <div class="row" style="margin-top:12px"><span class="dot" style="background:var(--detective)"></span>Magenta = an error spotted</div>
+      <div class="row"><span class="dot" style="background:var(--good)"></span>Teal = a correct graph</div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="menutoggle" id="menubtn">☰ Menu</button>
+      <span class="badge">VC2M6ST02</span>
+      <span class="spacer"></span>
+      <div class="ctrl">
+        <label>Show tier</label>
+        <button class="pill" data-flt="all" aria-pressed="true">All</button>
+        <button class="pill g" data-flt="g" aria-pressed="false">G</button>
+        <button class="pill o" data-flt="o" aria-pressed="false">O</button>
+        <button class="pill r" data-flt="r" aria-pressed="false">R</button>
+      </div>
+      <div class="tswitch">
+        <span>Teacher view</span>
+        <button class="toggle" id="teacher" aria-pressed="false" aria-label="Reveal all answers"></button>
+      </div>
+    </div>
+    <div class="canvas" id="canvas"></div>
+  </div>
+</div>
+
+<script>
+/* ============================== GRAPH ENGINE ============================== */
+const VB={w:440,h:320,L:58,R:18,T:42,B:58};
+const plotW=VB.w-VB.L-VB.R, plotH=VB.h-VB.T-VB.B, baseY=VB.T+plotH, topY=VB.T;
+
+function tickY(ticks,k){return baseY-(k/(ticks.length-1))*plotH;}
+function valToY(ticks,v){
+  const m=ticks.length;
+  if(v<=ticks[0])return baseY;
+  if(v>=ticks[m-1])return topY;
+  for(let i=0;i<m-1;i++){
+    if(v>=ticks[i]&&v<=ticks[i+1]){
+      const frac=(v-ticks[i])/(ticks[i+1]-ticks[i]);
+      return baseY-((i+frac)/(m-1))*plotH;
+    }
+  }
+  return baseY;
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+
+/* cfg: {bars:[{label,value,color,narrow}], ticks:[], title, yLabel, xLabel, errors:[{type,index}]} */
+function renderChart(cfg,highlight){
+  const bars=cfg.bars, n=bars.length, slot=plotW/n;
+  const E=highlight?(cfg.errors||[]):[];
+  const eByBar={}; let axisErr=null,titleErr=null,xErr=null;
+  E.forEach((e,i)=>{const num=i+1;
+    if(e.type==='bar')eByBar[e.index]=num;
+    if(e.type==='yaxis')axisErr=num;
+    if(e.type==='title')titleErr=num;
+    if(e.type==='xlabel')xErr=num;});
+  let s=`<svg viewBox="0 0 ${VB.w} ${VB.h}" role="img" font-family="Space Mono, monospace">`;
+  // gridlines + y ticks
+  cfg.ticks.forEach((t,k)=>{const y=tickY(cfg.ticks,k);
+    s+=`<line x1="${VB.L}" y1="${y}" x2="${VB.L+plotW}" y2="${y}" stroke="#e7ecf3"/>`;
+    s+=`<text x="${VB.L-8}" y="${y+4}" text-anchor="end" font-size="11" fill="#6b7a92">${t}</text>`;});
+  // axes
+  s+=`<line x1="${VB.L}" y1="${topY}" x2="${VB.L}" y2="${baseY}" stroke="#9aa8bd" stroke-width="1.4"/>`;
+  s+=`<line x1="${VB.L}" y1="${baseY}" x2="${VB.L+plotW}" y2="${baseY}" stroke="#9aa8bd" stroke-width="1.4"/>`;
+  // bars
+  bars.forEach((b,i)=>{
+    const bw=slot*(b.narrow?0.30:b.wide?0.82:0.56), cx=VB.L+slot*i+slot/2, x=cx-bw/2;
+    const y=valToY(cfg.ticks,b.value), h=baseY-y;
+    s+=`<rect class="bar" x="${x}" y="${y}" width="${bw}" height="${Math.max(0,h)}" rx="3" fill="${b.color}"/>`;
+    s+=`<text x="${cx}" y="${y-6}" text-anchor="middle" font-size="11" font-weight="700" fill="#3a4a63">${b.value}</text>`;
+    s+=`<text x="${cx}" y="${baseY+16}" text-anchor="middle" font-size="11" fill="#3a4a63" font-family="Inter">${esc(b.label)}</text>`;
+    if(eByBar[i]){
+      s+=`<rect x="${x-5}" y="${y-5}" width="${bw+10}" height="${h+10}" rx="5" fill="none" stroke="#E11D74" stroke-width="2" stroke-dasharray="5 4"/>`;
+      s+=badge(cx+bw/2+4,y-2,eByBar[i]);
+    }
+  });
+  // title
+  const titleY=22;
+  if(cfg.title){s+=`<text x="${VB.L+plotW/2}" y="${titleY}" text-anchor="middle" font-size="13" font-weight="700" fill="#16243A" font-family="Space Grotesk">${esc(cfg.title)}</text>`;}
+  else if(titleErr){s+=`<rect x="${VB.L+plotW/2-78}" y="9" width="156" height="20" rx="5" fill="none" stroke="#E11D74" stroke-width="2" stroke-dasharray="5 4"/>`+
+    `<text x="${VB.L+plotW/2}" y="23" text-anchor="middle" font-size="10.5" fill="#E11D74" font-family="Inter">no title</text>`+badge(VB.L+plotW/2+86,19,titleErr);}
+  // y label
+  if(cfg.yLabel){s+=`<text x="16" y="${VB.T+plotH/2}" transform="rotate(-90 16 ${VB.T+plotH/2})" text-anchor="middle" font-size="11" fill="#4a5a72" font-family="Inter">${esc(cfg.yLabel)}</text>`;}
+  // x label
+  if(cfg.xLabel){s+=`<text x="${VB.L+plotW/2}" y="${VB.h-8}" text-anchor="middle" font-size="11.5" fill="#4a5a72" font-family="Inter">${esc(cfg.xLabel)}</text>`;}
+  else if(xErr){s+=`<rect x="${VB.L+plotW/2-60}" y="${VB.h-22}" width="120" height="18" rx="5" fill="none" stroke="#E11D74" stroke-width="2" stroke-dasharray="5 4"/>`+
+    `<text x="${VB.L+plotW/2}" y="${VB.h-9}" text-anchor="middle" font-size="10" fill="#E11D74" font-family="Inter">no x-axis label</text>`+badge(VB.L+plotW/2+68,VB.h-13,xErr);}
+  // axis error highlight
+  if(axisErr){s+=`<line x1="${VB.L}" y1="${topY}" x2="${VB.L}" y2="${baseY}" stroke="#E11D74" stroke-width="3"/>`+badge(VB.L-2,topY-2,axisErr);}
+  s+=`</svg>`;
+  return s;
+}
+function badge(x,y,n){return `<g><circle cx="${x}" cy="${y}" r="9" fill="#E11D74"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">${n}</text></g>`;}
+
+/* ============================== GRAPH DATA ============================== */
+const C={red:'#D6453D',yellow:'#E8B400',blue:'#2E6FE0',teal:'#0E8C86',grey:'#9aa6b5',
+  choc:'#7a4a2b',vanilla:'#e8c873',straw:'#e06a8a',mint:'#5fc2a0',
+  rH:'#D6453D',bH:'#2E6FE0',gH:'#1F9D57',yH:'#E8B400',redBright:'#ff2d1a'};
+
+const GRAPHS={
+  good:{ hideModes:true,
+    correct:{bars:[{label:'AFL',value:7,color:C.teal},{label:'Soccer',value:10,color:C.teal},{label:'Cricket',value:6,color:C.teal},{label:'Netball',value:4,color:C.teal},{label:'Swimming',value:3,color:C.teal}],
+      ticks:[0,2,4,6,8,10],title:'Favourite sport — 30 students',yLabel:'Number of students',xLabel:'Sport'}},
+
+  g1:{ findings:[
+      {b:'#E11D74',t:'<b>y-axis starts at 1, not 0.</b> Every bar looks shorter than it really is.'},
+      {b:'#E11D74',t:'<b>Yellow bar reaches 9</b>, but the tally shows 4 — wrong by 5.'},
+      {b:'#E11D74',t:'<b>Totals don’t add up:</b> 4 + 9 + 8 = 21, but the title says 16.'}],
+    drawn:{bars:[{label:'Red',value:4,color:C.red},{label:'Yellow',value:9,color:C.yellow},{label:'Blue',value:8,color:C.blue}],
+      ticks:[1,2,3,4,5,6,7,8,9],title:'Grade 3B favourite primary colour (16 students)',yLabel:'Number of students',xLabel:'Colour',
+      errors:[{type:'yaxis'},{type:'bar',index:1}]},
+    correct:{bars:[{label:'Red',value:4,color:C.red},{label:'Yellow',value:4,color:C.yellow},{label:'Blue',value:8,color:C.blue}],
+      ticks:[0,2,4,6,8],title:'Grade 3B favourite primary colour (16 students)',yLabel:'Number of students',xLabel:'Colour'}},
+
+  g2:{ findings:[
+      {b:'#E11D74',t:'<b>No title</b> — we can’t tell the topic, who was asked, or how many.'},
+      {b:'#E11D74',t:'<b>Bar b is narrower</b> than the others, so it looks like less data.'},
+      {b:'#E11D74',t:'<b>Every bar is a different colour</b> — for one variable they should match.'}],
+    drawn:{bars:[{label:'a',value:8,color:C.red},{label:'b',value:2,color:C.teal,narrow:true},{label:'c',value:6,color:C.yellow},{label:'d',value:4,color:C.blue}],
+      ticks:[0,2,4,6,8,10],yLabel:'Frequency',xLabel:'Activity',
+      errors:[{type:'title'},{type:'bar',index:1}]},
+    correct:{bars:[{label:'a',value:8,color:C.teal},{label:'b',value:2,color:C.teal},{label:'c',value:6,color:C.teal},{label:'d',value:4,color:C.teal}],
+      ticks:[0,2,4,6,8,10],title:'After-school activities',yLabel:'Frequency',xLabel:'Activity'}},
+
+  g3:{ findings:[
+      {b:'#E11D74',t:'<b>Uneven scale:</b> the gaps are 2, 1, 3, 1 — they should be equal.'},
+      {b:'#E11D74',t:'<b>No title</b> — the topic and sample are missing.'}],
+    drawn:{bars:[{label:'a',value:7,color:C.teal},{label:'b',value:2,color:C.teal},{label:'c',value:6,color:C.teal},{label:'d',value:3,color:C.teal}],
+      ticks:[0,2,3,6,7],yLabel:'Number of students',xLabel:'Club',
+      errors:[{type:'yaxis'},{type:'title'}]},
+    correct:{bars:[{label:'a',value:7,color:C.teal},{label:'b',value:2,color:C.teal},{label:'c',value:6,color:C.teal},{label:'d',value:3,color:C.teal}],
+      ticks:[0,2,4,6,8],title:'Year 5 students in four school clubs',yLabel:'Number of students',xLabel:'Club'}},
+
+  ga:{ findings:[{b:'#E11D74',t:'<b>Fish bar reaches 9</b>, but 30 − (12+8+3+2) = 5. It’s 4 too tall.'}],
+    drawn:{bars:[{label:'Dog',value:12,color:C.teal},{label:'Cat',value:8,color:C.teal},{label:'Fish',value:9,color:C.teal},{label:'Bird',value:3,color:C.teal},{label:'Rabbit',value:2,color:C.teal}],
+      ticks:[0,2,4,6,8,10,12],title:'Favourite pet — Year 5 (30 students)',yLabel:'Number of students',xLabel:'Pet',errors:[{type:'bar',index:2}]},
+    correct:{bars:[{label:'Dog',value:12,color:C.teal},{label:'Cat',value:8,color:C.teal},{label:'Fish',value:5,color:C.teal},{label:'Bird',value:3,color:C.teal},{label:'Rabbit',value:2,color:C.teal}],
+      ticks:[0,2,4,6,8,10,12],title:'Favourite pet — Year 5 (30 students)',yLabel:'Number of students',xLabel:'Pet'}},
+
+  gb:{ findings:[
+      {b:'#E11D74',t:'<b>y-axis starts at 19</b>, not 0 — tiny gaps look dramatic.'},
+      {b:'#E11D74',t:'<b>No y-axis label</b> — we’re not told the numbers are °C.'}],
+    drawn:{bars:[{label:'Mon',value:22,color:C.teal},{label:'Tue',value:24,color:C.teal},{label:'Wed',value:21,color:C.teal},{label:'Thu',value:26,color:C.teal},{label:'Fri',value:23,color:C.teal}],
+      ticks:[19,20,21,22,23,24,25,26],title:'Daily temperature in Melbourne',xLabel:'Day',errors:[{type:'yaxis'}]},
+    correct:{bars:[{label:'Mon',value:22,color:C.teal},{label:'Tue',value:24,color:C.teal},{label:'Wed',value:21,color:C.teal},{label:'Thu',value:26,color:C.teal},{label:'Fri',value:23,color:C.teal}],
+      ticks:[0,4,8,12,16,20,24,28],title:'Daily temperature in Melbourne',yLabel:'Temperature (°C)',xLabel:'Day'}},
+
+  gc:{ findings:[
+      {b:'#E11D74',t:'<b>Strawberry bar is narrower</b> — it looks like less data.'},
+      {b:'#E11D74',t:'<b>Strawberry is grey</b>, not the shared colour — looks like a different category.'},
+      {b:'#E11D74',t:'<b>No x-axis label</b> — “Flavour” is missing.'}],
+    drawn:{bars:[{label:'Chocolate',value:15,color:C.teal},{label:'Vanilla',value:10,color:C.teal},{label:'Strawberry',value:8,color:C.grey,narrow:true},{label:'Mint',value:7,color:C.teal}],
+      ticks:[0,4,8,12,16],title:'Favourite ice cream flavour (40 students)',yLabel:'Number of students',errors:[{type:'bar',index:2},{type:'xlabel'}]},
+    correct:{bars:[{label:'Chocolate',value:15,color:C.teal},{label:'Vanilla',value:10,color:C.teal},{label:'Strawberry',value:8,color:C.teal},{label:'Mint',value:7,color:C.teal}],
+      ticks:[0,4,8,12,16],title:'Favourite ice cream flavour (40 students)',yLabel:'Number of students',xLabel:'Flavour'}},
+
+  w1:{ findings:[
+      {b:'#E11D74',t:'<b>Uneven scale:</b> gaps are 5, 5, 10, 15, 15 — not equal.'},
+      {b:'#E11D74',t:'The stretched top makes Fiction tower over Poetry by <b>more</b> than the true 9×.'}],
+    drawn:{bars:[{label:'Fiction',value:45,color:C.teal},{label:'Non-fiction',value:30,color:C.teal},{label:'Graphic',value:20,color:C.teal},{label:'Poetry',value:5,color:C.teal}],
+      ticks:[0,5,10,20,35,50],title:'Library survey — 100 students',yLabel:'Number of students',xLabel:'Book type',errors:[{type:'yaxis'}]},
+    correct:{bars:[{label:'Fiction',value:45,color:C.teal},{label:'Non-fiction',value:30,color:C.teal},{label:'Graphic',value:20,color:C.teal},{label:'Poetry',value:5,color:C.teal}],
+      ticks:[0,10,20,30,40,50],title:'Library survey — 100 students',yLabel:'Number of students',xLabel:'Book type'}},
+
+  w2:{ findings:[
+      {b:'#E11D74',t:'<b>y-axis starts at 80</b>, not 0 — the gap looks huge.'},
+      {b:'#E11D74',t:'<b>No y-axis label</b> — we’re not told these are house points.'},
+      {b:'#E11D74',t:'<b>Red’s bar is wider and brighter</b>, drawing the eye unfairly.'}],
+    drawn:{bars:[{label:'Red',value:142,color:C.redBright},{label:'Blue',value:138,color:C.bH},{label:'Green',value:97,color:C.gH},{label:'Yellow',value:83,color:C.yH}],
+      ticks:[80,90,100,110,120,130,140,150],title:'Sports day — house points',xLabel:'House',errors:[{type:'yaxis'},{type:'bar',index:0}]},
+    correct:{bars:[{label:'Red',value:142,color:C.teal},{label:'Blue',value:138,color:C.teal},{label:'Green',value:97,color:C.teal},{label:'Yellow',value:83,color:C.teal}],
+      ticks:[0,30,60,90,120,150],title:'Sports day — house points',yLabel:'House points',xLabel:'House'}},
+};
+/* widen Red on w2 drawn */
+GRAPHS.w2.drawn.bars[0].wide=true;
+</script>
+
+<script>
+/* ============================== CONTENT BUILDERS ============================== */
+let AID=0;
+function tier(level,label,questions,answers){
+  const cls={Green:'g',Orange:'o',Red:'r'}[label.split(' ')[0]]||'g';
+  const id='a'+(AID++);
+  let qs=questions.map(q=>`<div class="q"><p class="qtext"><span class="qn">${q.n}</span> ${q.t}</p>${q.h?`<span class="hint">${q.h}</span>`:''}</div>`).join('');
+  return `<div class="tier ${cls}">
+    <div class="tierhd"><span class="chip ${cls}">${cls.toUpperCase()}</span><span class="label">${label}</span></div>
+    ${qs}
+    <div class="answers">
+      <button class="revealbtn" data-rev="${id}">✓ Reveal answers</button>
+      <div class="apanel" id="${id}"><div class="inner"><h5>Answer key</h5>${answers}</div></div>
+    </div></div>`;
+}
+function graphBlock(gid,caption,findingsTitle){
+  const g=GRAPHS[gid];
+  const modes=g.hideModes?'':`<div class="modes" data-gid="${gid}">
+      ${g.drawn?'<button class="mode" data-mode="drawn" aria-pressed="true">As drawn</button>':''}
+      ${g.drawn?'<button class="mode" data-mode="highlight" aria-pressed="false">Highlight errors</button>':''}
+      <button class="mode good" data-mode="correct" aria-pressed="false">Correct version</button>
+    </div>`;
+  return `<div class="graphwrap">
+    <div>${modes}<div class="chart" id="chart-${gid}"></div></div>
+    <div>${caption||''}<div class="findings" id="find-${gid}"></div></div>
+  </div>`;
+}
+function findingsHTML(gid){
+  const g=GRAPHS[gid]; if(!g.findings)return '';
+  return g.findings.map((f,i)=>`<div class="finding"><span class="fbadge">${i+1}</span><span>${f.t}</span></div>`).join('');
+}
+
+/* ============================== SECTIONS ============================== */
+const SECTIONS=[];
+function S(id,nav,ix,html){SECTIONS.push({id,nav,ix,html});}
+
+S('welcome','Welcome','★',`
+  <div class="hero">
+    <div class="eyebrow">Mathematics · Statistics · VC2M6ST02</div>
+    <h1>Can you trust<br>this graph?</h1>
+    <p>Graphs are everywhere — in the news, online, in adverts. Some are honest. Some are built to fool you. Today you become a <b>graph detective</b>: you’ll spot errors, explain them with evidence, and decide whether a conclusion is actually fair.</p>
+    <div class="tiles">
+      <div class="tile"><div class="k">We are learning to</div><div class="v">Critique how data is shown & used</div></div>
+      <div class="tile"><div class="k">Big skill</div><div class="v">Find errors · prove them · judge claims</div></div>
+      <div class="tile"><div class="k">How it works</div><div class="v">Read your colour, then push higher</div></div>
+    </div>
+    <button class="startbtn" data-go="good">Start the lesson →</button>
+  </div>`);
+
+S('good','Good graph','1',`
+  <div class="eyebrow good">Self-learning · the standard to compare against</div>
+  <h2 class="h-title">What makes a good graph?</h2>
+  <p class="lede">Before you can find errors, you need to know what a correct graph looks like. Here’s the gold standard — and the checklist you’ll use every single time.</p>
+  <div class="card">
+    <h3>A graph you <em>can</em> trust</h3>
+    ${graphBlock('good')}
+  </div>
+  <div class="card">
+    <h3>The 8-point checklist</h3>
+    <p class="sub">Tap each one as you check it. Every good graph passes all eight.</p>
+    <ul class="check" id="checklist">
+      ${[['Title','Names the topic, who was measured, and the sample size.'],
+         ['Y-axis label','Says what the numbers mean (e.g. “Number of students”).'],
+         ['X-axis label','Names the categories being compared (e.g. “Colour”).'],
+         ['Scale starts at zero','The y-axis begins at 0 and rises in equal steps.'],
+         ['Bars correct height','Every bar matches the data — check it against the tally.'],
+         ['Equal bar widths','All bars the same width; a narrow bar looks like less.'],
+         ['Consistent colours','Bars of the same data type are all one colour.'],
+         ['Data adds up','All bar values sum to the total in the title.']]
+        .map(([h,d])=>`<li><span class="box">✓</span><span class="t"><b>${h}</b><br>${d}</span></li>`).join('')}
+    </ul>
+  </div>
+  <div class="card">
+    <h3>The 5-step error method</h3>
+    <p class="sub">Use this on every faulty graph from here on.</p>
+    <ul class="steps">
+      <li><b>Read the title.</b> Does it name the topic and who was measured? Note any numbers (e.g. “30 students”) — you’ll check them later.</li>
+      <li><b>Check the y-axis.</b> Does it start at 0? Do the numbers rise in equal steps? Write out the gaps.</li>
+      <li><b>Check each bar vs the data.</b> Read each bar’s height, then compare to the tally. Any mismatch is an error.</li>
+      <li><b>Check the bars themselves.</b> Same width? Same colour? Any difference is an error.</li>
+      <li><b>Write up each error.</b> <em>Name it → Evidence (numbers) → Why it matters.</em></li>
+    </ul>
+  </div>`);
+
+S('g1','Graph 1 · Colours','2',`
+  <div class="eyebrow">Section 2 · with a tally table</div>
+  <h2 class="h-title">Graph 1 — Grade 3B’s favourite colour</h2>
+  <p class="lede">This graph has <b>three</b> errors. Error 1 is given to you below. Compare every bar to the true data in the tally, then flip the graph to check yourself.</p>
+  <div class="card"><h3>The true data</h3>
+    <table class="tally"><tr><th>Colour</th><th>Tally</th><th>Frequency</th></tr>
+      <tr><td>Red</td><td>IIII</td><td class="f">4</td></tr>
+      <tr><td>Yellow</td><td>IIII</td><td class="f">4</td></tr>
+      <tr><td>Blue</td><td>卌 III</td><td class="f">8</td></tr>
+      <tr class="total"><td>Total</td><td></td><td class="f">16</td></tr>
+    </table>
+    <div class="note">Modelled — Error 1: the y-axis starts at 1, not 0. Every bar chart must start at 0, or all the bars look shorter than they really are.</div>
+  </div>
+  <div class="card"><h3>The graph</h3>
+    <p class="sub">Spot Errors 2 and 3 yourself, then tap “Highlight errors”.</p>
+    ${graphBlock('g1')}
+  </div>
+  ${tier(1,'Green — getting started',[
+    {n:'Q1',t:'The Yellow tally has 4 marks. What height does the Yellow bar reach? Are they the same?',h:'IIII = 4. Where does the top of the Yellow bar touch the scale?'},
+    {n:'Q2',t:'Count the Blue tally 卌 III. How many marks in total? Does the frequency column (8) agree?',h:'卌 = 5, III = 3, so 5 + 3 = ?'},
+    {n:'Q3',t:'Write the THREE errors. Error 1 is given — find Errors 2 and 3.',h:'Compare each bar to the tally; then check the total.'},
+    {n:'Q4',t:'Using the corrected data (Red 4, Yellow 4, Blue 8), which colour is most popular? How many more chose blue than red?',h:'Most popular = tallest bar. Difference = Blue − Red.'}],
+    `<p><span class="an">Q1</span> Tally = 4, but the bar reaches 9 — they do <b>not</b> match (that’s Error 2).</p>
+     <p><span class="an">Q2</span> 5 + 3 = 8, which agrees with the frequency column — Blue is correct.</p>
+     <p><span class="an">Q3</span> (1) y-axis starts at 1 not 0; (2) Yellow drawn at 9 but tally = 4; (3) graph totals 4 + 9 + 8 = 21, but the title says 16.</p>
+     <p><span class="an">Q4</span> Blue is most popular; Blue − Red = 8 − 4 = <b>4 more students</b>.</p>`)}
+  ${tier(2,'Orange — building understanding',[
+    {n:'Q5',t:'Explain Error 2 (the Yellow bar) using specific numbers. Why would it mislead someone reading only the graph?',h:'“The bar shows ___ but the tally shows ___. The error is ___ units…”'},
+    {n:'Q6',t:'Add the bar heights as shown (4 + 9 + 8). What do you get, and what problem does that create?',h:'Compare your total to the stated 16.'},
+    {n:'Q7',t:'Write a valid conclusion using the corrected data. Include percentages where possible.',h:'Blue = 8/16 = ?%'},
+    {n:'Q8',t:'A student says “the graph proves blue is twice as popular as red.” Is that mathematically correct?',h:'Is 8 = 2 × 4?'}],
+    `<p><span class="an">Q5</span> Yellow shows 9 but the tally is 4 — an error of 5 units (125% too high). A reader would wrongly think Yellow is most popular; really it’s Blue (8).</p>
+     <p><span class="an">Q6</span> 4 + 9 + 8 = 21, but the real total is 16 — the graph shows 5 more students than were surveyed.</p>
+     <p><span class="an">Q7</span> Blue most popular at 8/16 = 50%; Red and Yellow are equal at 4/16 = 25% each.</p>
+     <p><span class="an">Q8</span> Yes — 8 = 2 × 4, so with the corrected data Blue is exactly twice as popular as Red.</p>`)}
+  ${tier(3,'Red — challenge',[
+    {n:'Q9',t:'A newspaper uses the faulty graph: “Yellow nearly beats Blue in colour vote!” Using all three errors, explain in detail why this headline is not valid.'},
+    {n:'Q10',t:'The tally and frequency both say 4, but the bar is drawn at 9. Propose two explanations for how this happened. Which is more likely, and why?'},
+    {n:'Q11',t:'If 20 students were surveyed with corrected totals Red 5, Yellow 5, Blue 10, would the percentage distribution change? Show your working.'}],
+    `<p><span class="an">Q9</span> False. Yellow’s real value is 4, not 9 — far below Blue (8), not nearly equal. The three errors (scale from 1; Yellow wrong by 5; total 21 not 16) all distort the picture; none support the headline.</p>
+     <p><span class="an">Q10</span> (1) a graphing slip — the wrong value was plotted; (2) the tally was mis-recorded as 9 — but that would make the total 21, contradicting the table. So a graphing slip is more likely.</p>
+     <p><span class="an">Q11</span> Red 5/20 = 25%, Yellow 5/20 = 25%, Blue 10/20 = 50% — identical distribution. Doubling every value proportionally doesn’t change the percentages.</p>`)}`);
+
+S('g2','Graph 2 · Bars','3',`
+  <div class="eyebrow">Section 3 · no tally table</div>
+  <h2 class="h-title">Graph 2 — find the errors from the graph alone</h2>
+  <p class="lede">There’s no tally this time, so look hard at the bars themselves: widths, colours, and anything that’s missing. Three errors to find. Values shown: a = 8, b = 2, c = 6, d = 4.</p>
+  <div class="card"><h3>The graph</h3>${graphBlock('g2')}</div>
+  ${tier(1,'Green — getting started',[
+    {n:'Q1',t:'Are all four bars the same width? Which one looks different?',h:'Compare bar b to a, c and d.'},
+    {n:'Q2',t:'What is different about the colours? Is that a problem for one variable?',h:'Same data type → one colour or many?'},
+    {n:'Q3',t:'This graph has no title. What information is missing?',h:'What, who, and how many took part.'}],
+    `<p><span class="an">Q1</span> Bar b is narrower than a, c, d — all bars must be equal width.</p>
+     <p><span class="an">Q2</span> Every bar is a different colour; for one variable they should all be one colour.</p>
+     <p><span class="an">Q3</span> No title — we can’t tell the topic, who was measured, or the sample size.</p>`)}
+  ${tier(2,'Orange — building understanding',[
+    {n:'Q4',t:'List all three errors. For each, explain the impact on a reader.',h:'“Error: …  Impact: a reader would …”'},
+    {n:'Q5',t:'“Category a is four times b.” Correct? Does the graph make it easy to see?',h:'8 ÷ 2 = ?'},
+    {n:'Q6',t:'Describe a corrected graph: title, colours, bar widths, and any values that change.'}],
+    `<p><span class="an">Q4</span> (1) no title; (2) bar b narrower, so it looks smaller; (3) different colours, which implies different categories.</p>
+     <p><span class="an">Q5</span> 8 ÷ 2 = 4 exactly — correct, but the narrow, off-colour bar b makes it hard to see.</p>
+     <p><span class="an">Q6</span> Add one title, make all bars equal width and one colour, scale 0–10 in steps of 2. Values don’t change.</p>`)}
+  ${tier(3,'Red — challenge',[
+    {n:'Q7',t:'Why is an unequal bar width more misleading than a bar that’s slightly too tall? Use bar b.'},
+    {n:'Q8',t:'If a = reading, b = sport, c = screen time, d = music, write a misleading headline from the faulty graph, then a correct one.'}],
+    `<p><span class="an">Q7</span> We judge bars by area, not just height, so a narrow bar looks like less data overall — even though its height (2) is plotted correctly.</p>
+     <p><span class="an">Q8</span> Misleading: “Reading dominates after-school activities.” Correct: “Reading (8) is most common, then screen time (6), music (4), sport (2).”</p>`)}`);
+
+S('g3','Graph 3 · Scale','4',`
+  <div class="eyebrow">Section 4 · look hard at the y-axis</div>
+  <h2 class="h-title">Graph 3 — a sneakier kind of error</h2>
+  <p class="lede">This looks like Graph 2, but the trick is in the scale. y-axis markings: 0, 2, 3, 6, 7. Values: a = 7, b = 2, c = 6, d = 3. Are the gaps all the same size?</p>
+  <div class="card"><h3>The graph</h3>${graphBlock('g3')}</div>
+  ${tier(1,'Green — getting started',[
+    {n:'Q1',t:'Write the gaps between each pair: 0, 2, 3, 6, 7.',h:'2−0, 3−2, 6−3, 7−6 = ?'},
+    {n:'Q2',t:'Write a correct even scale in steps of 1, then in steps of 2.',h:'0,1,2,3…  and  0,2,4,6,8…'},
+    {n:'Q3',t:'Write a suitable title (a = Drama, b = Chess, c = Art, d = Coding).',h:'What, who, and when.'}],
+    `<p><span class="an">Q1</span> Gaps are 2, 1, 3, 1 — uneven.</p>
+     <p><span class="an">Q2</span> Steps of 1 → 0,1,2,3,4,5,6,7; steps of 2 → 0,2,4,6,8.</p>
+     <p><span class="an">Q3</span> e.g. “Number of Year 5 students in four school clubs.”</p>`)}
+  ${tier(2,'Orange — building understanding',[
+    {n:'Q4',t:'Why is an uneven scale misleading? Use a = 7, b = 2, c = 6, d = 3.',h:'Does 6→7 look the same size as 3→6?'},
+    {n:'Q5',t:'List all errors. Which graph has more — 2 or 3? Do more errors always mean more misleading?'},
+    {n:'Q6',t:'“Bars a and c are almost the same height.” Find the exact difference and the % difference (1 dp).',h:'% diff = (larger − smaller) ÷ smaller × 100.'}],
+    `<p><span class="an">Q4</span> The 6→7 gap (1) takes the same space as 3→6 (3), so bar a is compressed compared with c even though 7 > 6.</p>
+     <p><span class="an">Q5</span> Graph 3 has 2 errors (uneven scale, no title); Graph 2 has 3. But more errors ≠ more misleading — an uneven scale is subtle and often trusted; a missing title is obvious.</p>
+     <p><span class="an">Q6</span> Difference 7 − 6 = 1; % diff = 1 ÷ 6 × 100 ≈ 16.7% — not almost the same.</p>`)}
+  ${tier(3,'Red — challenge',[
+    {n:'Q7',t:'On an even 0–8 scale, where would a = 7 and c = 6 sit? Explain how the uneven scale compresses or stretches each bar.'},
+    {n:'Q8',t:'Compare Graphs 2 and 3. Which is more dangerous for a reader who doesn’t know the data? Use evidence from both.'}],
+    `<p><span class="an">Q7</span> Even scale: a reaches 7/8 = 87.5%, c reaches 6/8 = 75% — a clear gap. The uneven scale compresses 6→7, so they look almost equal.</p>
+     <p><span class="an">Q8</span> Defensible either way; Graph 3 is arguably more dangerous because it looks professional and isn’t obviously broken, so readers trust it.</p>`)}`);
+
+S('ga','Graph A · Pets','5',`
+  <div class="eyebrow">Section 5 · spot the mistake in the explanation</div>
+  <h2 class="h-title">Graph A — favourite pet</h2>
+  <div class="scenario"><div class="who">A student wrote</div>
+    <q>“This graph shows dog is the most popular pet (12 students), followed by fish (9), then cat (8). It’s complete because 12 + 9 + 8 + 3 + 2 = 34 students were surveyed.”</q>
+    <div class="truth"><b>Remember:</b> 30 students were surveyed. Dog 12, Cat 8, Bird 3, Rabbit 2 — so what must Fish be?</div>
+  </div>
+  <div class="card"><h3>The graph</h3>${graphBlock('ga')}</div>
+  ${tier(1,'Green — getting started',[
+    {n:'Q1',t:'Add the bar heights: Dog 12, Cat 8, Fish 9, Bird 3, Rabbit 2. Does the total match 30?',h:'12+8+9+3+2 = ?'},
+    {n:'Q2',t:'How many chose Fish on the graph? Is that expected when Dog = 12 and Cat = 8 of 30?',h:'30 − 12 − 8 = the rest.'},
+    {n:'Q3',t:'Find TWO mistakes in the student’s explanation.',h:'Check the fish value and the total.'}],
+    `<p><span class="an">Q1</span> 12+8+9+3+2 = 34 — does <b>not</b> match 30 (4 too many).</p>
+     <p><span class="an">Q2</span> Fish shows 9, but 30 − (12+8+3+2) = 5, so Fish should be 5.</p>
+     <p><span class="an">Q3</span> The student said fish = 9 (should be 5) and gave a total of 34 (the survey was 30).</p>`)}
+  ${tier(2,'Orange — building understanding',[
+    {n:'Q4',t:'Explain the error with numbers. What should the Fish bar show? Show working.',h:'Fish = 30 − (12+8+3+2).'},
+    {n:'Q5',t:'The student wrote “fish (9 students)”. Explain in full sentences why this is wrong and what it should say.'},
+    {n:'Q6',t:'Write a correct conclusion using the fixed data. Include fractions or percentages for at least two pets.',h:'Dog = 12/30 = ?%'}],
+    `<p><span class="an">Q4</span> The Fish bar is 9 but the correct value is 5 — it’s 4 units too high.</p>
+     <p><span class="an">Q5</span> “Fish (9 students)” is wrong; it should read “fish (5 students), 5/30 ≈ 17%.”</p>
+     <p><span class="an">Q6</span> Dog 12/30 = 40%, Cat 8/30 ≈ 27%, Fish 5/30 ≈ 17%, Bird 3/30 = 10%, Rabbit 2/30 ≈ 7%.</p>`)}
+  ${tier(3,'Red — challenge',[
+    {n:'Q7',t:'If Fish = 9 were accepted, what % would Fish appear to be vs the correct %? What’s the difference in percentage points?'},
+    {n:'Q8',t:'Write a corrected explanation, then a second that misleads using only true statements. Explain how it misleads without lying.'}],
+    `<p><span class="an">Q7</span> Incorrect 9/34 ≈ 26.5%; correct 5/30 ≈ 16.7%; difference ≈ 9.8 percentage points.</p>
+     <p><span class="an">Q8</span> Corrected: “Dog is most popular (40%); fish is third with 5 (17%).” Misleading-but-true: “Dog attracted more than double the votes of fish” — true, but it hides that fish is third, not last.</p>`)}`);
+
+S('gb','Graph B · Temp','6',`
+  <div class="eyebrow">Section 5 · check the news report</div>
+  <h2 class="h-title">Graph B — daily temperature in Melbourne</h2>
+  <div class="scenario"><div class="who">A news article wrote</div>
+    <q>“The graph clearly shows Wednesday was dramatically cooler than every other day, plummeting far below the rest of the week. Thursday was almost three times hotter than Wednesday. The graph is well-labelled and easy to read.”</q>
+    <div class="truth"><b>Actual temps:</b> Mon 22, Tue 24, Wed 21, Thu 26, Fri 23 (°C).</div>
+  </div>
+  <div class="card"><h3>The graph</h3>${graphBlock('gb')}</div>
+  ${tier(1,'Green — getting started',[
+    {n:'Q1',t:'What number does the y-axis start at? What should it start at?',h:'A correct bar-chart y-axis starts at…?'},
+    {n:'Q2',t:'What label is missing from the y-axis?',h:'What are the numbers measuring?'},
+    {n:'Q3',t:'Write down the TWO errors in this graph.'}],
+    `<p><span class="an">Q1</span> It starts at 19; it should start at 0.</p>
+     <p><span class="an">Q2</span> The y-axis has no label — it should be “Temperature (°C)”.</p>
+     <p><span class="an">Q3</span> (1) y-axis starts at 19; (2) y-axis label is missing.</p>`)}
+  ${tier(2,'Orange — building understanding',[
+    {n:'Q4',t:'Is Thursday “almost three times hotter” than Wednesday? Show your calculation.',h:'3 × 21 = ? Compare to 26.'},
+    {n:'Q5',t:'The article says the graph is “well-labelled and easy to read.” Give TWO reasons that’s false.'},
+    {n:'Q6',t:'Describe how the graph would look if the y-axis started at 0. Would the bars look very different?'}],
+    `<p><span class="an">Q4</span> 3 × 21 = 63°C; Thursday is only 26°C, so no. The real difference is just 26 − 21 = 5°C.</p>
+     <p><span class="an">Q5</span> There’s no y-axis label, and the scale starts at 19, not 0.</p>
+     <p><span class="an">Q6</span> On a 0–28 axis all the bars look much more similar; the truncation is what exaggerates the small differences.</p>`)}
+  ${tier(3,'Red — challenge',[
+    {n:'Q7',t:'Find the true % difference between Thursday (26°C) and Wednesday (21°C). Explain how the axis starting at 19 exaggerates it.'},
+    {n:'Q8',t:'The article has three errors (including the labelling claim). Identify all three, give correct values, and rewrite the paragraph accurately.'}],
+    `<p><span class="an">Q7</span> (26 − 21) ÷ 21 × 100 ≈ 23.8%. On the truncated axis the bars rise 7 vs 2 above the baseline — a 3.5 : 1 look, versus the true 1.24 : 1.</p>
+     <p><span class="an">Q8</span> Errors: Wednesday isn’t “dramatically cooler” (only 3–5°C below); Thursday isn’t three times hotter (26 vs 21); the graph isn’t well-labelled. Corrected: “Thursday was warmest at 26°C, just 5°C above Wednesday’s 21°C. The graph has a missing y-axis label and a scale starting at 19 instead of 0.”</p>`)}`);
+
+S('gc','Graph C · Ice cream','7',`
+  <div class="eyebrow">Section 5 · check the teacher’s comment</div>
+  <h2 class="h-title">Graph C — favourite ice cream flavour</h2>
+  <div class="scenario"><div class="who">A teacher commented</div>
+    <q>“Good graph! The x-axis label is missing, but otherwise it correctly represents all 40 students. Strawberry and mint are clearly the two least popular, with strawberry the least popular of all.”</q>
+    <div class="truth"><b>Real data:</b> Chocolate 15, Vanilla 10, Strawberry 8, Mint 7 (total 40).</div>
+  </div>
+  <div class="card"><h3>The graph</h3>${graphBlock('gc')}</div>
+  ${tier(1,'Green — getting started',[
+    {n:'Q1',t:'Is the Strawberry bar the same width as the others? What colour is it compared with the rest?'},
+    {n:'Q2',t:'What label should go on the x-axis?',h:'What type of things are named there?'},
+    {n:'Q3',t:'Check the total: 15 + 10 + 8 + 7 = ? Does it match 40?'}],
+    `<p><span class="an">Q1</span> Strawberry’s bar is narrower and a different colour (grey).</p>
+     <p><span class="an">Q2</span> The x-axis label should be “Flavour”.</p>
+     <p><span class="an">Q3</span> 15 + 10 + 8 + 7 = 40 — it matches.</p>`)}
+  ${tier(2,'Orange — building understanding',[
+    {n:'Q4',t:'List ALL three errors. For each, explain its impact on the reader.'},
+    {n:'Q5',t:'Why might “strawberry is least popular” be unfair? Think about the bar’s width and colour.'},
+    {n:'Q6',t:'Rewrite the teacher’s comment so it is fully accurate, correcting every error the teacher missed.'}],
+    `<p><span class="an">Q4</span> (1) Strawberry narrower (looks like less); (2) Strawberry off-colour (looks like a different category); (3) x-axis label missing.</p>
+     <p><span class="an">Q5</span> The narrow, off-colour bar makes Strawberry look smaller than its value (8) — it’s actually third, ahead of Mint (7).</p>
+     <p><span class="an">Q6</span> “Good attempt, but there are three errors: the Strawberry bar is too narrow and the wrong colour, and the x-axis label (Flavour) is missing. Strawberry (8) is third, ahead of Mint (7).”</p>`)}
+  ${tier(3,'Red — challenge',[
+    {n:'Q7',t:'Strawberry is both narrower and a different colour. Which is more likely to mislead? Justify using how people perceive graphs.'},
+    {n:'Q8',t:'Would a reader still get the correct ranking? Can a graph have several errors but still lead to a correct conclusion?'}],
+    `<p><span class="an">Q7</span> A different colour usually misleads more for category perception, but a narrower bar shrinks the perceived area/quantity — both distort. The reasoning matters more than the choice.</p>
+     <p><span class="an">Q8</span> Yes — the heights are still correct, so the ranking (Choc > Vanilla > Strawberry > Mint) reads correctly. A graph can carry presentation errors yet still support a technically correct conclusion.</p>`)}`);
+
+S('w1','Worded 1 · Library','8',`
+  <div class="eyebrow">Section 6 · worded problem</div>
+  <h2 class="h-title">The library survey</h2>
+  <div class="scenario"><div class="who">The scenario</div>
+    <q>The librarian surveyed 100 students: Fiction 45, Non-fiction 30, Graphic novel 20, Poetry 5. She drew it with an uneven scale (0, 5, 10, 20, 35, 50) and told the principal, “This proves fiction is ten times more popular than poetry.”</q>
+  </div>
+  <div class="card"><h3>The graph</h3>${graphBlock('w1')}</div>
+  ${tier(1,'Green — getting started',[
+    {n:'Q1',t:'Write the gaps between each number: 0, 5, 10, 20, 35, 50.',h:'5−0, 10−5, 20−10, 35−20, 50−35.'},
+    {n:'Q2',t:'Is the claim correct? Fiction = 45, Poetry = 5. Is 45 ten times 5?',h:'10 × 5 = ?'}],
+    `<p><span class="an">Q1</span> Gaps are 5, 5, 10, 15, 15 — not equal.</p>
+     <p><span class="an">Q2</span> 10 × 5 = 50 ≠ 45, so not exactly. 45 ÷ 5 = 9 — fiction is 9× poetry.</p>`)}
+  ${tier(2,'Orange — building understanding',[
+    {n:'Q3',t:'How does the uneven scale affect the Fiction and Poetry bars — bigger or smaller gap than reality?'},
+    {n:'Q4',t:'Write a correct even scale that fits all the data (5, 20, 30, 45). State the step size and all values.',h:'Steps of 5 or 10 both work.'},
+    {n:'Q5',t:'Is fiction exactly “ten times” poetry? Write the correct relationship.',h:'45 ÷ 5 = ?'}],
+    `<p><span class="an">Q3</span> The large upper gaps stretch Fiction’s bar, so its dominance looks even more extreme than 9 : 1.</p>
+     <p><span class="an">Q4</span> Step 5 → 0,5,…,50; or step 10 → 0,10,…,50.</p>
+     <p><span class="an">Q5</span> 45 ÷ 5 = 9 exactly — nine times, not ten.</p>`)}
+  ${tier(3,'Red — challenge',[
+    {n:'Q6',t:'On a correct scale Fiction’s bar is 9× Poetry’s. On the uneven scale, would it look more or less than 9× taller? Justify with the scale values.'},
+    {n:'Q7',t:'The principal buys 10× more fiction than poetry. Budget $500, fiction $12, poetry $8. Describe the problem and calculate a ratio-based recommendation.'}],
+    `<p><span class="an">Q6</span> More than 9× taller, because the step sizes above 10 are larger and stretch Fiction’s bar further.</p>
+     <p><span class="an">Q7</span> True ratio is 9 : 1; buying 10 : 1 over-serves fiction. With $500, a 9 : 1 split ≈ 36 fiction ($432) + 4 poetry ($32) = $464; a 10 : 1 split (40 fiction $480 + 1 poetry $8 = $488) underserves poetry readers.</p>`)}`);
+
+S('w2','Worded 2 · Sports day','9',`
+  <div class="eyebrow">Section 6 · worded problem</div>
+  <h2 class="h-title">The sports day result</h2>
+  <div class="scenario"><div class="who">The scenario</div>
+    <q>House points: Red 142, Blue 138, Green 97, Yellow 83. The student used a y-axis starting at 80, forgot the y-axis label, and drew Red’s bar brighter and wider. A teacher said, “Wow, Red won by a landslide — their bar is almost twice as tall as Green’s!”</q>
+  </div>
+  <div class="card"><h3>The graph</h3>${graphBlock('w2')}</div>
+  ${tier(1,'Green — getting started',[
+    {n:'Q1',t:'How many errors did the student make? List each one.',h:'Scale, axis label, bar width, bar colour.'},
+    {n:'Q2',t:'What is the actual difference between Red (142) and Green (97)? Is that a “landslide”?',h:'142 − 97 = ?'}],
+    `<p><span class="an">Q1</span> Four errors — y-axis starts at 80; no y-axis label; Red bar wider; Red bar brighter/different colour.</p>
+     <p><span class="an">Q2</span> 142 − 97 = 45 points (≈ 46% margin) — meaningful, but not a landslide.</p>`)}
+  ${tier(2,'Orange — building understanding',[
+    {n:'Q3',t:'On a y-axis from 80, how tall do Red and Green appear (in axis units)? Compare to a y-axis from 0.',h:'142−80 and 97−80; then 142 ÷ 97.'},
+    {n:'Q4',t:'Evaluate “Red’s bar is almost twice as tall as Green’s.” True on the misleading graph? On a correct one?'}],
+    `<p><span class="an">Q3</span> From 80: Red = 62 units, Green = 17 units, a ratio ≈ 3.65 : 1. The real ratio is 142 ÷ 97 ≈ 1.46 : 1.</p>
+     <p><span class="an">Q4</span> On the misleading graph Red is ~3.65× Green, so “almost twice” actually understates the distortion; on a correct graph it’s only 1.46× — not nearly twice.</p>`)}
+  ${tier(3,'Red — challenge',[
+    {n:'Q5',t:'Ratio of Red : Green bar heights on the truncated graph vs the correct graph (2 dp). By what % does the truncation exaggerate?'},
+    {n:'Q6',t:'Write a 4–6 sentence analysis of all the errors and the teacher’s comment, with corrected numbers and the real-world impact.'}],
+    `<p><span class="an">Q5</span> Truncated 62 ÷ 17 ≈ 3.65; correct 142 ÷ 97 ≈ 1.46; exaggeration ≈ (3.65 − 1.46) ÷ 1.46 × 100 ≈ 150%.</p>
+     <p><span class="an">Q6</span> Cover the four errors, correct the teacher (Red is 1.46× Green, not nearly 2×), note the ~150% exaggeration and the unfair highlighting of Red, and the real-world impact — wrong trophy decisions, demoralised houses, and lost trust in the reporting.</p>`)}`);
+
+S('videos','Videos','▶',`
+  <div class="eyebrow good">Reinforcement</div>
+  <h2 class="h-title">Watch & revise</h2>
+  <p class="lede">Great for the flipped self-learning step or for revision. Preferred source: Khan Academy — free, with linked practice.</p>
+  <div class="vids">
+    <div class="vid"><div class="play">▶</div><h4>Reading bar graphs</h4><p>Read and interpret bar graphs — the foundation for every task today.</p><a href="https://www.khanacademy.org/search?page_search_query=reading%20bar%20graphs" target="_blank" rel="noopener">Open on Khan Academy →</a></div>
+    <div class="vid"><div class="play">▶</div><h4>Interpreting bar graphs</h4><p>Pulling values and comparisons off a bar graph with confidence.</p><a href="https://www.khanacademy.org/search?page_search_query=interpreting%20bar%20graphs" target="_blank" rel="noopener">Open on Khan Academy →</a></div>
+    <div class="vid"><div class="play">▶</div><h4>Misleading graphs</h4><p>How scales and axes mislead a reader — the heart of this lesson.</p><a href="https://www.khanacademy.org/search?page_search_query=misleading%20graphs" target="_blank" rel="noopener">Open on Khan Academy →</a></div>
+  </div>`);
+
+S('bigidea','The big idea','✦',`
+  <div class="bigidea">
+    <h2>A graph can be wrong — and still look convincing.</h2>
+    <p>Always check the title, the axes, the scale, and whether the numbers add up — then decide for yourself whether the conclusion is fair.</p>
+  </div>
+  <div class="card" style="margin-top:24px"><h3>Your detective checklist, one last time</h3>
+  <ul class="steps">
+    <li><b>Title</b> — topic, who, how many?</li>
+    <li><b>Axes</b> — both labelled?</li>
+    <li><b>Scale</b> — starts at 0, equal steps?</li>
+    <li><b>Bars</b> — right height, equal width, consistent colour?</li>
+    <li><b>The claim</b> — does the maths actually support it?</li>
+  </ul></div>`);
+
+/* ============================== RENDER + WIRING ============================== */
+const canvas=document.getElementById('canvas'), nav=document.getElementById('nav');
+SECTIONS.forEach((s,i)=>{
+  const sec=document.createElement('section'); sec.className='view'; sec.id='view-'+s.id;
+  sec.innerHTML=s.html+pager(i);
+  canvas.appendChild(sec);
+  const li=document.createElement('li');
+  li.innerHTML=`<button data-go="${s.id}"><span class="ix">${s.ix}</span>${s.nav}</button>`;
+  nav.appendChild(li);
+});
+function pager(i){
+  const prev=i>0?SECTIONS[i-1]:null, next=i<SECTIONS.length-1?SECTIONS[i+1]:null;
+  return `<div class="pager">
+    <button data-go="${prev?prev.id:''}" ${prev?'':'disabled'}>← ${prev?prev.nav:'Start'}</button>
+    <button data-go="${next?next.id:''}" ${next?'':'disabled'}>${next?next.nav:'End'} →</button></div>`;
+}
+
+let current=null;
+function show(id){
+  if(!id)return;
+  document.querySelectorAll('section.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+id));
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===id));
+  current=id;
+  // draw all charts that live in this section
+  Object.keys(GRAPHS).forEach(gid=>{
+    const host=document.getElementById('chart-'+gid);
+    if(host && document.getElementById('view-'+id).contains(host)){
+      const g=GRAPHS[gid], def=g.drawn?'drawn':'correct';
+      drawGraph(gid,def);
+      const f=document.getElementById('find-'+gid); if(f)f.innerHTML=findingsHTML(gid);
+    }
+  });
+  window.scrollTo({top:0,behavior:'auto'});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function drawGraph(gid,mode){
+  const g=GRAPHS[gid], host=document.getElementById('chart-'+gid); if(!host)return;
+  const cfg=(mode==='correct')?g.correct:g.drawn;
+  host.innerHTML=renderChart(cfg, mode==='highlight');
+}
+
+document.addEventListener('click',e=>{
+  const go=e.target.closest('[data-go]'); if(go){show(go.dataset.go);return;}
+  const m=e.target.closest('.mode'); if(m){
+    const gid=m.closest('.modes').dataset.gid;
+    m.parentElement.querySelectorAll('.mode').forEach(b=>b.setAttribute('aria-pressed','false'));
+    m.setAttribute('aria-pressed','true');
+    drawGraph(gid,m.dataset.mode); return;
+  }
+  const rev=e.target.closest('[data-rev]'); if(rev){
+    const p=document.getElementById(rev.dataset.rev), open=p.classList.toggle('open');
+    rev.textContent=open?'✕ Hide answers':'✓ Reveal answers'; return;
+  }
+  const cl=e.target.closest('#checklist li'); if(cl){cl.classList.toggle('done');return;}
+  const flt=e.target.closest('[data-flt]'); if(flt){
+    document.querySelectorAll('[data-flt]').forEach(b=>b.setAttribute('aria-pressed','false'));
+    flt.setAttribute('aria-pressed','true');
+    document.body.classList.remove('flt-g','flt-o','flt-r');
+    if(flt.dataset.flt!=='all')document.body.classList.add('flt-'+flt.dataset.flt);
+    return;
+  }
+  if(e.target.id==='menubtn'){const sb=document.getElementById('sidebar');sb.classList.toggle('open');}
+});
+
+// teacher view = reveal/hide all answers
+document.getElementById('teacher').addEventListener('click',e=>{
+  const on=e.currentTarget.getAttribute('aria-pressed')!=='true';
+  e.currentTarget.setAttribute('aria-pressed',on);
+  document.querySelectorAll('.apanel').forEach(p=>p.classList.toggle('open',on));
+  document.querySelectorAll('[data-rev]').forEach(b=>b.textContent=on?'✕ Hide answers':'✓ Reveal answers');
+});
+
+// keyboard arrows
+document.addEventListener('keydown',e=>{
+  if(e.target.matches('input,textarea'))return;
+  const i=SECTIONS.findIndex(s=>s.id===current);
+  if(e.key==='ArrowRight'&&i<SECTIONS.length-1)show(SECTIONS[i+1].id);
+  if(e.key==='ArrowLeft'&&i>0)show(SECTIONS[i-1].id);
+});
+
+show('welcome');
+</script>
