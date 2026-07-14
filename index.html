@@ -29,7 +29,7 @@ a{color:inherit;text-decoration:none}
 .hero p{font-size:16.5px;color:#cdd8ea;max-width:60ch}
 
 .lessons{margin-top:32px;display:grid;gap:16px}
-.lesson{display:flex;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow);transition:border-color .12s,transform .12s}
+.lesson{display:flex;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow);transition:border-color .12s,transform .12s;min-height:116px;box-sizing:border-box}
 a.lesson:hover{border-color:var(--detective);transform:translateY(-1px)}
 .lesson .num{flex:none;width:44px;height:44px;border-radius:12px;background:var(--detective);color:#fff;font-family:var(--mono);font-weight:700;font-size:15px;display:grid;place-items:center}
 .lesson .body{flex:1;min-width:0}
@@ -39,7 +39,7 @@ a.lesson:hover{border-color:var(--detective);transform:translateY(-1px)}
 .lesson .arrow{flex:none;font-size:20px;color:var(--ink-soft);transition:transform .12s,color .12s}
 a.lesson:hover .arrow{transform:translateX(3px);color:var(--detective)}
 
-.placeholder{display:flex;gap:18px;align-items:center;background:transparent;border:1.5px dashed var(--line);border-radius:16px;padding:20px 22px;color:var(--ink-soft)}
+.placeholder{display:flex;gap:18px;align-items:center;background:transparent;border:1.5px dashed var(--line);border-radius:16px;padding:20px 22px;color:var(--ink-soft);min-height:116px;box-sizing:border-box}
 .placeholder .num{flex:none;width:44px;height:44px;border-radius:12px;border:1.5px dashed var(--line);color:var(--ink-soft);font-family:var(--mono);font-weight:700;font-size:14px;display:grid;place-items:center}
 .placeholder .body{flex:1;min-width:0}
 .placeholder h3{font-size:16.5px;margin-bottom:2px;color:var(--ink-soft);font-weight:600}
@@ -76,10 +76,15 @@ a.lesson:hover .arrow{transform:translateX(3px);color:var(--detective)}
       <span class="num">5.2</span>
       <span class="body"><h3>Types of Data</h3><p>Coming soon.</p></span>
     </div>
-    <div class="placeholder">
+    <a class="lesson" href="mode-and-shape.html">
       <span class="num">5.3</span>
-      <span class="body"><h3>Mode and Shape of Data</h3><p>Coming soon.</p></span>
-    </div>
+      <span class="body">
+        <span class="tag">VC2M5ST01</span>
+        <h3>Mode and Shape of Data</h3>
+        <p>Find the mode in a data set and describe the shape of its distribution.</p>
+      </span>
+      <span class="arrow">→</span>
+    </a>
     <div class="placeholder">
       <span class="num">5.4</span>
       <span class="body"><h3>Interpreting Line Graphs</h3><p>Coming soon.</p></span>
@@ -93,7 +98,7 @@ a.lesson:hover .arrow{transform:translateX(3px);color:var(--detective)}
       <span class="body">
         <span class="tag">VC2M6ST02</span>
         <h3>Critiquing Data Representations</h3>
-        <p>Become a graph detective — spot errors in graphs, back them up with evidence, and judge whether a conclusion is fair.</p>
+        <p>Spot errors in graphs, back them up with evidence, and judge whether the conclusion is fair.</p>
       </span>
       <span class="arrow">→</span>
     </a>
