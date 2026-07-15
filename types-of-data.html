@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5.2 Types of Data</title>
+<style>
+  :root{
+    --bg:#f4f7fb; --ink:#1f2a44; --muted:#5b6b8c; --card:#ffffff;
+    --accent:#3b6ef6; --accent2:#7b5cff;
+    --green:#2fa84f; --greenbg:#e9f8ee; --greenbd:#bfe8cb;
+    --amber:#e8a11a; --amberbg:#fdf4e1; --amberbd:#f4dca0;
+    --red:#e0453e; --redbg:#fdecea; --redbd:#f6c9c6;
+    --nominal:#e8a11a; --ordinal:#7b5cff; --discrete:#3b6ef6; --continuous:#2fa84f;
+    --shadow:0 6px 22px rgba(31,42,68,.09);
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:linear-gradient(180deg,#eef3fb,#f6f8fc);color:var(--ink);line-height:1.55;}
+  .wrap{max-width:900px;margin:0 auto;padding:22px 16px 80px;}
+  header.hero{background:linear-gradient(135deg,#3b6ef6,#7b5cff);color:#fff;border-radius:22px;
+    padding:26px 26px 22px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  header.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;
+    background:rgba(255,255,255,.12);border-radius:50%;}
+  header.hero h1{margin:0 0 4px;font-size:1.8rem;}
+  .eyebrow{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85;font-weight:600;}
+  .li{background:rgba(255,255,255,.16);border-radius:12px;padding:12px 14px;margin-top:14px;font-weight:600;}
+  .progresswrap{padding:12px 0 4px;margin:8px 0 4px;}
+  .progressbar{height:12px;background:#e3e9f4;border-radius:20px;overflow:hidden;}
+  .progressfill{height:100%;width:0;background:linear-gradient(90deg,#3b6ef6,#2fa84f);transition:width .4s;}
+  .progresslabel{font-size:.82rem;color:var(--muted);font-weight:600;margin-top:4px;text-align:right;}
+  section.card{background:var(--card);border-radius:var(--radius);padding:22px;margin-top:20px;box-shadow:var(--shadow);scroll-margin-top:82px;}
+  h2{margin:0 0 6px;font-size:1.35rem;display:flex;align-items:center;gap:10px;}
+  h2 .num{background:var(--accent);color:#fff;width:34px;height:34px;border-radius:10px;display:grid;
+    place-items:center;font-size:1rem;flex:none;}
+  h3{margin:18px 0 6px;font-size:1.08rem;}
+  p{margin:8px 0;}
+  .pill{display:inline-block;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:20px;}
+  .tag-green{background:var(--greenbg);color:var(--green);border:1px solid var(--greenbd);}
+  .tag-amber{background:var(--amberbg);color:var(--amber);border:1px solid var(--amberbd);}
+  .tag-red{background:var(--redbg);color:var(--red);border:1px solid var(--redbd);}
+  .note{font-size:.85rem;color:var(--muted);}
+
+  /* top nav */
+  .topnav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);
+    border:1px solid #e6ecf6;border-radius:16px;padding:10px 16px;margin-bottom:16px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 4px 16px rgba(31,42,68,.06);}
+  .topnav .brand{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--ink);font-size:1.02rem;}
+  .topnav .brand .bars{display:inline-flex;gap:2px;align-items:flex-end;height:18px;}
+  .topnav .brand .bars i{width:5px;border-radius:2px;display:block;}
+  .topnav .links{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto;}
+  .topnav .links a{color:var(--muted);text-decoration:none;font-weight:600;font-size:.9rem;}
+  .topnav .links a:hover{color:var(--accent);}
+  .tn-toggle{border:1.5px solid var(--accent);color:var(--accent);background:#fff;border-radius:20px;
+    padding:6px 14px;font-weight:700;font-size:.85rem;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:inherit;}
+  .tn-toggle .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);}
+  .tn-toggle.off{color:var(--muted);border-color:#cdd6e6;}
+  .tn-toggle.off .dot{background:#cdd6e6;}
+  @media(max-width:680px){.topnav .links{display:none;}}
+
+  /* curriculum pill — inline beside the subject line */
+  .hero-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:2px;}
+  .hero-top .eyebrow{margin:0;opacity:.9;}
+  .curric{display:inline-flex;align-items:center;gap:7px;background:#fff;color:#3b46e5;
+    border-radius:30px;padding:7px 16px;font-weight:800;text-decoration:none;font-size:.9rem;
+    box-shadow:0 3px 12px rgba(0,0,0,.18);white-space:nowrap;}
+  .curric:hover{transform:translateY(-1px);}
+  .curric .arrow{font-size:.95em;}
+
+  /* success criteria — aiming card */
+  .aiming .eyebrow-line{display:flex;align-items:center;gap:12px;color:var(--accent);}
+  .aiming .eyebrow-line .rule{height:3px;width:34px;background:var(--accent);border-radius:3px;}
+  .aiming .eyebrow-line span.lbl{font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800;}
+  .aiming h2.big{display:block;font-size:2.05rem;font-weight:800;margin:8px 0 18px;color:var(--ink);}
+  .sc-row{display:flex;align-items:center;gap:14px;border:1.5px solid #e6ecf6;border-radius:14px;
+    padding:14px 16px;margin-top:12px;font-size:1.05rem;font-weight:600;cursor:pointer;transition:.2s;background:#fff;}
+  .sc-row:hover{border-color:#cdd6e6;}
+  .sc-row.got{border-color:var(--green);background:var(--greenbg);}
+  .sc-chip{width:22px;height:22px;border-radius:6px;flex:none;}
+  .sc-chip.g{background:var(--nominal);} .sc-chip.a{background:var(--ordinal);} .sc-chip.r{background:var(--continuous);}
+  .sc-row .check{margin-left:auto;width:24px;height:24px;border-radius:50%;border:2px solid #cdd6e6;flex:none;
+    display:grid;place-items:center;color:#fff;font-size:.8rem;background:#fff;}
+  .sc-row.got .check{background:var(--green);border-color:var(--green);}
+
+  /* teacher callout */
+  .teacher-note{background:#fbf3c9;border:1px solid #f0e08a;border-radius:12px;padding:12px 16px;margin-top:16px;
+    color:#6b5a12;font-size:.95rem;line-height:1.5;}
+  .teacher-note .tag{display:inline-block;background:#6b5a12;color:#fff;font-size:.68rem;font-weight:800;
+    letter-spacing:.08em;padding:3px 9px;border-radius:6px;margin-right:8px;vertical-align:middle;}
+  .teacher-note b{color:#5a4a0e;}
+  body.hide-teacher .teacher-note{display:none;}
+
+  /* the data family tree diagram */
+  .tree{margin-top:16px;}
+  .tree-root{background:var(--ink);color:#fff;text-align:center;font-weight:800;letter-spacing:.08em;
+    border-radius:12px;padding:12px;font-size:1rem;}
+  .tree-branches{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;}
+  @media(max-width:640px){.tree-branches{grid-template-columns:1fr;}}
+  .branch{border-radius:16px;padding:16px;border:2px solid;transition:.25s;}
+  .branch.cat{background:var(--amberbg);border-color:var(--amberbd);}
+  .branch.num{background:var(--greenbg);border-color:var(--greenbd);}
+  .branch h4{margin:0 0 4px;font-size:1.05rem;}
+  .branch p{margin:0 0 10px;font-size:.88rem;color:var(--muted);}
+  .subrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .subcard{border-radius:12px;padding:10px 12px;background:#fff;transition:.25s;box-shadow:0 2px 8px rgba(31,42,68,.06);}
+  .subcard b{display:block;font-size:.92rem;margin-bottom:2px;}
+  .subcard span{font-size:.78rem;color:var(--muted);}
+  .subcard.glow{box-shadow:0 0 0 3px var(--glow,var(--accent)), 0 6px 16px rgba(31,42,68,.18);transform:translateY(-2px);}
+
+  /* example chips that reveal the path */
+  .reveal-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .ex-chip{background:#fff;border:2px solid #d5deee;color:var(--ink);border-radius:20px;padding:8px 16px;
+    font-weight:700;font-size:.88rem;cursor:pointer;font-family:inherit;transition:.15s;}
+  .ex-chip:hover{border-color:var(--accent);}
+  .ex-chip.done{opacity:.55;}
+  .reveal-line{margin-top:12px;min-height:26px;font-weight:700;font-size:.98rem;}
+
+  /* drag & drop sorting games */
+  .sort-bins{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+  .sort-bins.four{grid-template-columns:repeat(2,1fr);}
+  @media(max-width:640px){.sort-bins,.sort-bins.four{grid-template-columns:1fr;}}
+  .sort-bin{border:2.5px dashed #cdd6e6;border-radius:14px;padding:12px;min-height:110px;background:#fbfcfe;transition:.2s;}
+  .sort-bin h4{margin:0 0 8px;font-size:.98rem;}
+  .sort-bin .items{display:flex;flex-wrap:wrap;gap:8px;min-height:36px;}
+  .sort-bin.over{background:rgba(59,110,246,.08);}
+  .bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;}
+  .chip{background:#fff;border:2px solid var(--accent);color:var(--accent);border-radius:20px;padding:7px 14px;
+    font-weight:700;font-size:.85rem;cursor:grab;user-select:none;box-shadow:0 2px 6px rgba(59,110,246,.18);}
+  .chip:active{cursor:grabbing;}
+  .chip.placed{cursor:default;box-shadow:none;}
+  .celebrate{text-align:center;font-size:1.1rem;font-weight:800;color:var(--green);margin-top:10px;display:none;}
+
+  /* quiz */
+  .q{border:1px solid #e6ecf6;border-radius:12px;padding:12px 14px;margin-top:12px;background:#fcfdff;}
+  .q .qtext{font-weight:600;}
+  .q .qtext b{color:var(--accent);}
+  .qrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;}
+  .mc{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+  .mc label{display:flex;gap:8px;align-items:center;background:#fff;border:1.5px solid #d5deee;border-radius:9px;
+    padding:8px 10px;cursor:pointer;font-size:.92rem;}
+  .mc label:hover{border-color:var(--accent);}
+  .btn{background:var(--accent);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-weight:700;
+    cursor:pointer;font-size:.9rem;font-family:inherit;}
+  .btn:hover{filter:brightness(1.06);}
+  .btn.ghost{background:#eef2fb;color:var(--accent);}
+  .fb{margin-top:8px;font-weight:700;font-size:.9rem;display:none;}
+  .fb.ok{color:var(--green);display:block;}
+  .fb.no{color:var(--red);display:block;}
+  .reveal{background:#f2f6ff;border-left:4px solid var(--accent);padding:8px 12px;border-radius:8px;
+    margin-top:8px;font-size:.9rem;display:none;}
+
+  /* exit ticket stub */
+  .exit-stub{margin-top:28px;display:flex;background:linear-gradient(135deg,#2fa84f,#3b6ef6);border-radius:18px;
+    color:#fff;box-shadow:var(--shadow);position:relative;}
+  .exit-stub::before,.exit-stub::after{content:"";position:absolute;width:26px;height:26px;border-radius:50%;
+    background:#f6f8fc;left:calc(72% - 13px);}
+  .exit-stub::before{top:-13px;} .exit-stub::after{bottom:-13px;}
+  .exit-main{flex:1 1 72%;padding:26px 28px;}
+  .exit-main .kicker{font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;opacity:.9;font-weight:700;}
+  .exit-main h3{margin:6px 0 8px;font-size:1.5rem;}
+  .exit-main p{margin:0 0 16px;opacity:.95;}
+  .exit-main a{display:inline-block;background:#fff;color:var(--accent);text-decoration:none;font-weight:800;
+    padding:12px 26px;border-radius:30px;box-shadow:0 4px 14px rgba(0,0,0,.18);}
+  .exit-main a:hover{transform:translateY(-2px);}
+  .exit-tear{flex:0 0 28%;border-left:3px dashed rgba(255,255,255,.6);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:18px 10px;text-align:center;gap:6px;}
+  .exit-tear .big{font-size:2.6rem;line-height:1;}
+  .exit-tear .adm{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;opacity:.9;}
+  @media(max-width:560px){.exit-stub{flex-direction:column;}
+    .exit-stub::before{left:-13px;top:calc(72% - 13px);} .exit-stub::after{right:-13px;left:auto;bottom:auto;top:calc(72% - 13px);}
+    .exit-tear{border-left:none;border-top:3px dashed rgba(255,255,255,.6);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topnav">
+    <div class="brand">
+      <span class="bars"><i style="height:9px;background:#e8a11a"></i><i style="height:15px;background:#7b5cff"></i><i style="height:18px;background:#2fa84f"></i></span>
+      Types of Data
+    </div>
+    <div class="links">
+      <a href="#tree">Family tree</a>
+      <a href="#categorical">Categorical</a>
+      <a href="#numerical">Numerical</a>
+      <a href="#sort">Sort them all</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#exit">Exit</a>
+    </div>
+    <button class="tn-toggle" id="teacherToggle"><span class="dot"></span><span class="tn-label">Teacher notes: on</span></button>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-top">
+      <div class="eyebrow">Maths · Data &amp; Statistics · Year 5</div>
+      <a class="curric" href="https://victoriancurriculum.vcaa.vic.edu.au/Curriculum/ContentDescription/VC2M5ST01" target="_blank" rel="noopener">VC2M5ST01 <span class="arrow">↗</span></a>
+    </div>
+    <h1>5.2 Types of Data</h1>
+    <div class="li"><strong>Learning intention:</strong> We are learning to identify different types of data and sort them into categories.</div>
+  </header>
+
+  <section class="card aiming" id="aiming">
+    <div class="eyebrow-line"><span class="rule"></span><span class="lbl">Success criteria · I can…</span></div>
+    <h2 class="big">What we're aiming for</h2>
+    <div class="sc-row" data-sc><span class="sc-chip g"></span>I can tell whether a piece of data is categorical (words/labels) or numerical (numbers).<span class="check">✓</span></div>
+    <div class="sc-row" data-sc><span class="sc-chip a"></span>I can classify categorical data as nominal (no order) or ordinal (has an order).<span class="check">✓</span></div>
+    <div class="sc-row" data-sc><span class="sc-chip r"></span>I can classify numerical data as discrete (counted) or continuous (measured).<span class="check">✓</span></div>
+    <div class="teacher-note"><span class="tag">Teacher</span><b>Read together.</b> This lesson swaps a "ruling up" opener for straight into the learning intention. The colours preview the four sub-types students will meet: amber = nominal, purple = ordinal, blue = discrete, green = continuous — the same colours reappear in the sorting games.</div>
+  </section>
+
+  <div class="progresswrap">
+    <div class="progressbar"><div class="progressfill" id="pf"></div></div>
+    <div class="progresslabel" id="pl">0 of 0 questions correct</div>
+  </div>
+
+  <!-- SECTION 1: the family tree -->
+  <section class="card" id="tree">
+    <h2><span class="num">1</span> The data family tree</h2>
+    <p>Every piece of data has a family. To find out where it belongs, ask two questions: <strong>1) Is it a word or a number?</strong> Then <strong>2) what kind?</strong></p>
+    <div class="tree">
+      <div class="tree-root">DATA</div>
+      <div class="tree-branches">
+        <div class="branch cat">
+          <h4>🏷️ Categorical</h4>
+          <p>Words, labels or groups. You can't do maths with them.</p>
+          <div class="subrow">
+            <div class="subcard" id="sub-Nominal"><b>Nominal</b><span>No natural order. Eye colour, favourite sport.</span></div>
+            <div class="subcard" id="sub-Ordinal"><b>Ordinal</b><span>Categories you can rank. Movie ratings, sizes.</span></div>
+          </div>
+        </div>
+        <div class="branch num">
+          <h4>🔢 Numerical</h4>
+          <p>Numbers you can count or measure. You can do maths with them.</p>
+          <div class="subrow">
+            <div class="subcard" id="sub-Discrete"><b>Discrete</b><span>Whole-number jumps. Students in a class, goals scored.</span></div>
+            <div class="subcard" id="sub-Continuous"><b>Continuous</b><span>Any value on a scale. Weight, height, time.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:18px;">🕵️ <strong>Try it — click an example</strong> and watch it travel down the tree:</p>
+    <div class="reveal-grid" id="treeReveal"></div>
+    <div class="reveal-line" id="treeRevealLine"></div>
+  </section>
+
+  <!-- SECTION 2: categorical -->
+  <section class="card" id="categorical" style="border-top:6px solid var(--nominal);">
+    <h2><span class="num" style="background:var(--nominal)">2</span> Categorical data: nominal vs ordinal</h2>
+    <p><strong>Nominal</strong> data has no natural order — you can't say one label is "more" than another. <strong>Ordinal</strong> data can be ranked from lowest to highest, even though it's still words.</p>
+    <p class="note">Drag each card into the bin where it belongs.</p>
+    <div id="catSort"></div>
+    <div class="q" style="margin-top:16px;">
+      <div class="qtext">A survey asks students to pick their favourite <b>house group</b> (Red, Blue, Green, Yellow). Is this nominal or ordinal?</div>
+      <div class="mc" id="mc_house"></div>
+      <div class="qrow"><button class="btn" data-check-mc="mc_house">Check</button></div>
+      <div class="fb" id="mc_house_fb"></div>
+      <div class="reveal" id="mc_house_rv">💡 There's no order to house colours — none is "higher" than another — so it's nominal.</div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: numerical -->
+  <section class="card" id="numerical" style="border-top:6px solid var(--discrete);">
+    <h2><span class="num" style="background:var(--discrete)">3</span> Numerical data: discrete vs continuous</h2>
+    <p><strong>Discrete</strong> data is <em>counted</em> — it jumps in whole numbers with nothing sensible in between (you can't have 2.5 pets). <strong>Continuous</strong> data is <em>measured</em> — it can take any value on a scale, including the bits in between.</p>
+    <p class="note">Drag each card into the bin where it belongs.</p>
+    <div id="numSort"></div>
+    <div class="q" style="margin-top:16px;">
+      <div class="qtext">A stopwatch records how long it takes a runner to finish a lap. Is this discrete or continuous?</div>
+      <div class="mc" id="mc_lap"></div>
+      <div class="qrow"><button class="btn" data-check-mc="mc_lap">Check</button></div>
+      <div class="fb" id="mc_lap_fb"></div>
+      <div class="reveal" id="mc_lap_rv">💡 Time can be any value — 21.4 seconds, 21.43 seconds — so it's continuous.</div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: combined sorting challenge -->
+  <section class="card" id="sort" style="border-top:6px solid var(--ordinal);">
+    <h2><span class="num" style="background:var(--ordinal)">4</span> Sort them all! <span class="pill tag-amber">Challenge</span></h2>
+    <p>Now for the real test — every example could be any of the four types. Read carefully and drag each one into the correct bin.</p>
+    <div class="teacher-note"><span class="tag">Teacher</span>This is the checkpoint activity — if a student is placing most of these correctly without help, they've met all three success criteria.</div>
+    <div id="allSort"></div>
+  </section>
+
+  <!-- SECTION 5: quiz -->
+  <section class="card" id="quiz" style="border-top:6px solid var(--continuous);">
+    <h2><span class="num" style="background:var(--continuous)">5</span> Show what you know</h2>
+    <p>Final check — answer these on your own.</p>
+    <div id="finalQuiz"></div>
+  </section>
+
+  <!-- EXIT -->
+  <div class="exit-stub" id="exit">
+    <div class="exit-main">
+      <div class="kicker">Exit Ticket · Show what you know</div>
+      <h3>Prove you can sort categorical &amp; numerical data</h3>
+      <p>Head to Mathspace and complete your exit task. You've got this! 🚀</p>
+      <a href="#" target="_blank" rel="noopener">Open my exit ticket →</a>
+      <div class="celebrate" id="finalCelebrate" style="color:#fff;margin-top:14px;text-align:left;"></div>
+    </div>
+    <div class="exit-tear">
+      <div class="big">🎟️</div>
+      <div class="adm">Admit One</div>
+      <div class="adm" style="opacity:.7">VC2M5ST01</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============ SCORE TRACKING ============ */
+const scored=new Set(); let totalQ=0;
+function registerQ(){totalQ++;updateProgress();}
+function markCorrect(id){if(!scored.has(id)){scored.add(id);updateProgress();}}
+function updateProgress(){
+  const pct=totalQ?Math.round(scored.size/totalQ*100):0;
+  document.getElementById('pf').style.width=pct+'%';
+  document.getElementById('pl').textContent=`${scored.size} of ${totalQ} questions correct`;
+  if(totalQ&&scored.size===totalQ){
+    const c=document.getElementById('finalCelebrate');
+    c.style.display='block';c.textContent='🌟 Every question correct — you\'re a data-type detective! Now try your exit ticket.';
+  }
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ============ SECTION 1: family tree reveal ============ */
+const treeExamples=[
+  {term:'Eye colour',big:'Categorical',sub:'Nominal',emoji:'👀'},
+  {term:'Favourite sport',big:'Categorical',sub:'Nominal',emoji:'⚽'},
+  {term:'Movie rating (G, PG, M, MA15+)',big:'Categorical',sub:'Ordinal',emoji:'🎬'},
+  {term:'T-shirt size (S, M, L)',big:'Categorical',sub:'Ordinal',emoji:'👕'},
+  {term:'Number of pets',big:'Numerical',sub:'Discrete',emoji:'🐶'},
+  {term:'Goals scored in a match',big:'Numerical',sub:'Discrete',emoji:'🥅'},
+  {term:'Height',big:'Numerical',sub:'Continuous',emoji:'📏'},
+  {term:'Time to run 100m',big:'Numerical',sub:'Continuous',emoji:'⏱️'}
+];
+const treeBox=document.getElementById('treeReveal');
+const treeLine=document.getElementById('treeRevealLine');
+let lastGlow=null;
+treeExamples.forEach((ex,i)=>{
+  const b=document.createElement('button');
+  b.className='ex-chip';b.type='button';
+  b.textContent=`${ex.emoji} ${ex.term}`;
+  b.addEventListener('click',()=>{
+    if(lastGlow)lastGlow.classList.remove('glow');
+    const target=document.getElementById('sub-'+ex.sub);
+    const glowColor=getComputedStyle(document.documentElement).getPropertyValue('--'+ex.sub.toLowerCase()).trim();
+    target.style.setProperty('--glow',glowColor);
+    target.classList.add('glow');
+    lastGlow=target;
+    treeLine.innerHTML=`${ex.emoji} <strong>${ex.term}</strong> → 🏷️ ${ex.big} → <span style="color:${glowColor}">${ex.sub}</span>`;
+    document.querySelectorAll('.ex-chip').forEach(c=>c.classList.remove('done'));
+    b.classList.add('done');
+  });
+  treeBox.appendChild(b);
+});
+
+/* ============ SORTING GAME BUILDER ============ */
+function buildSort(containerId, items, bins, cols){
+  const stage=document.getElementById(containerId);
+  const binsHtml=bins.map(b=>`<div class="sort-bin" data-bin="${b.key}" style="border-color:${b.color}55">
+      <h4 style="color:${b.color}">${b.label}</h4>
+      <div class="items" data-bin-items="${b.key}"></div>
+    </div>`).join('');
+  stage.innerHTML=`<div class="sort-bins${cols===4?' four':''}">${binsHtml}</div>
+    <div class="bank" data-bank></div>
+    <div class="celebrate" data-done>🎉 All sorted — nice work!</div>`;
+  const bank=stage.querySelector('[data-bank]');
+  shuffle(items.slice()).forEach((it,i)=>{
+    registerQ();
+    const qid=containerId+'_'+i;
+    const chip=document.createElement('div');
+    chip.className='chip';chip.draggable=true;chip.textContent=it.term;
+    chip.dataset.bin=it.bin;chip.dataset.qid=qid;
+    chip.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',JSON.stringify({bin:it.bin,qid})));
+    bank.appendChild(chip);
+  });
+  let correct=0;const total=items.length;
+  stage.querySelectorAll('.sort-bin').forEach(binEl=>{
+    const meta=bins.find(b=>b.key===binEl.dataset.bin);
+    binEl.addEventListener('dragover',e=>{e.preventDefault();binEl.classList.add('over');});
+    binEl.addEventListener('dragleave',()=>binEl.classList.remove('over'));
+    binEl.addEventListener('drop',e=>{
+      e.preventDefault();binEl.classList.remove('over');
+      const data=JSON.parse(e.dataTransfer.getData('text/plain'));
+      const chip=stage.querySelector(`.chip[data-qid="${data.qid}"]`);
+      if(!chip||chip.classList.contains('placed'))return;
+      if(data.bin===binEl.dataset.bin){
+        chip.classList.add('placed');chip.draggable=false;
+        chip.style.borderColor=meta.color;chip.style.color=meta.color;
+        binEl.querySelector('[data-bin-items]').appendChild(chip);
+        markCorrect(data.qid);correct++;
+        if(correct===total)stage.querySelector('[data-done]').style.display='block';
+      }else{
+        binEl.style.borderColor='var(--red)';
+        setTimeout(()=>binEl.style.borderColor=meta.color+'55',450);
+      }
+    });
+  });
+}
+
+buildSort('catSort',[
+  {term:'Favourite pet',bin:'Nominal'},
+  {term:'Hair colour',bin:'Nominal'},
+  {term:'Postcode',bin:'Nominal'},
+  {term:'Place in a race (1st, 2nd, 3rd)',bin:'Ordinal'},
+  {term:'Star rating (⭐ to ⭐⭐⭐⭐⭐)',bin:'Ordinal'},
+  {term:'Spice level (mild/medium/hot)',bin:'Ordinal'}
+],[
+  {key:'Nominal',label:'Nominal — no order',color:'var(--nominal)'},
+  {key:'Ordinal',label:'Ordinal — has an order',color:'var(--ordinal)'}
+],2);
+
+buildSort('numSort',[
+  {term:'Number of siblings',bin:'Discrete'},
+  {term:'Students absent today',bin:'Discrete'},
+  {term:'Books read this term',bin:'Discrete'},
+  {term:'Weight',bin:'Continuous'},
+  {term:'Temperature',bin:'Continuous'},
+  {term:'Length of a pencil',bin:'Continuous'}
+],[
+  {key:'Discrete',label:'Discrete — counted',color:'var(--discrete)'},
+  {key:'Continuous',label:'Continuous — measured',color:'var(--continuous)'}
+],2);
+
+buildSort('allSort',[
+  {term:'Favourite colour',bin:'Nominal'},
+  {term:'Blood type',bin:'Nominal'},
+  {term:'Exam grade (A, B, C, D)',bin:'Ordinal'},
+  {term:'Olympic medal (gold/silver/bronze)',bin:'Ordinal'},
+  {term:'Goals scored this season',bin:'Discrete'},
+  {term:'Text messages sent today',bin:'Discrete'},
+  {term:'Distance run',bin:'Continuous'},
+  {term:'Volume of water in a bottle',bin:'Continuous'}
+],[
+  {key:'Nominal',label:'Nominal',color:'var(--nominal)'},
+  {key:'Ordinal',label:'Ordinal',color:'var(--ordinal)'},
+  {key:'Discrete',label:'Discrete',color:'var(--discrete)'},
+  {key:'Continuous',label:'Continuous',color:'var(--continuous)'}
+],4);
+
+/* ============ INLINE MC QUESTIONS (section 2 & 3) ============ */
+function buildInlineMC(id, options, answerIndex, praise){
+  registerQ();
+  const box=document.getElementById(id);
+  box.innerHTML=options.map((o,i)=>`<label><input type="radio" name="${id}" value="${i}"> ${o}</label>`).join('');
+  document.querySelector(`[data-check-mc="${id}"]`).addEventListener('click',()=>{
+    const sel=document.querySelector(`input[name="${id}"]:checked`);
+    const fb=document.getElementById(id+'_fb');
+    const rv=document.getElementById(id+'_rv');
+    if(!sel){fb.className='fb no';fb.textContent='Pick an answer first.';return;}
+    if(+sel.value===answerIndex){
+      fb.className='fb ok';fb.textContent='✅ Correct! '+(praise||'');
+      markCorrect(id);
+      if(rv)rv.style.display='block';
+    }else{
+      fb.className='fb no';fb.textContent='❌ Not quite — try again.';
+    }
+  });
+}
+buildInlineMC('mc_house',['Nominal','Ordinal'],0);
+buildInlineMC('mc_lap',['Discrete','Continuous'],1);
+
+/* ============ QUIZ ENGINE (section 5) ============ */
+function buildQuiz(containerId, questions){
+  const box=document.getElementById(containerId);
+  questions.forEach((q,i)=>{
+    registerQ();
+    const qid=containerId+'_'+i;
+    const div=document.createElement('div');div.className='q';
+    let inner=`<div class="qtext">${q.q}</div>`;
+    inner+=`<div class="mc">`+q.options.map((o,oi)=>
+      `<label><input type="radio" name="${qid}" value="${oi}"> ${o}</label>`).join('')+`</div>`;
+    inner+=`<div class="qrow"><button class="btn" data-check="${qid}">Check</button></div>`;
+    inner+=`<div class="fb" id="${qid}_fb"></div>`;
+    if(q.explain)inner+=`<div class="reveal" id="${qid}_rv">💡 ${q.explain}</div>`;
+    div.innerHTML=inner;
+    box.appendChild(div);
+    div.querySelector(`[data-check="${qid}"]`).addEventListener('click',()=>{
+      const fb=document.getElementById(qid+'_fb');
+      const rv=document.getElementById(qid+'_rv');
+      const sel=document.querySelector(`input[name="${qid}"]:checked`);
+      if(!sel){fb.className='fb no';fb.textContent='Pick an answer first.';return;}
+      if(+sel.value===q.answer){
+        fb.className='fb ok';fb.textContent='✅ Correct! '+(q.praise||'');
+        markCorrect(qid);
+        if(rv)rv.style.display='block';
+      }else{
+        fb.className='fb no';fb.textContent='❌ Not quite — try again.';
+      }
+    });
+  });
+}
+buildQuiz('finalQuiz',[
+  {q:'Which one of these is <b>categorical</b> data?',
+    options:['Number of pets','Favourite ice-cream flavour','Height in cm','Time to run 100m'],answer:1,
+    explain:'Ice-cream flavour is a label, not a number — it\'s categorical.'},
+  {q:'Which one of these is <b>numerical</b> data?',
+    options:['Eye colour','House group','Number of pages in a book','T-shirt size'],answer:2,
+    explain:'You can count the number of pages — it\'s numerical (and discrete).'},
+  {q:'A movie is rated G, PG, M or MA15+. What type of data is this?',
+    options:['Nominal','Ordinal','Discrete','Continuous'],answer:1,
+    explain:'The ratings can be ranked from mildest to most restricted, so it\'s ordinal.'},
+  {q:'The number of goals scored in a soccer match is…',
+    options:['Nominal','Ordinal','Discrete','Continuous'],answer:2,
+    explain:'Goals are counted in whole numbers — you can\'t score 2.5 goals — so it\'s discrete.'},
+  {q:'A student\'s height, measured with a tape measure, is…',
+    options:['Nominal','Ordinal','Discrete','Continuous'],answer:3,
+    explain:'Height can take any value on a scale, including in-between values — it\'s continuous.'},
+  {q:'"Favourite pet" has no natural order. Within categorical data, that makes it…',
+    options:['Nominal','Ordinal'],answer:0,
+    explain:'No ranking is possible, so it\'s nominal.'}
+]);
+
+/* teacher notes toggle */
+const tt=document.getElementById('teacherToggle');
+tt.addEventListener('click',()=>{
+  const off=document.body.classList.toggle('hide-teacher');
+  tt.classList.toggle('off',off);
+  tt.querySelector('.tn-label').textContent='Teacher notes: '+(off?'off':'on');
+});
+
+/* success criteria — click a row to mark "I've got this" */
+document.querySelectorAll('.sc-row[data-sc]').forEach(row=>{
+  row.addEventListener('click',()=>row.classList.toggle('got'));
+});
+</script>
+</body>
+</html>

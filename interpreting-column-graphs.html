@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Column Graphs — Interactive Lesson</title>
+<style>
+  :root{
+    --bg:#f4f7fb; --ink:#1f2a44; --muted:#5b6b8c; --card:#ffffff;
+    --accent:#3b6ef6; --accent2:#7b5cff;
+    --green:#2fa84f; --greenbg:#e9f8ee; --greenbd:#bfe8cb;
+    --amber:#e8a11a; --amberbg:#fdf4e1; --amberbd:#f4dca0;
+    --red:#e0453e; --redbg:#fdecea; --redbd:#f6c9c6;
+    --shadow:0 6px 22px rgba(31,42,68,.09);
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:linear-gradient(180deg,#eef3fb,#f6f8fc);color:var(--ink);line-height:1.55;}
+  .wrap{max-width:900px;margin:0 auto;padding:22px 16px 80px;}
+  header.hero{background:linear-gradient(135deg,#3b6ef6,#7b5cff);color:#fff;border-radius:22px;
+    padding:26px 26px 22px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  header.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;
+    background:rgba(255,255,255,.12);border-radius:50%;}
+  header.hero h1{margin:0 0 4px;font-size:1.8rem;}
+  .eyebrow{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85;font-weight:600;}
+  .li{background:rgba(255,255,255,.16);border-radius:12px;padding:12px 14px;margin-top:14px;font-weight:600;}
+  .sc{margin-top:12px;}
+  .sc label{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.12);
+    border-radius:10px;padding:9px 12px;margin-top:8px;cursor:pointer;font-size:.95rem;}
+  .sc input{margin-top:4px;transform:scale(1.25);accent-color:#fff;}
+  .progresswrap{padding:12px 0 4px;margin:8px 0 4px;}
+  .progressbar{height:12px;background:#e3e9f4;border-radius:20px;overflow:hidden;}
+  .progressfill{height:100%;width:0;background:linear-gradient(90deg,#3b6ef6,#2fa84f);transition:width .4s;}
+  .progresslabel{font-size:.82rem;color:var(--muted);font-weight:600;margin-top:4px;text-align:right;}
+  section.card{background:var(--card);border-radius:var(--radius);padding:22px;margin-top:20px;box-shadow:var(--shadow);}
+  h2{margin:0 0 6px;font-size:1.35rem;display:flex;align-items:center;gap:10px;}
+  h2 .num{background:var(--accent);color:#fff;width:34px;height:34px;border-radius:10px;display:grid;
+    place-items:center;font-size:1rem;flex:none;}
+  h3{margin:18px 0 6px;font-size:1.08rem;}
+  p{margin:8px 0;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:640px){.two{grid-template-columns:1fr}}
+  .chartbox{background:#fbfcfe;border:1px solid #e6ecf6;border-radius:14px;padding:12px;text-align:center;}
+  .chartbox .cap{font-size:.85rem;color:var(--muted);margin-top:6px;}
+  svg{max-width:100%;height:auto;}
+  .pill{display:inline-block;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:20px;}
+  .tag-green{background:var(--greenbg);color:var(--green);border:1px solid var(--greenbd);}
+  .tag-amber{background:var(--amberbg);color:var(--amber);border:1px solid var(--amberbd);}
+  .tag-red{background:var(--redbg);color:var(--red);border:1px solid var(--redbd);}
+  .layerrow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px;}
+  @media(max-width:640px){.layerrow{grid-template-columns:1fr}}
+  .layer{border-radius:14px;padding:14px;color:#fff;}
+  .layer h4{margin:0 0 4px;font-size:1rem;}
+  .layer small{opacity:.9;}
+  .l1{background:linear-gradient(135deg,#2fa84f,#48c46b);}
+  .l2{background:linear-gradient(135deg,#e8a11a,#f4b942);}
+  .l3{background:linear-gradient(135deg,#e0453e,#f06a63);}
+
+  /* drag & drop */
+  .dnd-stage{position:relative;width:520px;max-width:100%;margin:0 auto;}
+  .dnd-stage svg{width:520px;max-width:100%;}
+  .dropzone{position:absolute;border:2px dashed #9db4e0;border-radius:8px;background:rgba(59,110,246,.06);
+    font-size:.72rem;color:#5b6b8c;display:grid;place-items:center;text-align:center;padding:2px;transition:.2s;}
+  .dropzone.over{background:rgba(59,110,246,.2);border-color:var(--accent);}
+  .dropzone.correct{background:var(--greenbg);border:2px solid var(--green);color:var(--green);font-weight:700;}
+  .bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;}
+  .chip{background:#fff;border:2px solid var(--accent);color:var(--accent);border-radius:20px;padding:7px 14px;
+    font-weight:700;font-size:.85rem;cursor:grab;user-select:none;box-shadow:0 2px 6px rgba(59,110,246,.18);}
+  .chip.used{opacity:.35;pointer-events:none;text-decoration:line-through;}
+  .chip:active{cursor:grabbing;}
+
+  /* slider */
+  .sliderbox{text-align:center;}
+  input[type=range]{width:80%;accent-color:var(--accent);height:6px;}
+  .readout{font-weight:800;font-size:1.3rem;color:var(--accent);}
+
+  /* quiz */
+  .q{border:1px solid #e6ecf6;border-radius:12px;padding:12px 14px;margin-top:12px;background:#fcfdff;}
+  .q .qtext{font-weight:600;}
+  .q .qtext b{color:var(--accent);}
+  .qrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;}
+  .q input[type=text],.q input[type=number]{padding:8px 10px;border:2px solid #d5deee;border-radius:9px;
+    font-size:.95rem;width:130px;font-family:inherit;}
+  .q input:focus{outline:none;border-color:var(--accent);}
+  .mc{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+  .mc label{display:flex;gap:8px;align-items:center;background:#fff;border:1.5px solid #d5deee;border-radius:9px;
+    padding:8px 10px;cursor:pointer;font-size:.92rem;}
+  .mc label:hover{border-color:var(--accent);}
+  .btn{background:var(--accent);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-weight:700;
+    cursor:pointer;font-size:.9rem;font-family:inherit;}
+  .btn:hover{filter:brightness(1.06);}
+  .btn.ghost{background:#eef2fb;color:var(--accent);}
+  .fb{margin-top:8px;font-weight:700;font-size:.9rem;display:none;}
+  .fb.ok{color:var(--green);display:block;}
+  .fb.no{color:var(--red);display:block;}
+  .reveal{background:#f2f6ff;border-left:4px solid var(--accent);padding:8px 12px;border-radius:8px;
+    margin-top:8px;font-size:.9rem;display:none;}
+  details.hint{margin-top:8px;font-size:.88rem;}
+  details.hint summary{cursor:pointer;color:var(--accent);font-weight:600;}
+  .actwrap{border-radius:14px;padding:2px 0;}
+  .exit{background:linear-gradient(135deg,#2fa84f,#3b6ef6);color:#fff;border-radius:18px;padding:24px;
+    text-align:center;margin-top:24px;box-shadow:var(--shadow);}
+  .exit a{display:inline-block;margin-top:12px;background:#fff;color:var(--accent);text-decoration:none;
+    font-weight:800;padding:12px 26px;border-radius:30px;font-size:1.05rem;box-shadow:0 4px 14px rgba(0,0,0,.15);}
+  .exit a:hover{transform:translateY(-2px);}
+  .note{font-size:.85rem;color:var(--muted);}
+  .celebrate{text-align:center;font-size:1.1rem;font-weight:800;color:var(--green);margin-top:10px;display:none;}
+
+  /* top nav */
+  .topnav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);
+    border:1px solid #e6ecf6;border-radius:16px;padding:10px 16px;margin-bottom:16px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 4px 16px rgba(31,42,68,.06);}
+  .topnav .brand{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--ink);font-size:1.02rem;}
+  .topnav .brand .bars{display:inline-flex;gap:2px;align-items:flex-end;height:18px;}
+  .topnav .brand .bars i{width:5px;border-radius:2px;display:block;}
+  .topnav .links{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto;}
+  .topnav .links a{color:var(--muted);text-decoration:none;font-weight:600;font-size:.9rem;}
+  .topnav .links a:hover{color:var(--accent);}
+  .tn-toggle{border:1.5px solid var(--accent);color:var(--accent);background:#fff;border-radius:20px;
+    padding:6px 14px;font-weight:700;font-size:.85rem;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:inherit;}
+  .tn-toggle .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);}
+  .tn-toggle.off{color:var(--muted);border-color:#cdd6e6;}
+  .tn-toggle.off .dot{background:#cdd6e6;}
+  @media(max-width:680px){.topnav .links{display:none;}}
+  section.card{scroll-margin-top:82px;}
+
+  /* graph + questions side by side */
+  .qa-split{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:10px;}
+  .qa-split .chartcol{position:sticky;top:88px;}
+  .qa-split .qcol{font-size:.9rem;}
+  .qa-split .qcol .q{padding:10px 12px;}
+  .qa-split .qcol .q:first-child{margin-top:0;}
+  .qa-split .qcol .btn{padding:6px 13px;font-size:.85rem;}
+  .qa-split .qcol input[type=text],.qa-split .qcol input[type=number]{padding:6px 9px;font-size:.9rem;width:120px;}
+  @media(max-width:820px){
+    .qa-split{grid-template-columns:1fr;gap:8px;}
+    .qa-split .chartcol{position:static;}
+  }
+
+  /* curriculum pill — inline beside the subject line */
+  .hero-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:2px;}
+  .hero-top .eyebrow{margin:0;opacity:.9;}
+  .curric{display:inline-flex;align-items:center;gap:7px;background:#fff;color:#3b46e5;
+    border-radius:30px;padding:7px 16px;font-weight:800;text-decoration:none;font-size:.9rem;
+    box-shadow:0 3px 12px rgba(0,0,0,.18);white-space:nowrap;}
+  .curric:hover{transform:translateY(-1px);}
+  .curric .arrow{font-size:.95em;}
+
+  /* success criteria — aiming card */
+  .aiming .eyebrow-line{display:flex;align-items:center;gap:12px;color:var(--accent);}
+  .aiming .eyebrow-line .rule{height:3px;width:34px;background:var(--accent);border-radius:3px;}
+  .aiming .eyebrow-line span.lbl{font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800;}
+  .aiming h2.big{display:block;font-size:2.05rem;font-weight:800;margin:8px 0 18px;color:var(--ink);}
+  .sc-row{display:flex;align-items:center;gap:14px;border:1.5px solid #e6ecf6;border-radius:14px;
+    padding:14px 16px;margin-top:12px;font-size:1.05rem;font-weight:600;cursor:pointer;transition:.2s;background:#fff;}
+  .sc-row:hover{border-color:#cdd6e6;}
+  .sc-row.got{border-color:var(--green);background:var(--greenbg);}
+  .sc-chip{width:22px;height:22px;border-radius:6px;flex:none;}
+  .sc-chip.g{background:var(--green);} .sc-chip.a{background:var(--amber);} .sc-chip.r{background:var(--red);}
+  .sc-row .check{margin-left:auto;width:24px;height:24px;border-radius:50%;border:2px solid #cdd6e6;flex:none;
+    display:grid;place-items:center;color:#fff;font-size:.8rem;background:#fff;}
+  .sc-row.got .check{background:var(--green);border-color:var(--green);}
+
+  /* teacher callout */
+  .teacher-note{background:#fbf3c9;border:1px solid #f0e08a;border-radius:12px;padding:12px 16px;margin-top:16px;
+    color:#6b5a12;font-size:.95rem;line-height:1.5;}
+  .teacher-note .tag{display:inline-block;background:#6b5a12;color:#fff;font-size:.68rem;font-weight:800;
+    letter-spacing:.08em;padding:3px 9px;border-radius:6px;margin-right:8px;vertical-align:middle;}
+  .teacher-note b{color:#5a4a0e;}
+  body.hide-teacher .teacher-note{display:none;}
+
+  /* exit ticket stub */
+  .exit-stub{margin-top:28px;display:flex;background:linear-gradient(135deg,#2fa84f,#3b6ef6);border-radius:18px;
+    color:#fff;box-shadow:var(--shadow);position:relative;}
+  .exit-stub::before,.exit-stub::after{content:"";position:absolute;width:26px;height:26px;border-radius:50%;
+    background:#f6f8fc;left:calc(72% - 13px);}
+  .exit-stub::before{top:-13px;} .exit-stub::after{bottom:-13px;}
+  .exit-main{flex:1 1 72%;padding:26px 28px;}
+  .exit-main .kicker{font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;opacity:.9;font-weight:700;}
+  .exit-main h3{margin:6px 0 8px;font-size:1.5rem;}
+  .exit-main p{margin:0 0 16px;opacity:.95;}
+  .exit-main a{display:inline-block;background:#fff;color:var(--accent);text-decoration:none;font-weight:800;
+    padding:12px 26px;border-radius:30px;box-shadow:0 4px 14px rgba(0,0,0,.18);}
+  .exit-main a:hover{transform:translateY(-2px);}
+  .exit-tear{flex:0 0 28%;border-left:3px dashed rgba(255,255,255,.6);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:18px 10px;text-align:center;gap:6px;}
+  .exit-tear .big{font-size:2.6rem;line-height:1;}
+  .exit-tear .adm{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;opacity:.9;}
+  @media(max-width:560px){.exit-stub{flex-direction:column;}
+    .exit-stub::before{left:-13px;top:calc(72% - 13px);} .exit-stub::after{right:-13px;left:auto;bottom:auto;top:calc(72% - 13px);}
+    .exit-tear{border-left:none;border-top:3px dashed rgba(255,255,255,.6);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topnav">
+    <div class="brand">
+      <span class="bars"><i style="height:9px;background:#e8792b"></i><i style="height:15px;background:#7b5cff"></i><i style="height:18px;background:#2fa84f"></i></span>
+      Column Graphs
+    </div>
+    <div class="links">
+      <a href="#learn">Learn</a>
+      <a href="#parts">Graph parts</a>
+      <a href="#scale">Scale</a>
+      <a href="#read">Read</a>
+      <a href="#activities">Activities</a>
+      <a href="#exit">Exit</a>
+    </div>
+    <button class="tn-toggle" id="teacherToggle"><span class="dot"></span><span class="tn-label">Teacher notes: on</span></button>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-top">
+      <div class="eyebrow">Maths · Data &amp; Statistics · Year 5</div>
+      <a class="curric" href="https://victoriancurriculum.vcaa.vic.edu.au/Curriculum/ContentDescription/VC2M5ST01" target="_blank" rel="noopener">VC2M5ST01 <span class="arrow">↗</span></a>
+    </div>
+    <h1>4.2 Interpreting Column Graphs</h1>
+    <div class="li"><strong>Learning intention:</strong> We are learning to represent data in column graphs, and explain what the data tells us.</div>
+  </header>
+
+  <section class="card aiming" id="aiming">
+    <div class="eyebrow-line"><span class="rule"></span><span class="lbl">Success criteria · I can…</span></div>
+    <h2 class="big">What we're aiming for</h2>
+    <div class="sc-row" data-sc><span class="sc-chip g"></span>I can read a column graph and explain what it tells us — comparing results and describing patterns.<span class="check">✓</span></div>
+    <div class="sc-row" data-sc><span class="sc-chip a"></span>I can label a graph clearly with a title, categories, and a sensible scale (e.g. 1 square = 2 units).<span class="check">✓</span></div>
+    <div class="sc-row" data-sc><span class="sc-chip r"></span>I can create an accurate column graph from data, with equal column widths.<span class="check">✓</span></div>
+    <div class="teacher-note"><span class="tag">Teacher</span><b>Read together.</b> The green criterion is the reading &amp; interpreting skill — practised in the Green activities. The amber and red criteria are the building skills: a clear title, labelled axes, a sensible scale and equal columns. The colours match the traffic-light activities further down, so students always know which skill they're working on.</div>
+  </section>
+
+  <div class="progresswrap">
+    <div class="progressbar"><div class="progressfill" id="pf"></div></div>
+    <div class="progresslabel" id="pl">0 of 0 questions correct</div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <section class="card" id="learn">
+    <h2><span class="num">1</span> Single vs double column graphs</h2>
+    <p>A <strong>column graph</strong> (bar graph) uses the <em>height</em> of columns to show how much of something there is. There are two types:</p>
+    <div class="two">
+      <div class="chartbox"><div id="c_single"></div><div class="cap"><strong>Single</strong> column graph — one column per category.</div></div>
+      <div class="chartbox"><div id="c_double"></div><div class="cap"><strong>Double</strong> column graph — two columns per category, so you can compare two groups. Needs a <strong>key</strong>.</div></div>
+    </div>
+    <p class="note">Notice the double graph needs a <strong>key</strong> so you know which colour is which group.</p>
+  </section>
+
+  <!-- SECTION 2 : drag & drop features -->
+  <section class="card" id="parts">
+    <h2><span class="num">2</span> Name the features <span class="pill tag-green">drag &amp; drop</span></h2>
+    <p>Every good column graph has the same parts. Drag each label onto the right spot on the graph. Get all 7 to light up green!</p>
+    <div class="dnd-stage" id="dndStage">
+      <div id="dndChart"></div>
+      <!-- drop zones positioned over the 520x340 svg -->
+      <div class="dropzone" data-target="Title"            style="left:150px;top:6px;width:210px;height:24px;">?</div>
+      <div class="dropzone" data-target="Vertical axis title" style="left:2px;top:120px;width:26px;height:120px;writing-mode:vertical-rl;">?</div>
+      <div class="dropzone" data-target="Scale (numbers)"   style="left:30px;top:150px;width:24px;height:60px;">?</div>
+      <div class="dropzone" data-target="Key"               style="left:372px;top:52px;width:120px;height:44px;">?</div>
+      <div class="dropzone" data-target="Bars"              style="left:150px;top:170px;width:70px;height:70px;">?</div>
+      <div class="dropzone" data-target="Bar labels"        style="left:250px;top:288px;width:150px;height:20px;">?</div>
+      <div class="dropzone" data-target="Horizontal axis title" style="left:190px;top:312px;width:150px;height:22px;">?</div>
+    </div>
+    <div class="bank" id="dndBank"></div>
+    <div class="celebrate" id="dndDone">🎉 All features labelled — nice work!</div>
+  </section>
+
+  <!-- SECTION 3 : slider read the bar -->
+  <section class="card" id="scale">
+    <h2><span class="num">3</span> Read the bar <span class="pill tag-green">slider</span></h2>
+    <p>Sliding the marker to read a value is a key skill. Move the slider until the dashed line sits <strong>exactly on top of the highlighted bar</strong>, then check.</p>
+    <div class="sliderbox">
+      <div id="sliderChart"></div>
+      <input type="range" id="barSlider" min="0" max="10" step="1" value="0">
+      <div>Your reading: <span class="readout" id="sliderVal">0</span></div>
+      <div class="qrow" style="justify-content:center;">
+        <button class="btn" id="sliderCheck">Check my reading</button>
+        <button class="btn ghost" id="sliderNew">New bar</button>
+      </div>
+      <div class="fb" id="sliderFb"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 4 : three layers -->
+  <section class="card">
+    <h2><span class="num">4</span> Three layers of thinking about data</h2>
+    <p>Good data detectives don't just read numbers — they compare and conclude. When you look at any graph, work through these three layers:</p>
+    <div class="layerrow">
+      <div class="layer l1"><h4>1 · See</h4><small>What can I see straight away? Read values off the graph.</small></div>
+      <div class="layer l2"><h4>2 · Find out</h4><small>What can I work out? Compare and combine the data.</small></div>
+      <div class="layer l3"><h4>3 · Conclude</h4><small>What can I conclude? Spot patterns and draw inferences.</small></div>
+    </div>
+  </section>
+
+  <!-- SECTION 5 : read together -->
+  <section class="card" id="read">
+    <h2><span class="num">5</span> Read this graph together</h2>
+    <p>Lily threw a die and recorded how many times she rolled each number. Use the graph to answer — then check yourself.</p>
+    <div class="teacher-note"><span class="tag">Teacher</span>Model the three layers aloud: read a value (Q1–3), work something out (Q4–5), then reason about what the graph <em>can't</em> tell us (Q6 — order of throws). Think-aloud before releasing students to the coloured activities.</div>
+    <div class="qa-split">
+      <div class="chartcol"><div class="chartbox"><div id="dieChart"></div></div></div>
+      <div class="qcol" id="dieQuiz"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 6 : GREEN -->
+  <section class="card" id="activities" style="border-top:6px solid var(--green);">
+    <h2><span class="num" style="background:var(--green)">6</span> Green activities <span class="pill tag-green">Start here</span></h2>
+    <p>Layer 1 &amp; 2 practice — reading and comparing single column graphs.</p>
+    <div class="teacher-note"><span class="tag">Teacher</span>Everyone starts Green. Move to Amber once students confidently read and compare; Amber and Red add a 10s scale and double columns. Use this as your differentiation ladder rather than a whole-class pace.</div>
+
+    <h3>🥤 Preferred Drink</h3>
+    <div class="qa-split">
+      <div class="chartcol"><div class="chartbox"><div id="drinkChart"></div></div></div>
+      <div class="qcol" id="drinkQuiz"></div>
+    </div>
+
+    <h3 style="margin-top:22px;">🧁 Baking Time (minutes)</h3>
+    <div class="qa-split">
+      <div class="chartcol"><div class="chartbox"><div id="bakeChart"></div></div></div>
+      <div class="qcol" id="bakeQuiz"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 7 : AMBER -->
+  <section class="card" style="border-top:6px solid var(--amber);">
+    <h2><span class="num" style="background:var(--amber)">7</span> Amber activity <span class="pill tag-amber">Level up</span></h2>
+    <p>Reading a scale that counts in 10s and comparing across many categories.</p>
+    <h3>🌧️ Total Rainfall in October (mm)</h3>
+    <div class="qa-split">
+      <div class="chartcol"><div class="chartbox"><div id="rainChart"></div></div></div>
+      <div class="qcol" id="rainQuiz"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 8 : RED -->
+  <section class="card" style="border-top:6px solid var(--red);">
+    <h2><span class="num" style="background:var(--red)">8</span> Red activities <span class="pill tag-red">Challenge</span></h2>
+    <p>Double column graphs — Layer 3 thinking. Compare two groups and draw conclusions.</p>
+
+    <h3>🏐 Hornets vs Ravens — points over 5 games</h3>
+    <div class="qa-split">
+      <div class="chartcol"><div class="chartbox"><div id="netChart"></div></div></div>
+      <div class="qcol" id="netQuiz"></div>
+    </div>
+
+    <h3 style="margin-top:22px;">🍫 Drama Club Fundraising — items sold</h3>
+    <div class="qa-split">
+      <div class="chartcol"><div class="chartbox"><div id="dramaChart"></div></div></div>
+      <div class="qcol" id="dramaQuiz"></div>
+    </div>
+  </section>
+
+  <!-- EXIT -->
+  <div class="exit-stub" id="exit">
+    <div class="exit-main">
+      <div class="kicker">Exit Ticket · Show what you know</div>
+      <h3>Prove you can read &amp; build a column graph</h3>
+      <p>Head to Mathspace and complete your exit task. You've got this! 🚀</p>
+      <a href="https://mathspace.co/student/tasks/CurriculumCustomTask-963296/" target="_blank" rel="noopener">Open my exit ticket →</a>
+      <div class="celebrate" id="finalCelebrate" style="color:#fff;margin-top:14px;text-align:left;"></div>
+    </div>
+    <div class="exit-tear">
+      <div class="big">🎟️</div>
+      <div class="adm">Admit One</div>
+      <div class="adm" style="opacity:.7">VC2M5ST01</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============ CHART BUILDER ============ */
+function barChart(opts){
+  const W=520,H=340,mL=55,mR=20,mT=40,mB=58;
+  const pW=W-mL-mR, pH=H-mT-mB;
+  const max=opts.max, step=opts.step||Math.ceil(max/5);
+  const cats=opts.categories, series=opts.series;
+  const y=v=>mT+pH*(1-v/max);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" font-family="Segoe UI,Arial,sans-serif">`;
+  // title
+  s+=`<text x="${W/2}" y="22" text-anchor="middle" font-size="17" font-weight="700" fill="#1f2a44">${opts.title}</text>`;
+  // gridlines + scale
+  for(let v=0;v<=max;v+=step){
+    const yy=y(v);
+    s+=`<line x1="${mL}" y1="${yy}" x2="${W-mR}" y2="${yy}" stroke="#e3e9f4"/>`;
+    s+=`<text x="${mL-8}" y="${yy+4}" text-anchor="end" font-size="12" fill="#5b6b8c">${v}</text>`;
+  }
+  // axes
+  s+=`<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+pH}" stroke="#1f2a44" stroke-width="2"/>`;
+  s+=`<line x1="${mL}" y1="${mT+pH}" x2="${W-mR}" y2="${mT+pH}" stroke="#1f2a44" stroke-width="2"/>`;
+  // axis titles
+  s+=`<text x="${mL+pW/2}" y="${H-8}" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2a44">${opts.xLabel}</text>`;
+  s+=`<text transform="translate(15,${mT+pH/2}) rotate(-90)" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2a44">${opts.yLabel}</text>`;
+  // bars
+  const groupW=pW/cats.length;
+  const n=series.length;
+  const barGap=groupW*0.18;
+  const innerW=groupW-barGap;
+  const barW=innerW/n;
+  cats.forEach((cat,ci)=>{
+    const gx=mL+ci*groupW+barGap/2;
+    series.forEach((se,si)=>{
+      const v=se.values[ci];
+      const bx=gx+si*barW;
+      const by=y(v);
+      const bh=mT+pH-by;
+      const col=(se.colors&&se.colors[ci])||se.color;
+      s+=`<rect x="${bx+2}" y="${by}" width="${barW-4}" height="${bh}" fill="${col}" rx="2"><title>${cat}: ${v}</title></rect>`;
+    });
+    s+=`<text x="${mL+ci*groupW+groupW/2}" y="${mT+pH+18}" text-anchor="middle" font-size="12" fill="#1f2a44">${cat}</text>`;
+  });
+  // legend
+  if(opts.legend){
+    let lx=W-mR-140, ly=mT+6;
+    series.forEach((se,i)=>{
+      s+=`<rect x="${lx}" y="${ly+i*20}" width="14" height="14" fill="${se.color}" rx="2"/>`;
+      s+=`<text x="${lx+20}" y="${ly+i*20+12}" font-size="12" fill="#1f2a44">${se.name}</text>`;
+    });
+    s+=`<rect x="${lx-8}" y="${ly-6}" width="140" height="${series.length*20+8}" fill="none" stroke="#c9d5ec" rx="6"/>`;
+  }
+  s+=`</svg>`;
+  return s;
+}
+
+/* ============ SCORE TRACKING ============ */
+const scored=new Set(); let totalQ=0;
+function registerQ(){totalQ++;updateProgress();}
+function markCorrect(id){if(!scored.has(id)){scored.add(id);updateProgress();}}
+function updateProgress(){
+  const pct=totalQ?Math.round(scored.size/totalQ*100):0;
+  document.getElementById('pf').style.width=pct+'%';
+  document.getElementById('pl').textContent=`${scored.size} of ${totalQ} questions correct`;
+  if(totalQ&&scored.size===totalQ){
+    const c=document.getElementById('finalCelebrate');
+    c.style.display='block';c.textContent='🌟 Every question correct — you\'re a data expert! Now try your exit ticket.';
+  }
+}
+
+/* ============ QUIZ ENGINE ============ */
+/* build a quiz from an array of question objects into a container */
+function buildQuiz(containerId, questions){
+  const box=document.getElementById(containerId);
+  questions.forEach((q,i)=>{
+    registerQ();
+    const qid=containerId+'_'+i;
+    const div=document.createElement('div');div.className='q';
+    let inner=`<div class="qtext">${q.q}</div>`;
+    if(q.type==='mc'){
+      inner+=`<div class="mc">`+q.options.map((o,oi)=>
+        `<label><input type="radio" name="${qid}" value="${oi}"> ${o}</label>`).join('')+`</div>`;
+    }else{
+      const it=q.type==='text'?'text':'number';
+      inner+=`<div class="qrow"><input type="${it}" id="${qid}_in" placeholder="Your answer"${q.unit?'':''}> `+
+             (q.unit?`<span class="note">${q.unit}</span>`:'')+`</div>`;
+    }
+    inner+=`<div class="qrow"><button class="btn" data-check="${qid}">Check</button>`+
+           (q.hint?`</div><details class="hint"><summary>Need a hint?</summary>${q.hint}</details>`:`</div>`);
+    inner+=`<div class="fb" id="${qid}_fb"></div>`;
+    if(q.explain)inner+=`<div class="reveal" id="${qid}_rv">💡 ${q.explain}</div>`;
+    div.innerHTML=inner;
+    box.appendChild(div);
+    div.querySelector(`[data-check="${qid}"]`).addEventListener('click',()=>checkQ(qid,q));
+  });
+}
+function checkQ(qid,q){
+  const fb=document.getElementById(qid+'_fb');
+  const rv=document.getElementById(qid+'_rv');
+  let ok=false, given=null;
+  if(q.type==='mc'){
+    const sel=document.querySelector(`input[name="${qid}"]:checked`);
+    if(!sel){fb.className='fb no';fb.textContent='Pick an answer first.';return;}
+    ok=(+sel.value===q.answer);
+  }else if(q.type==='text'){
+    given=(document.getElementById(qid+'_in').value||'').trim().toLowerCase();
+    if(!given){fb.className='fb no';fb.textContent='Type an answer first.';return;}
+    ok=q.accept.some(a=>given.includes(a.toLowerCase()));
+  }else{ // number
+    const raw=document.getElementById(qid+'_in').value;
+    if(raw===''){fb.className='fb no';fb.textContent='Type a number first.';return;}
+    given=parseFloat(raw);
+    const tol=q.tol||0;
+    ok=Math.abs(given-q.answer)<=tol;
+  }
+  if(ok){
+    fb.className='fb ok';fb.textContent='✅ Correct! '+(q.praise||'');
+    markCorrect(qid);
+    if(rv)rv.style.display='block';
+  }else{
+    fb.className='fb no';fb.textContent='❌ Not quite — try again. '+(q.nudge||'');
+  }
+}
+
+/* ============ RENDER CHARTS ============ */
+document.getElementById('c_single').innerHTML=barChart({
+  title:'Favourite Sports',yLabel:'Number of students',xLabel:'Sport',max:10,step:2,
+  categories:['Football','Hockey','Rugby','Other'],
+  series:[{color:'#e8792b',colors:['#e8792b','#d81b7a','#2f7ae5','#7ab52f'],values:[9,4,6,3]}]});
+
+document.getElementById('c_double').innerHTML=barChart({
+  title:'Favourite Sports',yLabel:'Number of students',xLabel:'Sport',max:10,step:2,legend:true,
+  categories:['Football','Hockey','Rugby','Other'],
+  series:[{name:'Boys',color:'#2f7ae5',values:[3,2,5,2]},{name:'Girls',color:'#e8792b',values:[6,2,1,1]}]});
+
+/* DnD chart (favourite sports double) */
+document.getElementById('dndChart').innerHTML=barChart({
+  title:'Favourite Sports',yLabel:'Number of students',xLabel:'Sport',max:10,step:2,legend:true,
+  categories:['Football','Hockey','Rugby','Other'],
+  series:[{name:'Boys',color:'#2f7ae5',values:[3,2,5,2]},{name:'Girls',color:'#e8792b',values:[6,2,1,1]}]});
+
+/* die chart */
+document.getElementById('dieChart').innerHTML=barChart({
+  title:'Results from throwing a die',yLabel:'Times each digit occurred',xLabel:'Score (digit on face)',max:25,step:5,
+  categories:['1','2','3','4','5','6'],
+  series:[{color:'#e0453e',colors:['#e0453e','#6f9c1f','#2f6ee5','#8a1414','#f0b400','#b81c7d'],values:[19,15,25,5,15,12]}]});
+
+/* drink chart */
+document.getElementById('drinkChart').innerHTML=barChart({
+  title:'Preferred Drink',yLabel:'Number of people',xLabel:'Drink',max:10,step:1,
+  categories:['Juice','Soda','Milk','Water','Lemonade'],
+  series:[{color:'#8794ab',colors:['#8794ab','#2b2f38','#8794ab','#2b2f38','#8794ab'],values:[3,7,2,9,4]}]});
+
+/* baking chart */
+document.getElementById('bakeChart').innerHTML=barChart({
+  title:'Baking Time',yLabel:'Minutes',xLabel:'Item',max:50,step:5,
+  categories:['Muffin','Cookie','Cake','Brownie','Bread'],
+  series:[{color:'#8794ab',colors:['#8794ab','#2b2f38','#8794ab','#2b2f38','#8794ab'],values:[30,15,32.5,22.5,45]}]});
+
+/* rainfall chart */
+document.getElementById('rainChart').innerHTML=barChart({
+  title:'Total Rainfall in October',yLabel:'Rainfall (mm)',xLabel:'Capital cities',max:100,step:10,
+  categories:['Paris','London','Sydney','Tokyo','Rome'],
+  series:[{color:'#2ba6a4',values:[60,75,90,80,85]}]});
+
+/* netball chart */
+document.getElementById('netChart').innerHTML=barChart({
+  title:'Hornets vs Ravens',yLabel:'Points',xLabel:'Game',max:60,step:10,legend:true,
+  categories:['1','2','3','4','5'],
+  series:[{name:'Hornets',color:'#5b6b8c',values:[45,20,40,60,30]},{name:'Ravens',color:'#c9d2e3',values:[30,45,30,35,45]}]});
+
+/* drama chart */
+document.getElementById('dramaChart').innerHTML=barChart({
+  title:'Drama Club Fund-raising',yLabel:'Amount sold',xLabel:'Drama club members',max:30,step:5,legend:true,
+  categories:['Sam','Naomi','Gus','Paddy','Amber'],
+  series:[{name:'Cookies',color:'#d7c9a0',values:[14,24,10,26,24]},{name:'Chocolate',color:'#5a4632',values:[30,20,28,26,22]}]});
+
+/* ============ DRAG & DROP ============ */
+const dndTerms=['Title','Vertical axis title','Horizontal axis title','Scale (numbers)','Key','Bars','Bar labels'];
+const bank=document.getElementById('dndBank');
+shuffle(dndTerms.slice()).forEach(t=>{
+  const c=document.createElement('div');c.className='chip';c.draggable=true;c.textContent=t;c.dataset.term=t;
+  c.addEventListener('dragstart',e=>e.dataTransfer.setData('text',t));
+  bank.appendChild(c);
+});
+let dndCorrect=0;const dndTotal=dndTerms.length;
+document.querySelectorAll('.dropzone').forEach(z=>{
+  z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('over');});
+  z.addEventListener('dragleave',()=>z.classList.remove('over'));
+  z.addEventListener('drop',e=>{
+    e.preventDefault();z.classList.remove('over');
+    const t=e.dataTransfer.getData('text');
+    if(z.classList.contains('correct'))return;
+    if(t===z.dataset.target){
+      z.classList.add('correct');z.textContent=t;
+      const chip=[...bank.children].find(c=>c.dataset.term===t&&!c.classList.contains('used'));
+      if(chip)chip.classList.add('used');
+      dndCorrect++;
+      if(dndCorrect===dndTotal)document.getElementById('dndDone').style.display='block';
+    }else{
+      z.style.borderColor='var(--red)';setTimeout(()=>z.style.borderColor='',500);
+    }
+  });
+});
+
+/* ============ SLIDER ============ */
+let sliderTarget=7;
+function drawSliderChart(){
+  const W=520,H=300,mL=50,mR=20,mT=30,mB=45,pW=W-mL-mR,pH=H-mT-mB,max=10,step=1;
+  const y=v=>mT+pH*(1-v/max);
+  const read=+document.getElementById('barSlider').value;
+  let s=`<svg viewBox="0 0 ${W} ${H}" font-family="Segoe UI,Arial">`;
+  s+=`<text x="${W/2}" y="18" text-anchor="middle" font-size="15" font-weight="700" fill="#1f2a44">How many students chose Rugby?</text>`;
+  for(let v=0;v<=max;v+=step){const yy=y(v);
+    s+=`<line x1="${mL}" y1="${yy}" x2="${W-mR}" y2="${yy}" stroke="#eef2f9"/>`;
+    s+=`<text x="${mL-6}" y="${yy+4}" text-anchor="end" font-size="11" fill="#5b6b8c">${v}</text>`;}
+  s+=`<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+pH}" stroke="#1f2a44" stroke-width="2"/>`;
+  s+=`<line x1="${mL}" y1="${mT+pH}" x2="${W-mR}" y2="${mT+pH}" stroke="#1f2a44" stroke-width="2"/>`;
+  // one highlighted bar
+  const bx=mL+pW/2-40,bw=80,by=y(sliderTarget),bh=mT+pH-by;
+  s+=`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="#2f7ae5" rx="3"/>`;
+  s+=`<text x="${bx+bw/2}" y="${mT+pH+18}" text-anchor="middle" font-size="12" fill="#1f2a44">Rugby</text>`;
+  // reading line
+  const ry=y(read);
+  s+=`<line x1="${mL}" y1="${ry}" x2="${W-mR}" y2="${ry}" stroke="#e0453e" stroke-width="2.5" stroke-dasharray="7 5"/>`;
+  s+=`<text x="${W-mR-2}" y="${ry-5}" text-anchor="end" font-size="12" font-weight="700" fill="#e0453e">you: ${read}</text>`;
+  s+=`</svg>`;
+  document.getElementById('sliderChart').innerHTML=s;
+}
+document.getElementById('barSlider').addEventListener('input',()=>{
+  document.getElementById('sliderVal').textContent=document.getElementById('barSlider').value;drawSliderChart();});
+document.getElementById('sliderCheck').addEventListener('click',()=>{
+  const read=+document.getElementById('barSlider').value;const fb=document.getElementById('sliderFb');
+  if(read===sliderTarget){fb.className='fb ok';fb.textContent=`✅ Spot on! The Rugby bar reaches ${sliderTarget}.`;markCorrect('slider');}
+  else{fb.className='fb no';fb.textContent=read<sliderTarget?'❌ A little higher — the bar is taller than your line.':'❌ A little lower — your line is above the bar.';}
+});
+document.getElementById('sliderNew').addEventListener('click',()=>{
+  sliderTarget=Math.floor(Math.random()*9)+1;
+  document.getElementById('sliderFb').className='fb';document.getElementById('sliderFb').textContent='';
+  document.getElementById('barSlider').value=0;document.getElementById('sliderVal').textContent='0';drawSliderChart();});
+registerQ(); // slider counts as one
+drawSliderChart();
+
+/* ============ QUIZZES ============ */
+buildQuiz('dieQuiz',[
+  {type:'number',q:'<b>See:</b> How many times did Lily throw a 2?',answer:15,explain:'The bar above the 2 reaches 15.',praise:'You read that straight off the graph.'},
+  {type:'number',q:'<b>See:</b> Which number did she throw more than any other?',answer:3,explain:'The tallest bar is above 3 (reaches 25).',hint:'Look for the tallest bar.'},
+  {type:'number',q:'<b>See:</b> Which number came up least often?',answer:4,explain:'The shortest bar is above 4 (only 5 times).'},
+  {type:'number',q:'<b>Find out:</b> If Lily added all the sixes together, what would the total be?',answer:72,tol:0,explain:'6 came up 12 times, and 12 × 6 = 72.',hint:'6 appeared 12 times. Each throw is worth 6, so 12 × 6.'},
+  {type:'number',q:'<b>Find out:</b> How many times did she throw the die altogether?',answer:91,explain:'19 + 15 + 25 + 5 + 15 + 12 = 91.',hint:'Add every bar: 19+15+25+5+15+12.'},
+  {type:'mc',q:'<b>Conclude:</b> Does the graph tell you which number Lily threw <em>first</em>?',
+    options:['Yes — it was the number 1','No — a column graph only shows totals, not the order they happened'],
+    answer:1,explain:'A frequency column graph shows how many of each, not the order the throws happened in.'}
+]);
+
+buildQuiz('drinkQuiz',[
+  {type:'number',q:'How many people prefer to drink water?',answer:9,explain:'The Water bar reaches 9.'},
+  {type:'number',q:'How many people were surveyed in total?',answer:25,explain:'3 + 7 + 2 + 9 + 4 = 25.',hint:'Add all five bars.'},
+  {type:'number',q:'How many more people prefer soda over milk?',answer:5,explain:'Soda 7 − Milk 2 = 5.'},
+  {type:'mc',q:'Would it be logical for this graph to have a value <em>between</em> the y-axis numbers (e.g. 3.5)?',
+    options:['Yes, half-people are fine','No — you count whole people, so values must be whole numbers'],
+    answer:1,explain:'You can\'t survey half a person, so the counts must be whole numbers.'}
+]);
+
+buildQuiz('bakeQuiz',[
+  {type:'number',q:'How many minutes does it take to bake bread?',answer:45,unit:'minutes',explain:'The Bread bar reaches 45.'},
+  {type:'number',q:'To bake cookies AND muffins, how many minutes will the oven be on?',answer:45,unit:'minutes',explain:'Cookies 15 + Muffins 30 = 45 minutes.',hint:'Add the cookie and muffin times.'},
+  {type:'number',q:'About how long does it take to bake a brownie?',answer:22.5,tol:1,unit:'minutes (about)',explain:'The Brownie bar sits between 20 and 25 — about 22–23 minutes.',hint:'It\'s halfway between 20 and 25.'},
+  {type:'number',q:'What is the difference in bake time between bread and cake?',answer:12.5,tol:1,unit:'minutes',explain:'Bread 45 − Cake 32.5 ≈ 12.5 minutes.',hint:'Bread is 45, cake is about 32–33.'}
+]);
+
+buildQuiz('rainQuiz',[
+  {type:'text',q:'Which city had the highest rainfall in October?',accept:['sydney'],explain:'Sydney\'s bar is tallest at 90 mm.'},
+  {type:'number',q:'What was this city\'s rainfall?',answer:90,unit:'mm',explain:'Sydney reached 90 mm.'},
+  {type:'text',q:'Which cities had rainfall between 70 mm and 90 mm? (name them)',accept:['london','tokyo','rome'],
+    explain:'London 75, Tokyo 80 and Rome 85 all fall between 70 and 90 mm.',hint:'Look for bars taller than 70 but not quite 90.'},
+  {type:'number',q:'How many more millimetres of rain did Rome have than Paris?',answer:25,unit:'mm',explain:'Rome 85 − Paris 60 = 25 mm.',hint:'Rome is 85, Paris is 60.'}
+]);
+
+buildQuiz('netQuiz',[
+  {type:'number',q:'In which game did the Hornets beat the Ravens by 15 points?',answer:1,explain:'Game 1: 45 − 30 = 15.',hint:'Find where the dark bar is exactly 15 taller than the light bar.'},
+  {type:'number',q:'In which game did the Hornets beat the Ravens by the MOST points?',answer:4,explain:'Game 4: 60 − 35 = 25 points — the biggest gap.'},
+  {type:'number',q:'Calculate the total points scored by the Ravens in all 5 games.',answer:185,explain:'30 + 45 + 30 + 35 + 45 = 185.',hint:'Add all five light (Ravens) bars.'},
+  {type:'number',q:'How many more points did the Hornets score than the Ravens over the 5 games?',answer:10,explain:'Hornets 195 − Ravens 185 = 10.',hint:'Hornets: 45+20+40+60+30 = 195. Then subtract 185.'}
+]);
+
+buildQuiz('dramaQuiz',[
+  {type:'text',q:'Which sold better overall — cookies or chocolate?',accept:['chocolate'],
+    explain:'Chocolate total 126 vs cookies total 98 — chocolate sold more.',hint:'Add each colour across all 5 people.'},
+  {type:'text',q:'Who sold the most altogether?',accept:['paddy'],
+    explain:'Paddy sold 26 + 26 = 52 items, the most of anyone.',hint:'Add each person\'s two bars and compare.'},
+  {type:'number',q:'Cookies are $2.50 a packet and chocolate is $1.50 a bar. How much money did the TOP seller raise? ($)',
+    answer:104,tol:0,unit:'dollars',explain:'Paddy: 26 × $2.50 = $65, plus 26 × $1.50 = $39. Total = $104.',
+    hint:'Top seller is Paddy: 26 cookies and 26 chocolates.'}
+]);
+
+/* success criteria — click a row to mark "I've got this" */
+document.querySelectorAll('.sc-row[data-sc]').forEach(row=>{
+  row.addEventListener('click',()=>row.classList.toggle('got'));
+});
+
+/* teacher notes toggle */
+const tt=document.getElementById('teacherToggle');
+tt.addEventListener('click',()=>{
+  const off=document.body.classList.toggle('hide-teacher');
+  tt.classList.toggle('off',off);
+  tt.querySelector('.tn-label').textContent='Teacher notes: '+(off?'off':'on');
+});
+
+/* utilities */
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+</script>
+</body>
+</html>
