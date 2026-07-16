@@ -120,15 +120,21 @@
   .sort-bins{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
   .sort-bins.four{grid-template-columns:repeat(2,1fr);}
   @media(max-width:640px){.sort-bins,.sort-bins.four{grid-template-columns:1fr;}}
-  .sort-bin{border:2.5px dashed #cdd6e6;border-radius:14px;padding:12px;min-height:110px;background:#fbfcfe;transition:.2s;}
+  .sort-bin{border:2.5px dashed #cdd6e6;border-radius:14px;padding:12px;min-height:110px;background:#fbfcfe;transition:.2s;cursor:pointer;}
   .sort-bin h4{margin:0 0 8px;font-size:.98rem;}
   .sort-bin .items{display:flex;flex-wrap:wrap;gap:8px;min-height:36px;}
-  .sort-bin.over{background:rgba(59,110,246,.08);}
+  .sort-bin.over{background:rgba(59,110,246,.08);border-style:solid;}
+  .sort-bin.wrong{border-color:var(--red)!important;background:var(--redbg);}
   .bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;}
   .chip{background:#fff;border:2px solid var(--accent);color:var(--accent);border-radius:20px;padding:7px 14px;
-    font-weight:700;font-size:.85rem;cursor:grab;user-select:none;box-shadow:0 2px 6px rgba(59,110,246,.18);}
+    font-weight:700;font-size:.85rem;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;
+    box-shadow:0 2px 6px rgba(59,110,246,.18);}
   .chip:active{cursor:grabbing;}
+  .chip.selected{background:var(--accent);color:#fff !important;transform:scale(1.05);}
+  .chip.dragging{position:fixed;z-index:1000;pointer-events:none;transform:rotate(-2deg) scale(1.05);
+    box-shadow:0 10px 26px rgba(31,42,68,.3);}
   .chip.placed{cursor:default;box-shadow:none;}
+  .sort-hint{font-size:.85rem;color:var(--muted);text-align:center;margin-top:10px;}
   .celebrate{text-align:center;font-size:1.1rem;font-weight:800;color:var(--green);margin-top:10px;display:none;}
 
   /* quiz */
@@ -149,6 +155,28 @@
   .fb.no{color:var(--red);display:block;}
   .reveal{background:#f2f6ff;border-left:4px solid var(--accent);padding:8px 12px;border-radius:8px;
     margin-top:8px;font-size:.9rem;display:none;}
+  details.hint{margin-top:8px;font-size:.88rem;}
+  details.hint summary{cursor:pointer;color:var(--accent);font-weight:600;}
+  details.hint .hint-body{background:#f2f6ff;border-left:4px solid var(--accent);padding:8px 12px;
+    border-radius:8px;margin-top:6px;}
+
+  /* must-complete work — tier filter */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px;}
+  .filter-btn{border:2px solid #d5deee;background:#fff;color:var(--muted);border-radius:20px;
+    padding:7px 18px;font-weight:700;font-size:.88rem;cursor:pointer;font-family:inherit;transition:.15s;}
+  .filter-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .filter-btn.active{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .filter-btn.active.f-green{background:var(--green);border-color:var(--green);}
+  .filter-btn.active.f-amber{background:var(--amber);border-color:var(--amber);}
+  .filter-btn.active.f-red{background:var(--red);border-color:var(--red);}
+  .tier-block{border:1.5px solid #e6ecf6;border-left:6px solid #cdd6e6;border-radius:14px;
+    padding:16px 18px;margin-top:16px;background:#fcfdff;}
+  .tier-block.t-green{border-left-color:var(--green);}
+  .tier-block.t-amber{border-left-color:var(--amber);}
+  .tier-block.t-red{border-left-color:var(--red);}
+  .tier-block.hidden{display:none;}
+  .tier-block h3{margin:0 0 4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .tier-block .q .qnum{color:var(--accent);font-weight:800;margin-right:4px;}
 
   /* exit ticket stub */
   .exit-stub{margin-top:28px;display:flex;background:linear-gradient(135deg,#2fa84f,#3b6ef6);border-radius:18px;
@@ -186,6 +214,7 @@
       <a href="#numerical">Numerical</a>
       <a href="#sort">Sort them all</a>
       <a href="#quiz">Quiz</a>
+      <a href="#mustdo">Must do</a>
       <a href="#exit">Exit</a>
     </div>
     <button class="tn-toggle" id="teacherToggle"><span class="dot"></span><span class="tn-label">Teacher notes: on</span></button>
@@ -251,7 +280,7 @@
     <p class="note">Drag each card into the bin where it belongs.</p>
     <div id="catSort"></div>
     <div class="q" style="margin-top:16px;">
-      <div class="qtext">A survey asks students to pick their favourite <b>house group</b> (Red, Blue, Green, Yellow). Is this nominal or ordinal?</div>
+      <div class="qtext">A survey asks students to pick their favourite <b>house group</b> (Blackwood, Clarke, Hensley, Mungo, and Taylor). Is this nominal or ordinal?</div>
       <div class="mc" id="mc_house"></div>
       <div class="qrow"><button class="btn" data-check-mc="mc_house">Check</button></div>
       <div class="fb" id="mc_house_fb"></div>
@@ -287,6 +316,60 @@
     <h2><span class="num" style="background:var(--continuous)">5</span> Show what you know</h2>
     <p>Final check — answer these on your own.</p>
     <div id="finalQuiz"></div>
+  </section>
+
+  <!-- SECTION 6: must complete work -->
+  <section class="card" id="mustdo" style="border-top:6px solid var(--ink);">
+    <h2><span class="num" style="background:var(--ink)">6</span> Must Complete Work</h2>
+    <p>Everyone starts on <strong>Green</strong>. Move to Amber, then Red, as you get confident. Write Part 2 and Part 3 answers in your maths book in <strong>full sentences</strong>.</p>
+    <div class="teacher-note"><span class="tag">Teacher</span>Part 1 is self-marking on the page. Parts 2 and 3 are book work — each question has a "Self-check" reveal listing what a strong answer should mention, so students can mark their own before conferencing.</div>
+
+    <div class="filters" id="tierFilters">
+      <button class="filter-btn active" data-tier="all">All</button>
+      <button class="filter-btn f-green" data-tier="green">Green</button>
+      <button class="filter-btn f-amber" data-tier="amber">Amber</button>
+      <button class="filter-btn f-red" data-tier="red">Red</button>
+    </div>
+
+    <div class="tier-block t-green" data-tier-block="green">
+      <h3>Part 1 — Categorical, Numerical, Ordinal, Nominal, Continuous or Discrete? <span class="pill tag-green">Green</span></h3>
+      <p class="note">Answer on the page — it marks itself.</p>
+      <div id="greenQuiz"></div>
+    </div>
+
+    <div class="tier-block t-amber" data-tier-block="amber">
+      <h3>Part 2 — Answer these questions in one to two full sentences <span class="pill tag-amber">Amber</span></h3>
+      <p class="note">Write your answers in your maths book, then use the self-check to mark your own work.</p>
+      <div class="q">
+        <div class="qtext"><span class="qnum">1.</span> A school records how long (in minutes and seconds) it takes each student to complete a 200m run. What type of data is this, and why?</div>
+        <details class="hint"><summary>Self-check ✓</summary><div class="hint-body">A strong answer says it is <strong>numerical → continuous</strong>, because time is <em>measured</em> and can take any value on a scale — including in-between values like 1 minute 32.6 seconds.</div></details>
+      </div>
+      <div class="q">
+        <div class="qtext"><span class="qnum">2.</span> Mrs Baines surveys Year 5 about their house group (Taylor, Hensley, Clarke, Blackwood and Mungo). Classify this data and explain your reasoning.</div>
+        <details class="hint"><summary>Self-check ✓</summary><div class="hint-body">A strong answer says it is <strong>categorical → nominal</strong>, because house groups are names/labels and there is no natural order — no house is "higher" than another.</div></details>
+      </div>
+      <div class="q">
+        <div class="qtext"><span class="qnum">3.</span> A class votes for their preferred fruit: apple, banana, mango, or strawberry. Classify this data and explain whether it is nominal or ordinal.</div>
+        <details class="hint"><summary>Self-check ✓</summary><div class="hint-body">A strong answer says it is <strong>categorical → nominal</strong>. The fruits are labels that can't be ranked from lowest to highest, so the data is nominal, not ordinal.</div></details>
+      </div>
+    </div>
+
+    <div class="tier-block t-red" data-tier-block="red">
+      <h3>Part 3 — Explain your thinking clearly <span class="pill tag-red">Red</span></h3>
+      <p class="note">Write your answers in your maths book, then use the self-check to mark your own work.</p>
+      <div class="q">
+        <div class="qtext"><span class="qnum">1.</span> A weather station collects the following data each day: the date, temperature (°C), rainfall (mm), wind speed (km/h), and a weather description (sunny, cloudy, rainy, stormy). Classify each piece of data as discrete, continuous, nominal, or ordinal, and justify each classification.</div>
+        <details class="hint"><summary>Self-check ✓</summary><div class="hint-body">A strong answer classifies all five: <strong>date → ordinal</strong> (dates have a natural order); <strong>temperature → continuous</strong>, <strong>rainfall → continuous</strong> and <strong>wind speed → continuous</strong> (all measured on a scale with in-between values possible); <strong>weather description → nominal</strong> (labels with no natural order).</div></details>
+      </div>
+      <div class="q">
+        <div class="qtext"><span class="qnum">2.</span> A researcher argues that star ratings (1 star to 5 stars) on a restaurant review app are discrete data because they are whole numbers. Another researcher says they are ordinal data. Who is correct, and why?</div>
+        <details class="hint"><summary>Self-check ✓</summary><div class="hint-body">A strong answer sides with <strong>ordinal</strong>: the stars are really ranked <em>categories</em> (worst → best), and the numbers are just labels for the ranks — the gap between 1★ and 2★ isn't necessarily the same "amount" as between 4★ and 5★. It can also acknowledge the first researcher noticed something true (ratings jump in whole steps), but counting whole numbers alone doesn't make data numerical.</div></details>
+      </div>
+      <div class="q">
+        <div class="qtext"><span class="qnum">3.</span> A student claims: "Shoe sizes must be continuous data because feet are measured." Evaluate this claim. Is it fully correct, partially correct, or incorrect? Justify your answer.</div>
+        <details class="hint"><summary>Self-check ✓</summary><div class="hint-body">A strong answer says <strong>partially correct</strong>: foot <em>length</em> is continuous (measured, any value possible), but shoe <em>sizes</em> only come in set steps (6, 6.5, 7…) with nothing available in between — so shoe size itself behaves like <strong>discrete</strong> data even though it comes from a measurement.</div></details>
+      </div>
+    </div>
   </section>
 
   <!-- EXIT -->
@@ -356,45 +439,95 @@ treeExamples.forEach((ex,i)=>{
 });
 
 /* ============ SORTING GAME BUILDER ============ */
+/* Works with mouse AND touch: drag a chip with pointer events, or
+   tap a chip to select it, then tap the bin it belongs in. */
 function buildSort(containerId, items, bins, cols){
   const stage=document.getElementById(containerId);
-  const binsHtml=bins.map(b=>`<div class="sort-bin" data-bin="${b.key}" style="border-color:${b.color}55">
+  const binsHtml=bins.map(b=>`<div class="sort-bin" data-bin="${b.key}" style="border-color:${b.color}77">
       <h4 style="color:${b.color}">${b.label}</h4>
       <div class="items" data-bin-items="${b.key}"></div>
     </div>`).join('');
   stage.innerHTML=`<div class="sort-bins${cols===4?' four':''}">${binsHtml}</div>
     <div class="bank" data-bank></div>
+    <div class="sort-hint">🖱️ Drag a card into a bin — or 👆 tap the card, then tap its bin.</div>
     <div class="celebrate" data-done>🎉 All sorted — nice work!</div>`;
   const bank=stage.querySelector('[data-bank]');
+  let selected=null, correct=0;
+  const total=items.length;
+
+  function tryPlace(chip, binEl){
+    if(chip.classList.contains('placed'))return;
+    const meta=bins.find(b=>b.key===binEl.dataset.bin);
+    if(chip.dataset.bin===binEl.dataset.bin){
+      chip.classList.remove('selected');
+      chip.classList.add('placed');
+      chip.style.borderColor=meta.color;chip.style.color=meta.color;
+      binEl.querySelector('[data-bin-items]').appendChild(chip);
+      markCorrect(chip.dataset.qid);correct++;
+      if(correct===total)stage.querySelector('[data-done]').style.display='block';
+    }else{
+      binEl.classList.add('wrong');
+      setTimeout(()=>binEl.classList.remove('wrong'),450);
+    }
+  }
+
   shuffle(items.slice()).forEach((it,i)=>{
     registerQ();
-    const qid=containerId+'_'+i;
     const chip=document.createElement('div');
-    chip.className='chip';chip.draggable=true;chip.textContent=it.term;
-    chip.dataset.bin=it.bin;chip.dataset.qid=qid;
-    chip.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',JSON.stringify({bin:it.bin,qid})));
+    chip.className='chip';chip.textContent=it.term;
+    chip.dataset.bin=it.bin;chip.dataset.qid=containerId+'_'+i;
+    chip.addEventListener('pointerdown',e=>{
+      if(chip.classList.contains('placed'))return;
+      e.preventDefault();
+      chip.setPointerCapture(e.pointerId);
+      const r=chip.getBoundingClientRect();
+      const ox=e.clientX-r.left, oy=e.clientY-r.top;
+      let moved=false, hoverBin=null;
+      const onMove=ev=>{
+        if(!moved){
+          if(Math.hypot(ev.clientX-(r.left+ox),ev.clientY-(r.top+oy))<6)return;
+          moved=true;
+          chip.classList.add('dragging');
+          chip.style.width=r.width+'px';
+        }
+        chip.style.left=(ev.clientX-ox)+'px';
+        chip.style.top=(ev.clientY-oy)+'px';
+        const under=document.elementFromPoint(ev.clientX,ev.clientY);
+        const bin=under&&under.closest('.sort-bin');
+        const valid=bin&&stage.contains(bin)?bin:null;
+        if(hoverBin&&hoverBin!==valid)hoverBin.classList.remove('over');
+        hoverBin=valid;
+        if(hoverBin)hoverBin.classList.add('over');
+      };
+      const onUp=()=>{
+        chip.removeEventListener('pointermove',onMove);
+        chip.removeEventListener('pointerup',onUp);
+        chip.removeEventListener('pointercancel',onUp);
+        if(moved){
+          chip.classList.remove('dragging');
+          chip.style.left='';chip.style.top='';chip.style.width='';
+          if(hoverBin){hoverBin.classList.remove('over');tryPlace(chip,hoverBin);}
+        }else{
+          if(selected===chip){chip.classList.remove('selected');selected=null;}
+          else{
+            if(selected)selected.classList.remove('selected');
+            selected=chip;chip.classList.add('selected');
+          }
+        }
+      };
+      chip.addEventListener('pointermove',onMove);
+      chip.addEventListener('pointerup',onUp);
+      chip.addEventListener('pointercancel',onUp);
+    });
     bank.appendChild(chip);
   });
-  let correct=0;const total=items.length;
+
   stage.querySelectorAll('.sort-bin').forEach(binEl=>{
-    const meta=bins.find(b=>b.key===binEl.dataset.bin);
-    binEl.addEventListener('dragover',e=>{e.preventDefault();binEl.classList.add('over');});
-    binEl.addEventListener('dragleave',()=>binEl.classList.remove('over'));
-    binEl.addEventListener('drop',e=>{
-      e.preventDefault();binEl.classList.remove('over');
-      const data=JSON.parse(e.dataTransfer.getData('text/plain'));
-      const chip=stage.querySelector(`.chip[data-qid="${data.qid}"]`);
-      if(!chip||chip.classList.contains('placed'))return;
-      if(data.bin===binEl.dataset.bin){
-        chip.classList.add('placed');chip.draggable=false;
-        chip.style.borderColor=meta.color;chip.style.color=meta.color;
-        binEl.querySelector('[data-bin-items]').appendChild(chip);
-        markCorrect(data.qid);correct++;
-        if(correct===total)stage.querySelector('[data-done]').style.display='block';
-      }else{
-        binEl.style.borderColor='var(--red)';
-        setTimeout(()=>binEl.style.borderColor=meta.color+'55',450);
-      }
+    binEl.addEventListener('click',()=>{
+      if(!selected)return;
+      const chip=selected;selected=null;
+      chip.classList.remove('selected');
+      tryPlace(chip,binEl);
     });
   });
 }
@@ -407,8 +540,8 @@ buildSort('catSort',[
   {term:'Star rating (⭐ to ⭐⭐⭐⭐⭐)',bin:'Ordinal'},
   {term:'Spice level (mild/medium/hot)',bin:'Ordinal'}
 ],[
-  {key:'Nominal',label:'Nominal — no order',color:'var(--nominal)'},
-  {key:'Ordinal',label:'Ordinal — has an order',color:'var(--ordinal)'}
+  {key:'Nominal',label:'Nominal — no order',color:'#e8a11a'},
+  {key:'Ordinal',label:'Ordinal — has an order',color:'#7b5cff'}
 ],2);
 
 buildSort('numSort',[
@@ -419,8 +552,8 @@ buildSort('numSort',[
   {term:'Temperature',bin:'Continuous'},
   {term:'Length of a pencil',bin:'Continuous'}
 ],[
-  {key:'Discrete',label:'Discrete — counted',color:'var(--discrete)'},
-  {key:'Continuous',label:'Continuous — measured',color:'var(--continuous)'}
+  {key:'Discrete',label:'Discrete — counted',color:'#3b6ef6'},
+  {key:'Continuous',label:'Continuous — measured',color:'#2fa84f'}
 ],2);
 
 buildSort('allSort',[
@@ -433,10 +566,10 @@ buildSort('allSort',[
   {term:'Distance run',bin:'Continuous'},
   {term:'Volume of water in a bottle',bin:'Continuous'}
 ],[
-  {key:'Nominal',label:'Nominal',color:'var(--nominal)'},
-  {key:'Ordinal',label:'Ordinal',color:'var(--ordinal)'},
-  {key:'Discrete',label:'Discrete',color:'var(--discrete)'},
-  {key:'Continuous',label:'Continuous',color:'var(--continuous)'}
+  {key:'Nominal',label:'Nominal',color:'#e8a11a'},
+  {key:'Ordinal',label:'Ordinal',color:'#7b5cff'},
+  {key:'Discrete',label:'Discrete',color:'#3b6ef6'},
+  {key:'Continuous',label:'Continuous',color:'#2fa84f'}
 ],4);
 
 /* ============ INLINE MC QUESTIONS (section 2 & 3) ============ */
@@ -511,6 +644,39 @@ buildQuiz('finalQuiz',[
     options:['Nominal','Ordinal'],answer:0,
     explain:'No ranking is possible, so it\'s nominal.'}
 ]);
+
+buildQuiz('greenQuiz',[
+  {q:'<span class="qnum">1.</span> Is the number of students in a class <b>discrete</b> or <b>continuous</b> data?',
+    options:['Discrete','Continuous'],answer:0,
+    explain:'Students are counted in whole numbers — you can\'t have half a student — so it\'s discrete.'},
+  {q:'<span class="qnum">2.</span> Is a person\'s favourite sport an example of <b>nominal</b> or <b>ordinal</b> data?',
+    options:['Nominal','Ordinal'],answer:0,
+    explain:'Sports are labels with no natural order, so it\'s nominal.'},
+  {q:'<span class="qnum">3.</span> Is the weight of a school bag <b>numerical</b> or <b>categorical</b> data?',
+    options:['Numerical','Categorical'],answer:0,
+    explain:'Weight is a number you measure, so it\'s numerical (and continuous).'},
+  {q:'<span class="qnum">4.</span> Is a student\'s eye colour <b>discrete</b>, <b>continuous</b>, <b>nominal</b>, or <b>ordinal</b>?',
+    options:['Discrete','Continuous','Nominal','Ordinal'],answer:2,
+    explain:'Eye colour is a label with no natural order — categorical → nominal.'},
+  {q:'<span class="qnum">5.</span> Is a movie rating of G, PG, M, or MA15+ an example of <b>nominal</b> or <b>ordinal</b> data?',
+    options:['Nominal','Ordinal'],answer:1,
+    explain:'The ratings can be ranked from mildest to most restricted, so it\'s ordinal.'},
+  {q:'<span class="qnum">6.</span> Is the number of goals scored in a netball match <b>discrete</b> or <b>continuous</b> data?',
+    options:['Discrete','Continuous'],answer:0,
+    explain:'Goals are counted in whole numbers — you can\'t score part of a goal — so it\'s discrete.'}
+]);
+
+/* must-complete tier filter */
+document.querySelectorAll('#tierFilters .filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#tierFilters .filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tier=btn.dataset.tier;
+    document.querySelectorAll('[data-tier-block]').forEach(block=>{
+      block.classList.toggle('hidden',tier!=='all'&&block.dataset.tierBlock!==tier);
+    });
+  });
+});
 
 /* teacher notes toggle */
 const tt=document.getElementById('teacherToggle');
