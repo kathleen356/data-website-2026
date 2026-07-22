@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6.1 Data Range — Year 5 Maths</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1f3a5f;
+    --navy-dark: #16293f;
+    --blue: #4f6df5;
+    --blue-soft: #eef1ff;
+    --green: #4caf50;
+    --green-deep: #2e7d32;
+    --green-bg: #eaf6eb;
+    --amber: #f0a132;
+    --amber-deep: #c07b12;
+    --amber-bg: #fdf3e0;
+    --red: #e05d5a;
+    --red-deep: #b03835;
+    --red-bg: #fceceb;
+    --light: #e8edf3;
+    --ink: #24303f;
+    --purple: #7c5cd6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+  body {
+    font-family: 'Nunito', "Segoe UI", Arial, sans-serif;
+    background:
+      radial-gradient(1000px 500px at 110% -50px, #dfe7ff 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, #e3f2e4 0%, transparent 55%),
+      #f1f4f9;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .page { max-width: 940px; margin: 0 auto; padding: 16px 16px 70px; }
+
+  /* ===================== NAV ===================== */
+  .navbar {
+    position: sticky; top: 12px; z-index: 100;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(8px);
+    border-radius: 999px;
+    box-shadow: 0 6px 24px rgba(31,58,95,.14);
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 22px; margin-bottom: 26px; flex-wrap: wrap;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.12rem; color: var(--navy-dark); margin-right: auto; }
+  .nav-logo svg rect { transform-origin: bottom; }
+  .nav-logo:hover svg rect { animation: bounceBar .6s ease; }
+  .nav-logo svg rect:nth-child(2) { animation-delay: .1s; }
+  .nav-logo svg rect:nth-child(3) { animation-delay: .2s; }
+  @keyframes bounceBar { 50% { transform: scaleY(.55); } }
+  .nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
+  .nav-links a {
+    text-decoration: none; color: #3d4a5c; font-weight: 700;
+    padding: 7px 13px; border-radius: 999px; font-size: .93rem;
+    transition: all .18s;
+  }
+  .nav-links a:hover { background: var(--light); color: var(--navy); transform: translateY(-1px); }
+  .nav-links a.g:hover { background: var(--green-bg); color: var(--green-deep); }
+  .nav-links a.a:hover { background: var(--amber-bg); color: var(--amber-deep); }
+  .nav-links a.r:hover { background: var(--red-bg); color: var(--red-deep); }
+  .nav-pill {
+    border: 2px solid var(--blue); color: var(--blue); background: #fff;
+    font-weight: 800; font-size: .88rem; cursor: pointer;
+    padding: 7px 16px; border-radius: 999px;
+    display: flex; align-items: center; gap: 7px;
+    font-family: inherit; transition: all .18s;
+  }
+  .nav-pill:hover { background: var(--blue-soft); }
+  .nav-pill .dot { width: 9px; height: 9px; border-radius: 50%; background: #b6bfd4; transition: background .18s; }
+  .nav-pill.on .dot { background: var(--blue); }
+
+  /* ===================== HERO ===================== */
+  .hero {
+    position: relative; overflow: hidden;
+    background: linear-gradient(130deg, #1f3a5f 0%, #2d5a92 55%, #3e77b8 100%);
+    color: #fff; border-radius: 22px;
+    padding: 42px 40px 38px; margin-bottom: 28px;
+  }
+  .hero h1 { font-size: 2.4rem; font-weight: 900; line-height: 1.15; margin-bottom: 8px; }
+  .hero .sub { font-size: 1.05rem; opacity: .88; max-width: 520px; }
+  .hero-chips { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; max-width: 560px; }
+  .chip { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.22); padding: 6px 15px; border-radius: 999px; font-size: .9rem; font-weight: 700; }
+  .hero-bars { position: absolute; right: 34px; bottom: 0; display: flex; align-items: flex-end; gap: 10px; opacity: .9; }
+  .hero-bars div { width: 30px; border-radius: 6px 6px 0 0; animation: heroGrow 1s cubic-bezier(.2,.8,.3,1.2) backwards; }
+  .hero-bars div:nth-child(1) { height: 42px; background: #f0a132; animation-delay: .1s; }
+  .hero-bars div:nth-child(2) { height: 88px; background: #4caf50; animation-delay: .25s; }
+  .hero-bars div:nth-child(3) { height: 60px; background: #e05d5a; animation-delay: .4s; }
+  .hero-bars div:nth-child(4) { height: 110px; background: #8ab4f8; animation-delay: .55s; }
+  .hero-bars div:nth-child(5) { height: 30px; background: #c9b6f5; animation-delay: .7s; }
+  @keyframes heroGrow { from { transform: scaleY(0); transform-origin: bottom; } }
+  @media (max-width: 700px) { .hero-bars { display: none; } }
+
+  /* ===================== GENERIC ===================== */
+  section { margin-bottom: 28px; }
+  .card {
+    background: #fff; border-radius: 18px;
+    padding: 26px 30px;
+    box-shadow: 0 2px 10px rgba(31,58,95,.07);
+  }
+  .sec-head {
+    display: flex; align-items: center; gap: 12px;
+    color: #fff; font-size: 1.18rem; font-weight: 800;
+    padding: 14px 22px; border-radius: 16px 16px 0 0;
+    background: var(--navy);
+  }
+  .sec-body {
+    background: #fff; border-radius: 0 0 16px 16px;
+    padding: 24px 28px;
+    box-shadow: 0 2px 10px rgba(31,58,95,.07);
+  }
+  .badge { font-size: .7rem; font-weight: 900; padding: 3px 12px; border-radius: 999px; background: rgba(255,255,255,.28); letter-spacing: 1px; }
+  h2.block-title { font-size: 1.45rem; font-weight: 900; color: var(--navy); margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+  .block-sub { color: #64748b; margin-bottom: 18px; }
+
+  /* ===================== LI / SC ===================== */
+  .li-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .li-grid { grid-template-columns: 1fr; } }
+  .li-box { background: #fff; border-radius: 18px; padding: 22px 26px; box-shadow: 0 2px 10px rgba(31,58,95,.07); border-top: 6px solid var(--navy); }
+  .li-box.sc { border-top-color: var(--green); }
+  .li-box h3 { color: var(--navy); font-weight: 900; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .li-box.sc h3 { color: var(--green-deep); }
+  .sc-list { list-style: none; }
+  .sc-list li {
+    padding: 8px 10px 8px 38px; position: relative; cursor: pointer;
+    border-radius: 10px; transition: background .15s; user-select: none;
+  }
+  .sc-list li:hover { background: var(--green-bg); }
+  .sc-list li::before { content: "☐"; position: absolute; left: 10px; font-size: 1.15rem; color: var(--navy); }
+  .sc-list li.ticked::before { content: "✅"; font-size: .95rem; left: 8px; top: 11px; }
+  .sc-list li.ticked { color: #6b7f63; text-decoration: line-through; text-decoration-color: #a8c69a; }
+  .sc-hint { font-size: .83rem; color: #94a3b8; margin-top: 10px; font-style: italic; }
+  .sc-progress { height: 8px; background: var(--light); border-radius: 99px; margin-top: 12px; overflow: hidden; }
+  .sc-progress div { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), #7ed957); border-radius: 99px; transition: width .4s cubic-bezier(.2,.8,.3,1.1); }
+
+  /* ===================== RULE ===================== */
+  .rule-banner {
+    background: linear-gradient(120deg, #eef1ff, #e6f3ff);
+    border: 2px dashed #a9b8f0;
+    border-radius: 18px; text-align: center; padding: 26px; margin-bottom: 20px;
+  }
+  .rule-banner .lbl { font-weight: 900; color: var(--blue); letter-spacing: 2px; text-transform: uppercase; font-size: .8rem; }
+  .rule-formula { font-size: 1.9rem; font-weight: 900; color: var(--navy); margin: 6px 0; }
+  .rule-formula .max { color: var(--green-deep); }
+  .rule-formula .min { color: var(--red-deep); }
+  .rule-banner .note { font-style: italic; color: #4a5568; }
+
+  /* ===================== EXPLORER (bars) ===================== */
+  .explorer-stage { background: #f8fafc; border-radius: 14px; padding: 26px 20px 8px; margin-top: 6px; }
+  .bars { display: flex; align-items: flex-end; justify-content: center; gap: 14px; height: 230px; position: relative; }
+  .bar-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 54px; }
+  .bar-val { font-weight: 900; color: var(--navy); margin-bottom: 4px; font-size: 1.02rem; transition: transform .3s; }
+  .bar {
+    width: 100%; border-radius: 8px 8px 0 0;
+    background: linear-gradient(180deg, #9db6d8, #7e9dc7);
+    transition: all .45s cubic-bezier(.2,.8,.3,1.1);
+    animation: growUp .8s cubic-bezier(.2,.8,.3,1.15) backwards;
+  }
+  @keyframes growUp { from { height: 0 !important; } }
+  .bar-name { font-size: .78rem; color: #7b8aa0; margin-top: 6px; font-weight: 700; }
+  .bar-col.is-max .bar { background: linear-gradient(180deg, #7ed957, var(--green)); box-shadow: 0 0 0 3px var(--green-bg), 0 6px 16px rgba(76,175,80,.4); }
+  .bar-col.is-max .bar-val { color: var(--green-deep); transform: scale(1.3); }
+  .bar-col.is-min .bar { background: linear-gradient(180deg, #f49290, var(--red)); box-shadow: 0 0 0 3px var(--red-bg), 0 6px 16px rgba(224,93,90,.4); }
+  .bar-col.is-min .bar-val { color: var(--red-deep); transform: scale(1.3); }
+  .bar-col.dimmed .bar { opacity: .25; }
+  .bar-col.dimmed .bar-val { opacity: .3; }
+
+  .range-bracket {
+    position: absolute; right: -6px; width: 26px;
+    border: 3px solid var(--purple); border-left: none; border-radius: 0 10px 10px 0;
+    opacity: 0; transition: opacity .5s;
+  }
+  .range-bracket.visible { opacity: 1; }
+  .range-bracket span {
+    position: absolute; left: 30px; top: 50%; transform: translateY(-50%);
+    background: var(--purple); color: #fff; font-weight: 900; font-size: .85rem;
+    padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+  }
+  .explorer-controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding: 18px 0 14px; }
+  .xbtn {
+    font-family: inherit; font-weight: 800; font-size: .95rem;
+    padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer;
+    transition: transform .12s, filter .15s; color: #fff;
+  }
+  .xbtn:hover { filter: brightness(1.08); transform: translateY(-2px); }
+  .xbtn:active { transform: scale(.97); }
+  .xbtn.find-max { background: var(--green); }
+  .xbtn.find-min { background: var(--red); }
+  .xbtn.show-range { background: var(--purple); }
+  .xbtn.reset { background: #94a3b8; }
+  .explorer-caption {
+    text-align: center; min-height: 54px; padding: 4px 12px 12px;
+    font-weight: 700; color: var(--navy); font-size: 1.05rem;
+  }
+  .explorer-caption .eq { font-size: 1.3rem; color: var(--purple); }
+
+  /* ===================== STEP WALKER ===================== */
+  .chips { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 18px 0; }
+  .chip-num {
+    width: 56px; height: 56px; border-radius: 14px;
+    background: #fff; border: 3px solid #d3dbe6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; font-weight: 900; color: var(--navy);
+    transition: all .35s;
+  }
+  .chip-num.hl-max { border-color: var(--green); background: var(--green-bg); color: var(--green-deep); transform: translateY(-8px) scale(1.12); box-shadow: 0 8px 18px rgba(76,175,80,.35); }
+  .chip-num.hl-min { border-color: var(--red); background: var(--red-bg); color: var(--red-deep); transform: translateY(-8px) scale(1.12); box-shadow: 0 8px 18px rgba(224,93,90,.35); }
+  .chip-num.faded { opacity: .35; }
+
+  .walker-steps { max-width: 560px; margin: 0 auto; }
+  .wstep {
+    display: flex; align-items: center; gap: 14px;
+    background: #f8fafc; border-radius: 12px; padding: 13px 18px; margin-bottom: 10px;
+    opacity: .35; transform: translateX(-6px); transition: all .4s;
+    border-left: 5px solid #d3dbe6; font-weight: 700;
+  }
+  .wstep.active { opacity: 1; transform: none; background: #fff; box-shadow: 0 3px 12px rgba(31,58,95,.1); }
+  .wstep .n {
+    min-width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: #d3dbe6; color: #fff; font-weight: 900;
+  }
+  .wstep.active .n { background: var(--navy); }
+  .wstep.s1.active { border-left-color: var(--green); } .wstep.s1.active .n { background: var(--green); }
+  .wstep.s2.active { border-left-color: var(--red); }   .wstep.s2.active .n { background: var(--red); }
+  .wstep.s3.active { border-left-color: var(--purple); }.wstep.s3.active .n { background: var(--purple); }
+  .wstep.s4.active { border-left-color: var(--navy); }
+  .wstep .ans { margin-left: auto; font-weight: 900; font-size: 1.1rem; visibility: hidden; }
+  .wstep.active .ans { visibility: visible; animation: popIn .4s cubic-bezier(.2,.8,.3,1.4); }
+  @keyframes popIn { from { transform: scale(0); } }
+  .walker-controls { text-align: center; margin-top: 16px; }
+  .walker-controls .xbtn { background: var(--navy); }
+  .walker-controls .xbtn.secondary { background: #94a3b8; }
+
+  /* ===================== YOU TRY ===================== */
+  .youtry { background: linear-gradient(135deg, #fff, #f5f8ff); border: 3px solid var(--blue); }
+  .yt-prompt {
+    text-align: center; font-weight: 800; font-size: 1.12rem;
+    color: var(--navy); min-height: 34px; margin-bottom: 6px;
+  }
+  .yt-prompt .max-w { color: var(--green-deep); } .yt-prompt .min-w { color: var(--red-deep); }
+  .yt-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 16px 0 20px; }
+  .yt-chip {
+    width: 62px; height: 62px; border-radius: 16px;
+    background: #fff; border: 3px solid #c9d4e4;
+    font-size: 1.4rem; font-weight: 900; color: var(--navy);
+    cursor: pointer; font-family: inherit;
+    transition: all .2s;
+  }
+  .yt-chip:hover:not(:disabled) { transform: translateY(-5px); border-color: var(--blue); box-shadow: 0 8px 16px rgba(79,109,245,.25); }
+  .yt-chip:disabled { cursor: default; }
+  .yt-chip.correct-max { border-color: var(--green); background: var(--green-bg); color: var(--green-deep); transform: scale(1.1); }
+  .yt-chip.correct-min { border-color: var(--red); background: var(--red-bg); color: var(--red-deep); transform: scale(1.1); }
+  .yt-chip.shake { animation: shake .4s; }
+  @keyframes shake { 25% { transform: translateX(-7px); } 50% { transform: translateX(7px); } 75% { transform: translateX(-4px); } }
+  .yt-answer-zone { display: none; text-align: center; }
+  .yt-answer-zone.visible { display: block; animation: popIn .35s; }
+  .yt-eq { font-size: 1.35rem; font-weight: 900; color: var(--navy); margin-bottom: 12px; }
+  .yt-eq .max-w { color: var(--green-deep); } .yt-eq .min-w { color: var(--red-deep); }
+  .yt-answer-zone input {
+    width: 100px; font-size: 1.4rem; font-weight: 900; text-align: center;
+    padding: 8px; border: 3px solid #c9d4e4; border-radius: 12px;
+    font-family: inherit; color: var(--navy); outline: none;
+  }
+  .yt-answer-zone input:focus { border-color: var(--blue); }
+  .yt-check { background: var(--blue); margin-left: 10px; }
+  .yt-feedback { text-align: center; font-weight: 900; font-size: 1.15rem; min-height: 36px; margin-top: 12px; }
+  .yt-feedback.good { color: var(--green-deep); }
+  .yt-feedback.bad { color: var(--red-deep); }
+  .yt-footer { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+  .yt-new { background: var(--purple); }
+  .streak { font-weight: 900; color: var(--amber-deep); font-size: 1.05rem; }
+
+  /* ===================== TASKS ===================== */
+  .task-green .sec-head { background: linear-gradient(120deg, var(--green-deep), var(--green)); }
+  .task-amber .sec-head { background: linear-gradient(120deg, var(--amber-deep), var(--amber)); }
+  .task-red .sec-head { background: linear-gradient(120deg, var(--red-deep), var(--red)); }
+  ol.questions { margin-left: 22px; }
+  ol.questions > li { margin-bottom: 6px; padding: 12px 14px 12px 8px; border-radius: 10px; transition: background .15s; }
+  ol.questions > li:hover { background: #f6f8fb; }
+  .qdata { font-weight: 900; color: var(--navy); font-size: 1.05rem; }
+  .answer { display: none; margin-top: 10px; padding: 11px 15px; border-radius: 10px; font-size: .97rem; }
+  .show-answers .answer { display: block; animation: popIn .3s; }
+  .task-green .answer { background: var(--green-bg); border-left: 4px solid var(--green); }
+  .task-amber .answer { background: var(--amber-bg); border-left: 4px solid var(--amber); }
+  .task-red .answer { background: var(--red-bg); border-left: 4px solid var(--red); }
+  .reveal-btn {
+    display: block; width: 100%; margin-top: 18px; padding: 14px;
+    border: none; border-radius: 12px;
+    font-size: 1rem; font-weight: 800; cursor: pointer; color: #fff;
+    font-family: inherit; transition: filter .15s, transform .1s;
+  }
+  .reveal-btn:hover { filter: brightness(1.09); }
+  .reveal-btn:active { transform: scale(.99); }
+  .task-green .reveal-btn { background: var(--green); }
+  .task-amber .reveal-btn { background: var(--amber-deep); }
+  .task-red .reveal-btn { background: var(--red-deep); }
+
+  /* ===================== CHECKPOINT / EXIT ===================== */
+  .checkpoint {
+    background: linear-gradient(120deg, var(--amber), #f6b95a);
+    color: #fff; border-radius: 18px; padding: 24px 28px;
+    text-align: center; font-weight: 700;
+    box-shadow: 0 4px 14px rgba(240,161,50,.35);
+  }
+  .checkpoint strong { display: block; font-size: 1.25rem; margin-bottom: 6px; font-weight: 900; }
+  .exit-card { text-align: center; }
+  .exit-link {
+    display: inline-block; background: var(--navy); color: #fff;
+    text-decoration: none; font-weight: 800;
+    padding: 13px 30px; border-radius: 12px; margin: 12px 0 20px;
+    transition: all .15s;
+  }
+  .exit-link:hover { background: var(--navy-dark); transform: translateY(-2px); }
+  .timer-display { font-size: 3.4rem; font-weight: 900; color: var(--navy); font-variant-numeric: tabular-nums; margin: 8px 0; }
+  .timer-display.warning { color: var(--amber-deep); }
+  .timer-display.done { color: var(--red-deep); animation: shake .5s; }
+  .timer-buttons button {
+    font-family: inherit; font-size: 1rem; font-weight: 800;
+    padding: 10px 18px; margin: 4px;
+    border: 2px solid var(--navy); border-radius: 10px;
+    background: #fff; color: var(--navy); cursor: pointer; transition: all .15s;
+  }
+  .timer-buttons button:hover { background: var(--light); }
+  .timer-buttons button.selected, .timer-buttons button.control { background: var(--navy); color: #fff; }
+  .timer-buttons button.control:hover { background: var(--navy-dark); }
+  .timer-note { color: #667085; font-size: .9rem; margin-top: 8px; }
+
+  /* confetti */
+  .confetti-piece { position: fixed; top: -20px; z-index: 999; font-size: 22px; pointer-events: none; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(105vh) rotate(720deg); } }
+
+  @media (max-width: 720px) {
+    .navbar { border-radius: 20px; justify-content: center; }
+    .nav-logo { margin-right: 0; }
+    .hero h1 { font-size: 1.8rem; }
+    .bar-col { width: 40px; }
+  }
+  @media print {
+    .navbar, .timer-buttons, .timer-display, .timer-note, .reveal-btn, .explorer-controls, .walker-controls, .youtry { display: none; }
+    body { background: #fff; }
+    .card, .sec-body { box-shadow: none; border: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ===== NAV ===== -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <svg width="26" height="24" viewBox="0 0 26 24">
+        <rect x="1"  y="12" width="6" height="12" rx="1.5" fill="#e07a3f"/>
+        <rect x="10" y="6"  width="6" height="18" rx="1.5" fill="#4f6df5"/>
+        <rect x="19" y="0"  width="6" height="24" rx="1.5" fill="#4caf50"/>
+      </svg>
+      6.1 Data Range
+    </div>
+    <div class="nav-links">
+      <a href="#learn">Learn</a>
+      <a href="#explore">Explore</a>
+      <a href="#youtry">You try</a>
+      <a href="#green" class="g">Green</a>
+      <a href="#amber" class="a">Amber</a>
+      <a href="#red" class="r">Red</a>
+      <a href="#exit">Exit</a>
+    </div>
+    <button class="nav-pill" id="allAnswersPill" onclick="toggleAllAnswers()">
+      <span class="dot"></span> Teacher notes: <span id="allAnswersState">off</span>
+    </button>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <h1>6.1 Data Range 📊</h1>
+    <p class="sub">How spread out is your data? Today we learn to find out — using just <strong>one subtraction!</strong></p>
+    <div class="hero-bars"><div></div><div></div><div></div><div></div><div></div></div>
+  </header>
+
+  <!-- ===== LI / SC ===== -->
+  <section id="learn">
+    <div class="li-grid">
+      <div class="li-box">
+        <h3>🎯 Learning Intention</h3>
+        <p>We are learning to identify a range of data.</p>
+        <div class="rule-banner" style="margin: 16px 0 0; padding: 18px;">
+          <div class="lbl">The Rule</div>
+          <div class="rule-formula" style="font-size:1.3rem;">Range = <span class="max">Maximum</span> − <span class="min">Minimum</span></div>
+          <div class="note">The range tells us how spread out a data set is.</div>
+        </div>
+      </div>
+      <div class="li-box sc">
+        <h3>⭐ Success Criteria — I can…</h3>
+        <ul class="sc-list" id="scList">
+          <li>identify the <strong>maximum</strong> and <strong>minimum</strong> values in a data set</li>
+          <li>calculate the range using <strong>maximum − minimum</strong></li>
+          <li>explain what the range tells me about <strong>spread</strong></li>
+          <li>compare two data sets and say which is more <strong>consistent</strong></li>
+        </ul>
+        <div class="sc-progress"><div id="scProgress"></div></div>
+        <p class="sc-hint">💡 Click each one to tick it off as you master it!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== EXPLORER ===== -->
+  <section id="explore">
+    <div class="card">
+      <h2 class="block-title">🔍 See it in action</h2>
+      <p class="block-sub">A group of Year 5 students counted how many books they read in Term 1. Press the buttons in order and watch what happens!</p>
+
+      <div class="explorer-stage">
+        <div class="bars" id="barsWrap"></div>
+        <div class="explorer-controls">
+          <button class="xbtn find-max" onclick="explorerMax()">1️⃣ Find the MAXIMUM</button>
+          <button class="xbtn find-min" onclick="explorerMin()">2️⃣ Find the MINIMUM</button>
+          <button class="xbtn show-range" onclick="explorerRange()">3️⃣ Show the RANGE</button>
+          <button class="xbtn reset" onclick="explorerReset()">↺ Reset</button>
+        </div>
+        <div class="explorer-caption" id="explorerCaption">The data: 4, 9, 2, 12, 7, 5, 15, 3 books</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STEP WALKER ===== -->
+  <section>
+    <div class="card">
+      <h2 class="block-title">👣 How to work it out — step by step</h2>
+      <p class="block-sub">Same data, written the way you should set it out in your book. Click "Next step".</p>
+
+      <div class="chips" id="walkerChips"></div>
+
+      <div class="walker-steps">
+        <div class="wstep s1" id="ws1"><span class="n">1</span> Find the <strong>&nbsp;MAXIMUM&nbsp;</strong> (highest) value <span class="ans" style="color:var(--green-deep)">15</span></div>
+        <div class="wstep s2" id="ws2"><span class="n">2</span> Find the <strong>&nbsp;MINIMUM&nbsp;</strong> (lowest) value <span class="ans" style="color:var(--red-deep)">2</span></div>
+        <div class="wstep s3" id="ws3"><span class="n">3</span> Subtract: Maximum − Minimum <span class="ans" style="color:var(--purple)">15 − 2 = 13</span></div>
+        <div class="wstep s4" id="ws4"><span class="n">✓</span> The range is <span class="ans" style="color:var(--navy)">13 books</span></div>
+      </div>
+
+      <div class="walker-controls">
+        <button class="xbtn" id="walkerNext" onclick="walkerNext()">Next step ➜</button>
+        <button class="xbtn secondary" onclick="walkerReset()">↺ Start again</button>
+      </div>
+
+      <div class="remember-box" style="background: var(--light); border-radius: 12px; padding: 18px 24px; margin-top: 22px;">
+        <h3 style="color: var(--navy); margin-bottom: 8px;">🧠 Remember:</h3>
+        <ul style="margin-left: 20px;">
+          <li>Always identify max and min <strong>before</strong> subtracting</li>
+          <li>Range is always a positive number (max − min, never min − max)</li>
+          <li>A bigger range = more spread out. A smaller range = more consistent.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== YOU TRY ===== -->
+  <section id="youtry">
+    <div class="card youtry">
+      <h2 class="block-title">🎮 You try!</h2>
+      <p class="block-sub">Practise the three steps with random data. Can you build a streak?</p>
+
+      <div class="yt-prompt" id="ytPrompt"></div>
+      <div class="yt-chips" id="ytChips"></div>
+
+      <div class="yt-answer-zone" id="ytAnswerZone">
+        <div class="yt-eq" id="ytEq"></div>
+        <input type="number" id="ytInput" placeholder="?" onkeydown="if(event.key==='Enter')ytCheck()">
+        <button class="xbtn yt-check" onclick="ytCheck()">Check ✓</button>
+      </div>
+
+      <div class="yt-feedback" id="ytFeedback"></div>
+      <div class="yt-footer">
+        <button class="xbtn yt-new" onclick="ytNew()">🎲 New data set</button>
+        <span class="streak">🔥 Streak: <span id="ytStreak">0</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GREEN ===== -->
+  <section id="green" class="task-green">
+    <div class="sec-head">🟢 Must Complete Work — Find the Range <span class="badge">GREEN</span></div>
+    <div class="sec-body">
+      <ol class="questions">
+        <li>What is the range of this data set?<br><span class="qdata">3, 8, 1, 6, 4</span>
+          <div class="answer">✔ 8 − 1 = <strong>7</strong></div></li>
+        <li>A student recorded her daily screen time in minutes:<br><span class="qdata">45, 90, 30, 75, 60</span><br>What is the range?
+          <div class="answer">✔ 90 − 30 = <strong>60 minutes</strong></div></li>
+        <li>Five students scored these points in a quiz:<br><span class="qdata">12, 7, 18, 5, 14</span><br>What is the range?
+          <div class="answer">✔ 18 − 5 = <strong>13 points</strong></div></li>
+        <li>The temperatures on five mornings were:<br><span class="qdata">9°C, 14°C, 6°C, 11°C, 16°C</span><br>Find the range.
+          <div class="answer">✔ 16°C − 6°C = <strong>10°C</strong></div></li>
+        <li>A pet store counted the number of fish sold each day:<br><span class="qdata">22, 35, 17, 41, 28</span><br>What is the range?
+          <div class="answer">✔ 41 − 17 = <strong>24 fish</strong></div></li>
+        <li>Find the range:<br><span class="qdata">100, 250, 175, 300, 125</span>
+          <div class="answer">✔ 300 − 100 = <strong>200</strong></div></li>
+      </ol>
+      <button class="reveal-btn" onclick="toggleSection('green', this)">🔒 Reveal answers</button>
+    </div>
+  </section>
+
+  <!-- ===== AMBER ===== -->
+  <section id="amber" class="task-amber">
+    <div class="sec-head">🟠 Find the Range and Explain <span class="badge">AMBER</span></div>
+    <div class="sec-body">
+      <ol class="questions">
+        <li>A class recorded how many minutes they spent reading each night:<br><span class="qdata">20, 45, 10, 55, 30, 40, 15</span><br>Find the range and write one sentence explaining what it tells you about the data.
+          <div class="answer">✔ 55 − 10 = <strong>45 minutes</strong>. The reading times are very spread out — some students read 45 minutes more per night than others.</div></li>
+        <li>Two groups of students completed a sprint.<br>Group A times (seconds): <span class="qdata">14, 16, 13, 15, 17</span><br>Group B times (seconds): <span class="qdata">11, 19, 14, 21, 10</span><br>Find the range for both groups. Which group was more consistent?
+          <div class="answer">✔ Group A: 17 − 13 = <strong>4 seconds</strong>. Group B: 21 − 10 = <strong>11 seconds</strong>. <strong>Group A</strong> was more consistent because its range is smaller.</div></li>
+        <li>The number of people who visited a library over 7 days was:<br><span class="qdata">112, 98, 143, 87, 156, 102, 119</span><br>Find the range and explain what it tells you about visitor numbers.
+          <div class="answer">✔ 156 − 87 = <strong>69 people</strong>. Visitor numbers varied a lot from day to day — busy days had up to 69 more visitors than quiet days.</div></li>
+        <li>A gardener recorded how many tomatoes she picked each week:<br><span class="qdata">15, 23, 8, 31, 19, 27</span><br>Find the range. Then explain whether this range tells you exactly how many tomatoes she usually picks.
+          <div class="answer">✔ 31 − 8 = <strong>23 tomatoes</strong>. No — the range only shows the spread between the best and worst weeks. It does not tell you the usual (typical) amount she picks.</div></li>
+      </ol>
+      <button class="reveal-btn" onclick="toggleSection('amber', this)">🔒 Reveal answers</button>
+    </div>
+  </section>
+
+  <!-- ===== RED ===== -->
+  <section id="red" class="task-red">
+    <div class="sec-head">🔴 Putting Knowledge in Context <span class="badge">RED</span></div>
+    <div class="sec-body">
+      <ol class="questions">
+        <li>A data set has a range of <span class="qdata">24</span>. The minimum value is <span class="qdata">13</span>. What is the maximum value? Explain how you worked this out.
+          <div class="answer">✔ Maximum = minimum + range = 13 + 24 = <strong>37</strong>. Since range = max − min, we can rearrange it to max = min + range.</div></li>
+        <li>A sports coach wants to know if her team's performance is becoming more consistent over three weeks.<br>
+          Week 1 scores: <span class="qdata">45, 67, 52, 71, 49</span><br>
+          Week 2 scores: <span class="qdata">55, 62, 58, 68, 53</span><br>
+          Week 3 scores: <span class="qdata">59, 64, 61, 66, 60</span><br>
+          Calculate the range for each week and explain what the trend shows.
+          <div class="answer">✔ Week 1: 71 − 45 = <strong>26</strong>. Week 2: 68 − 53 = <strong>15</strong>. Week 3: 66 − 59 = <strong>7</strong>. The range gets smaller each week, so the team's scores are becoming <strong>more consistent</strong> over time.</div></li>
+      </ol>
+      <button class="reveal-btn" onclick="toggleSection('red', this)">🔒 Reveal answers</button>
+    </div>
+  </section>
+
+  <!-- ===== CHECKPOINT ===== -->
+  <section class="checkpoint">
+    <strong>✅ Have you marked all your tasks?</strong>
+    If no — go back and mark your work using the reveal buttons in each section.<br>
+    If yes — complete the exit ticket below.
+  </section>
+
+  <!-- ===== EXIT ===== -->
+  <section id="exit">
+    <div class="sec-head">🎟️ Exit Ticket</div>
+    <div class="sec-body exit-card">
+      <p>Finished and marked everything? Complete your exit ticket:</p>
+      <a class="exit-link" href="#" target="_blank" rel="noopener">🎟️ Click here to access your exit ticket</a>
+      <div class="timer-display" id="timerDisplay">–:––</div>
+      <div class="timer-buttons">
+        <button onclick="setTimer(5, this)">5 min</button>
+        <button onclick="setTimer(7, this)">7 min</button>
+        <button onclick="setTimer(10, this)">10 min</button>
+        <button class="control" id="startPause" onclick="toggleTimer()">Start</button>
+        <button class="control" onclick="resetTimer()">Reset</button>
+      </div>
+      <p class="timer-note">Your teacher will set the timer between 5 and 10 minutes.</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  /* ---------- date ---------- */
+  document.getElementById('today').textContent = new Date().toLocaleDateString('en-AU', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  });
+
+  /* ---------- success criteria ---------- */
+  const scItems = document.querySelectorAll('#scList li');
+  scItems.forEach(li => li.addEventListener('click', () => {
+    li.classList.toggle('ticked');
+    const done = document.querySelectorAll('#scList li.ticked').length;
+    document.getElementById('scProgress').style.width = (done / scItems.length * 100) + '%';
+    if (done === scItems.length) confetti(24);
+  }));
+
+  /* ---------- explorer ---------- */
+  const DATA = [4, 9, 2, 12, 7, 5, 15, 3];
+  const MAXV = Math.max(...DATA), MINV = Math.min(...DATA);
+  const barsWrap = document.getElementById('barsWrap');
+  const caption = document.getElementById('explorerCaption');
+  let expState = { max: false, min: false };
+
+  function buildBars() {
+    barsWrap.innerHTML = '';
+    DATA.forEach((v, i) => {
+      const col = document.createElement('div');
+      col.className = 'bar-col';
+      col.dataset.v = v;
+      const h = Math.round(v / MAXV * 170);
+      col.innerHTML = '<div class="bar-val">' + v + '</div>' +
+        '<div class="bar" style="height:' + h + 'px; animation-delay:' + (i * 0.08) + 's"></div>' +
+        '<div class="bar-name">Student ' + (i + 1) + '</div>';
+      barsWrap.appendChild(col);
+    });
+    const br = document.createElement('div');
+    br.className = 'range-bracket';
+    br.id = 'rangeBracket';
+    br.innerHTML = '<span>Range = ' + (MAXV - MINV) + '</span>';
+    barsWrap.appendChild(br);
+  }
+  function explorerMax() {
+    document.querySelectorAll('#barsWrap .bar-col').forEach(c => {
+      c.classList.toggle('is-max', +c.dataset.v === MAXV);
+    });
+    expState.max = true;
+    caption.innerHTML = 'The <strong style="color:var(--green-deep)">maximum</strong> is <strong style="color:var(--green-deep)">' + MAXV + '</strong> — the tallest bar! 🏆';
+  }
+  function explorerMin() {
+    document.querySelectorAll('#barsWrap .bar-col').forEach(c => {
+      c.classList.toggle('is-min', +c.dataset.v === MINV);
+    });
+    expState.min = true;
+    caption.innerHTML = 'The <strong style="color:var(--red-deep)">minimum</strong> is <strong style="color:var(--red-deep)">' + MINV + '</strong> — the shortest bar! 🔎';
+  }
+  function explorerRange() {
+    if (!expState.max || !expState.min) { explorerMax(); explorerMin(); }
+    document.querySelectorAll('#barsWrap .bar-col').forEach(c => {
+      const v = +c.dataset.v;
+      c.classList.toggle('dimmed', v !== MAXV && v !== MINV);
+    });
+    const br = document.getElementById('rangeBracket');
+    const minH = Math.round(MINV / MAXV * 170), maxH = 170;
+    br.style.bottom = (26 + minH) + 'px';
+    br.style.height = (maxH - minH) + 'px';
+    br.classList.add('visible');
+    caption.innerHTML = 'Range = <span class="eq">' + MAXV + ' − ' + MINV + ' = ' + (MAXV - MINV) + '</span> — the data is spread across ' + (MAXV - MINV) + ' books! 🎉';
+    confetti(18);
+  }
+  function explorerReset() {
+    expState = { max: false, min: false };
+    buildBars();
+    caption.textContent = 'The data: ' + DATA.join(', ') + ' books';
+  }
+  buildBars();
+
+  /* ---------- step walker ---------- */
+  const walkerChipsEl = document.getElementById('walkerChips');
+  DATA.forEach(v => {
+    const d = document.createElement('div');
+    d.className = 'chip-num';
+    d.textContent = v;
+    d.dataset.v = v;
+    walkerChipsEl.appendChild(d);
+  });
+  let wStep = 0;
+  function walkerNext() {
+    if (wStep >= 4) return;
+    wStep++;
+    document.getElementById('ws' + wStep).classList.add('active');
+    const chips = document.querySelectorAll('#walkerChips .chip-num');
+    if (wStep === 1) chips.forEach(c => c.classList.toggle('hl-max', +c.dataset.v === MAXV));
+    if (wStep === 2) chips.forEach(c => c.classList.toggle('hl-min', +c.dataset.v === MINV));
+    if (wStep === 3) chips.forEach(c => { if (+c.dataset.v !== MAXV && +c.dataset.v !== MINV) c.classList.add('faded'); });
+    if (wStep === 4) { document.getElementById('walkerNext').textContent = 'Done! ✓'; confetti(16); }
+  }
+  function walkerReset() {
+    wStep = 0;
+    document.querySelectorAll('.wstep').forEach(w => w.classList.remove('active'));
+    document.querySelectorAll('#walkerChips .chip-num').forEach(c => c.classList.remove('hl-max', 'hl-min', 'faded'));
+    document.getElementById('walkerNext').textContent = 'Next step ➜';
+  }
+
+  /* ---------- you try ---------- */
+  let ytData = [], ytMax = 0, ytMin = 0, ytPhase = 'max', ytStreakN = 0;
+  const ytPrompt = document.getElementById('ytPrompt');
+  const ytChipsEl = document.getElementById('ytChips');
+  const ytZone = document.getElementById('ytAnswerZone');
+  const ytFeedback = document.getElementById('ytFeedback');
+
+  function ytNew() {
+    const set = new Set();
+    while (set.size < 5) set.add(Math.floor(Math.random() * 49) + 1);
+    ytData = [...set];
+    ytMax = Math.max(...ytData); ytMin = Math.min(...ytData);
+    ytPhase = 'max';
+    ytZone.classList.remove('visible');
+    ytFeedback.textContent = ''; ytFeedback.className = 'yt-feedback';
+    document.getElementById('ytInput').value = '';
+    ytPrompt.innerHTML = 'Step 1: Click the <span class="max-w">MAXIMUM</span> (highest) number';
+    ytChipsEl.innerHTML = '';
+    ytData.forEach(v => {
+      const b = document.createElement('button');
+      b.className = 'yt-chip';
+      b.textContent = v;
+      b.onclick = () => ytPick(b, v);
+      ytChipsEl.appendChild(b);
+    });
+  }
+  function ytPick(btn, v) {
+    if (ytPhase === 'max') {
+      if (v === ytMax) {
+        btn.classList.add('correct-max'); btn.disabled = true;
+        ytPhase = 'min';
+        ytPrompt.innerHTML = 'Step 2: Now click the <span class="min-w">MINIMUM</span> (lowest) number';
+      } else { wrongChip(btn); }
+    } else if (ytPhase === 'min') {
+      if (v === ytMin) {
+        btn.classList.add('correct-min'); btn.disabled = true;
+        ytPhase = 'range';
+        ytChipsEl.querySelectorAll('.yt-chip').forEach(b => b.disabled = true);
+        ytPrompt.innerHTML = 'Step 3: Work out the range!';
+        document.getElementById('ytEq').innerHTML =
+          'Range = <span class="max-w">' + ytMax + '</span> − <span class="min-w">' + ytMin + '</span> = ?';
+        ytZone.classList.add('visible');
+        document.getElementById('ytInput').focus();
+      } else { wrongChip(btn); }
+    }
+  }
+  function wrongChip(btn) {
+    btn.classList.add('shake');
+    setTimeout(() => btn.classList.remove('shake'), 450);
+    ytFeedback.textContent = 'Not quite — look again! 👀';
+    ytFeedback.className = 'yt-feedback bad';
+    setTimeout(() => { if (ytFeedback.classList.contains('bad')) { ytFeedback.textContent = ''; ytFeedback.className = 'yt-feedback'; } }, 1400);
+  }
+  function ytCheck() {
+    if (ytPhase !== 'range') return;
+    const val = parseInt(document.getElementById('ytInput').value, 10);
+    if (val === ytMax - ytMin) {
+      ytStreakN++;
+      document.getElementById('ytStreak').textContent = ytStreakN;
+      ytFeedback.innerHTML = '🎉 Correct! Range = ' + ytMax + ' − ' + ytMin + ' = <strong>' + (ytMax - ytMin) + '</strong>';
+      ytFeedback.className = 'yt-feedback good';
+      ytPhase = 'done';
+      confetti(20);
+    } else {
+      ytStreakN = 0;
+      document.getElementById('ytStreak').textContent = 0;
+      ytFeedback.textContent = 'Not quite — remember: maximum − minimum. Try again!';
+      ytFeedback.className = 'yt-feedback bad';
+    }
+  }
+  ytNew();
+
+  /* ---------- answers ---------- */
+  function toggleSection(id, btn) {
+    const sec = document.getElementById(id);
+    const on = sec.classList.toggle('show-answers');
+    btn.textContent = on ? '🔓 Hide answers' : '🔒 Reveal answers';
+    updatePill();
+  }
+  function toggleAllAnswers() {
+    const secs = ['green', 'amber', 'red'].map(id => document.getElementById(id));
+    const turnOn = !secs.every(s => s.classList.contains('show-answers'));
+    secs.forEach(s => {
+      s.classList.toggle('show-answers', turnOn);
+      s.querySelector('.reveal-btn').textContent = turnOn ? '🔓 Hide answers' : '🔒 Reveal answers';
+    });
+    updatePill();
+  }
+  function updatePill() {
+    const allOn = ['green', 'amber', 'red'].every(id => document.getElementById(id).classList.contains('show-answers'));
+    document.getElementById('allAnswersPill').classList.toggle('on', allOn);
+    document.getElementById('allAnswersState').textContent = allOn ? 'on' : 'off';
+  }
+
+  /* ---------- timer ---------- */
+  let totalSeconds = 0, remaining = 0, interval = null;
+  const display = document.getElementById('timerDisplay');
+  const startPauseBtn = document.getElementById('startPause');
+  function render() {
+    const m = Math.floor(remaining / 60), s = remaining % 60;
+    display.textContent = m + ':' + String(s).padStart(2, '0');
+    display.classList.toggle('warning', remaining > 0 && remaining <= 60);
+    display.classList.toggle('done', totalSeconds > 0 && remaining === 0);
+  }
+  function setTimer(mins, btn) {
+    clearInterval(interval); interval = null;
+    totalSeconds = remaining = mins * 60;
+    startPauseBtn.textContent = 'Start';
+    document.querySelectorAll('.timer-buttons button:not(.control)').forEach(b => b.classList.remove('selected'));
+    if (btn) btn.classList.add('selected');
+    render();
+  }
+  function toggleTimer() {
+    if (remaining <= 0) return;
+    if (interval) {
+      clearInterval(interval); interval = null;
+      startPauseBtn.textContent = 'Start';
+    } else {
+      startPauseBtn.textContent = 'Pause';
+      interval = setInterval(() => {
+        remaining--; render();
+        if (remaining <= 0) {
+          clearInterval(interval); interval = null;
+          startPauseBtn.textContent = 'Start';
+          display.textContent = "Time's up! ⏰";
+        }
+      }, 1000);
+    }
+  }
+  function resetTimer() {
+    clearInterval(interval); interval = null;
+    remaining = totalSeconds;
+    startPauseBtn.textContent = 'Start';
+    render();
+  }
+  render();
+
+  /* ---------- confetti ---------- */
+  const EMOJI = ['🎉', '⭐', '✨', '🎊', '💚', '🧡'];
+  function confetti(n) {
+    for (let i = 0; i < n; i++) {
+      const p = document.createElement('div');
+      p.className = 'confetti-piece';
+      p.textContent = EMOJI[Math.floor(Math.random() * EMOJI.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (1.6 + Math.random() * 1.6) + 's';
+      p.style.fontSize = (14 + Math.random() * 16) + 'px';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 3400);
+    }
+  }
+</script>
+</body>
+</html>
