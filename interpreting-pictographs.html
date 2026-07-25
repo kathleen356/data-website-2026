@@ -1,0 +1,1177 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.1 Interpreting Pictographs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F8FC;
+    --grid:#E1E8F2;
+    --grid-strong:#CFDAEC;
+    --ink:#18233F;
+    --ink-soft:#5A6783;
+    --ink-faint:#8A95AD;
+    --accent:#4F46E5;
+    --accent-soft:#EAE9FF;
+    --mode:#DB2777;
+    --ok:#16A34A; --ok-soft:#E7F6EC;
+    --green:#16A34A; --green-bg:#E7F6EC; --green-line:#B7E4C6;
+    --amber:#D97706; --amber-bg:#FCF1E1; --amber-line:#F3D9AE;
+    --red:#DC2626;   --red-bg:#FBEAEA;   --red-line:#F2C2C2;
+    --c-orange:#F0862E; --c-green:#6FB544; --c-magenta:#D94FB0;
+    --c-blue:#3E9AE6; --c-purple:#8B6FE0; --c-teal:#2FB6A8; --c-red:#E8604C;
+    --card:#FFFFFF;
+    --shadow:0 1px 2px rgba(24,35,63,.05), 0 10px 30px -18px rgba(24,35,63,.25);
+    --radius:18px;
+    --maxw:1020px;
+    --display:'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+    --body:'Nunito', system-ui, -apple-system, sans-serif;
+    --mono:'Space Mono', ui-monospace, 'Courier New', monospace;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink); font-family:var(--body);
+    font-size:17px; line-height:1.6;
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:26px 26px;
+    background-position:-1px -1px;
+  }
+  body.students .teacher-note{display:none !important}
+
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 20px}
+
+  header.bar{
+    position:sticky; top:0; z-index:40;
+    background:rgba(246,248,252,.88); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--grid-strong);
+  }
+  .bar-inner{max-width:var(--maxw); margin:0 auto; padding:10px 20px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .brand{font-family:var(--display); font-weight:700; font-size:1.05rem; letter-spacing:.2px;
+    display:flex; align-items:center; gap:9px; margin-right:auto}
+  .brand .glyph{display:inline-block; width:24px; height:19px; flex:0 0 auto}
+  nav.jump{display:flex; gap:4px; flex-wrap:wrap}
+  nav.jump a{font-family:var(--display); font-weight:500; font-size:.82rem; text-decoration:none;
+    color:var(--ink-soft); padding:6px 10px; border-radius:999px}
+  nav.jump a:hover{color:var(--ink); background:var(--accent-soft)}
+  .tview{font-family:var(--display); font-weight:600; font-size:.8rem; cursor:pointer;
+    border:1.5px solid var(--accent); color:var(--accent); background:transparent;
+    padding:6px 13px; border-radius:999px; display:inline-flex; align-items:center; gap:7px}
+  .tview .dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+  body.students .tview{border-color:var(--ink-faint); color:var(--ink-soft)}
+  body.students .tview .dot{background:var(--ink-faint)}
+
+  .hero{padding:54px 0 30px}
+  .eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--accent); font-weight:700}
+  .hero h1{font-family:var(--display); font-weight:700; line-height:1.05;
+    font-size:clamp(2.3rem,6vw,4.2rem); margin:.25em 0 .15em; letter-spacing:-.5px}
+  .hero h1 .pink{color:var(--mode)} .hero h1 .green{color:var(--c-green)}
+  .lead{font-size:1.08rem; color:var(--ink-soft); max-width:none; margin:.2em 0 1.2em}
+
+  section{padding:38px 0; scroll-margin-top:64px}
+  .part-tag{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:.72rem;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:700; margin-bottom:6px}
+  .part-tag::before{content:""; width:22px; height:2px; background:var(--accent); display:inline-block}
+  h2{font-family:var(--display); font-weight:700; font-size:clamp(1.6rem,3.2vw,2.3rem);
+    margin:.1em 0 .35em; letter-spacing:-.3px; line-height:1.08}
+  h3{font-family:var(--display); font-weight:600; font-size:1.2rem; margin:0 0 .4em}
+  h4{font-family:var(--display); font-weight:700; margin:0 0 8px; font-size:1.05rem}
+
+  .card{background:var(--card); border:1px solid var(--grid-strong); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:24px}
+  .card + .card{margin-top:18px}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:stretch}
+  .two > .card + .card{margin-top:0}
+  @media(max-width:720px){.two{grid-template-columns:1fr}}
+
+  .keyword{color:var(--mode); font-weight:800}
+  .define{background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:10px;
+    padding:14px 16px; font-size:1.05rem}
+  .define b{color:var(--accent)}
+
+  table.freq{border-collapse:collapse; width:100%; font-family:var(--body);
+    background:#fff; border-radius:12px; overflow:hidden; border:1px solid var(--grid-strong)}
+  table.freq caption{font-family:var(--display); font-weight:700; font-size:1.02rem; text-align:left;
+    padding:0 0 8px; color:var(--ink)}
+  table.freq th, table.freq td{padding:9px 14px; text-align:left; border-bottom:1px solid var(--grid)}
+  table.freq thead th{background:var(--accent); color:#fff; font-family:var(--display); font-weight:600; font-size:.95rem}
+  table.freq tbody tr:last-child td{border-bottom:0}
+  table.freq td.num{font-family:var(--mono); font-weight:700; text-align:center; width:90px; color:var(--ink)}
+  table.freq td.tally{padding:6px 14px}
+  table.freq tbody tr:nth-child(even){background:var(--paper)}
+  .tablescroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+  .swatch{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:8px; vertical-align:-1px}
+  .tallygroups{display:flex; flex-wrap:wrap; gap:9px; align-items:center}
+
+  .btn{font-family:var(--display); font-weight:600; font-size:.9rem; cursor:pointer; border-radius:10px;
+    padding:9px 16px; border:1.5px solid var(--accent); background:var(--accent); color:#fff;
+    transition:transform .1s, filter .15s; text-decoration:none; display:inline-flex; align-items:center; gap:8px}
+  .btn:hover{filter:brightness(1.06)} .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent; color:var(--accent)}
+  .btn.sm{font-size:.82rem; padding:7px 13px}
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; align-items:center}
+
+  .scenario{background:var(--paper); border-radius:12px; padding:16px 18px; border:1px solid var(--grid-strong)}
+  .scenario + .scenario{margin-top:14px}
+  .qlist{margin:.4em 0 0; padding-left:1.25em} .qlist li{margin:5px 0}
+  .hintline{font-size:.9rem; color:var(--ink-faint); margin:10px 0 0; font-style:italic}
+
+  .answer{margin-top:14px; border-radius:12px; border:1px solid var(--grid-strong); background:#fff;
+    overflow:hidden; max-height:0; opacity:0; transition:max-height .35s ease, opacity .25s ease}
+  .answer.open{max-height:1400px; opacity:1}
+  .answer .inner{padding:14px 18px}
+  .answer h5{font-family:var(--display); font-weight:700; margin:0 0 6px; color:var(--ok); font-size:.95rem;
+    display:flex; align-items:center; gap:8px}
+  .answer ul{margin:.2em 0; padding-left:1.2em} .answer li{margin:3px 0; font-size:.96rem}
+
+  /* pictograph rows */
+  .pictograph{display:grid; grid-template-columns:auto 1fr; gap:10px 14px; align-items:center; margin-top:4px}
+  .picto-head{font-family:var(--display); font-weight:700; font-size:.82rem; color:var(--accent);
+    text-transform:uppercase; letter-spacing:.06em}
+  .row-label{font-family:var(--display); font-weight:600; font-size:.95rem; color:var(--ink)}
+  .row-icons{display:flex; gap:7px; align-items:center; flex-wrap:wrap; min-height:32px}
+  .picto-legend{display:flex; gap:22px; flex-wrap:wrap; margin-top:16px; padding-top:14px;
+    border-top:1px dashed var(--grid-strong); font-size:.92rem; color:var(--ink-soft)}
+  .legend-item{display:inline-flex; align-items:center; gap:7px}
+
+  /* interactive apples example */
+  .ipicto-hint{font-size:.92rem; color:var(--accent); font-weight:700; margin:0 0 12px; display:flex; align-items:center; gap:7px}
+  .ipicto-row{display:grid; grid-template-columns:60px 1fr auto; align-items:center; gap:14px; width:100%;
+    background:var(--paper); border:1.5px solid var(--grid-strong); border-radius:12px; padding:9px 14px; margin-bottom:8px;
+    cursor:pointer; font-family:var(--body); text-align:left; transition:border-color .15s, background .15s, transform .08s}
+  .ipicto-row:hover{border-color:var(--accent); background:#fff}
+  .ipicto-row:active{transform:translateY(1px)}
+  .ipicto-row.on{border-color:var(--ok); background:var(--ok-soft)}
+  .ipicto-label{font-family:var(--display); font-weight:700; font-size:1rem; color:var(--ink)}
+  .ipicto-icons{display:flex; gap:7px; align-items:center; flex-wrap:wrap; min-height:32px}
+  .ipicto-badge{font-family:var(--display); font-weight:700; font-size:.92rem; color:var(--ok);
+    background:#fff; border:1.5px solid var(--ok); border-radius:999px; padding:4px 12px; white-space:nowrap;
+    opacity:0; transform:scale(.6); transition:opacity .2s ease, transform .2s cubic-bezier(.3,1.5,.5,1)}
+  .ipicto-row.on .ipicto-badge{opacity:1; transform:scale(1)}
+  .ipicto-tapmark{font-family:var(--mono); font-size:.72rem; color:var(--ink-faint); white-space:nowrap}
+  .ipicto-row.on .ipicto-tapmark{display:none}
+  @keyframes applePop{0%{transform:scale(1)}35%{transform:scale(1.3)}70%{transform:scale(.92)}100%{transform:scale(1)}}
+
+  /* interactive check quiz */
+  .qcheck{display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:#fff; border:1.5px solid var(--grid-strong);
+    border-radius:12px; padding:12px 14px; margin-bottom:10px; transition:border-color .15s, background .15s}
+  .qcheck .qc-num{width:26px;height:26px;border-radius:7px;background:var(--accent);color:#fff;font-family:var(--display);
+    font-weight:700;display:grid;place-items:center;flex:0 0 auto;font-size:.9rem}
+  .qcheck .qc-text{flex:1 1 130px; font-weight:600}
+  .qcheck .qc-answer{display:flex; align-items:center; gap:8px; margin-left:auto; flex:0 0 auto}
+  .qcheck input{width:70px; font-family:var(--mono); font-weight:700; font-size:1rem; text-align:center;
+    border:1.5px solid var(--grid-strong); border-radius:9px; padding:7px 8px; color:var(--ink)}
+  .qcheck input.txt{width:150px; text-align:left; font-family:var(--body); font-weight:700}
+  .qcheck input:focus{outline:none; border-color:var(--accent)}
+  .qcheck.correct{border-color:var(--ok); background:var(--ok-soft)}
+  .qcheck.correct input{border-color:var(--ok)}
+  .qcheck.correct .qc-num{background:var(--ok)}
+  .qcheck.wrong{border-color:var(--amber); background:var(--amber-bg)}
+  .qcheck.wrong input{border-color:var(--amber)}
+  .qc-fb{font-family:var(--display); font-weight:600; font-size:.88rem; flex:1 1 100%; margin:0}
+  .qcheck.correct .qc-fb{color:var(--ok)}
+  .qcheck.wrong .qc-fb{color:var(--amber)}
+  .qc-overall{font-family:var(--display); font-weight:700; font-size:1.05rem; margin:4px 0 0; min-height:1.4em}
+  .qc-overall.win{color:var(--ok)}
+  .qcheck .qc-open{flex:1 1 100%; margin-top:8px; min-height:70px; width:100%; font-family:var(--body); font-size:.95rem;
+    border:1.5px solid var(--grid-strong); border-radius:9px; padding:9px 11px; color:var(--ink); resize:vertical}
+  .qcheck .qc-open::placeholder{color:var(--ink-faint)}
+  .qcheck .qc-open:focus{outline:none; border-color:var(--accent)}
+
+  /* teacher note */
+  .teacher-note{background:#FFFBEA; border:1px solid #F2E2A6; border-radius:12px;
+    padding:12px 16px; margin-top:16px; font-size:.93rem; color:#6b5d18}
+  .teacher-note b{font-family:var(--display); color:#8a6d00}
+  .teacher-note .pill{font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
+    background:#8a6d00; color:#fff; padding:3px 8px; border-radius:999px; margin-right:8px; vertical-align:1px}
+
+  /* success criteria */
+  .reflect{display:grid; gap:10px}
+  .rrow{background:#fff; border:1px solid var(--grid-strong); border-radius:12px; padding:12px 16px;
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .rrow .txt{flex:1 1 220px; font-weight:600}
+  .rrow .dotmark{width:12px;height:12px;border-radius:3px;background:var(--accent);flex:0 0 auto}
+  .rate{display:inline-flex; gap:6px; flex-wrap:wrap}
+  .rate button{font-family:var(--display); font-weight:600; font-size:.8rem; border:1.5px solid var(--grid-strong);
+    background:#fff; color:var(--ink-soft); border-radius:999px; padding:5px 12px; cursor:pointer}
+  .rate button.got.on{background:var(--green); border-color:var(--green); color:#fff}
+  .rate button.near.on{background:var(--amber); border-color:var(--amber); color:#fff}
+  .rate button.help.on{background:var(--red); border-color:var(--red); color:#fff}
+  .talk{margin-top:18px; background:var(--ink); color:#fff; border-radius:var(--radius); padding:18px 22px}
+  .talk b{color:#FFD24A; font-family:var(--display)}
+  .divider{height:1px; background:var(--grid-strong); margin:22px 0}
+
+  /* curriculum link */
+  .eyebrow-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .curric-link{font-family:var(--display); font-weight:700; font-size:.72rem; cursor:pointer; text-decoration:none;
+    padding:7px 16px; border-radius:999px; border:1.5px solid var(--grid-strong);
+    background:var(--card); color:var(--accent); transition:transform .1s, border-color .15s, color .15s;
+    display:inline-block}
+  .curric-link:hover{border-color:var(--accent); color:var(--accent)}
+  .curric-link:active{transform:translateY(1px)}
+  .curric{font-family:var(--mono); font-size:.72rem; color:var(--ink-faint); margin-top:4px}
+
+  /* pros & cons */
+  .pc-box{width:100%; min-height:120px; font-family:var(--body); font-size:.95rem; color:var(--ink);
+    border:1.5px dashed var(--accent); border-radius:10px; background:var(--accent-soft);
+    padding:10px 12px; resize:vertical}
+  .pc-box::placeholder{color:var(--accent); opacity:.65}
+  .pc-box:focus{outline:none; border-style:solid; background:#fff}
+
+  /* exit gate */
+  .gate-btns{display:flex; gap:10px; margin-top:6px}
+  .gate-btn{font-family:var(--display); font-weight:600; font-size:.9rem; cursor:pointer; border-radius:999px;
+    padding:8px 20px; border:1.5px solid var(--grid-strong); background:#fff; color:var(--ink-soft)}
+  .gate-btn.on.yes{background:var(--ok); border-color:var(--ok); color:#fff}
+  .gate-btn.on.no{background:var(--amber); border-color:var(--amber); color:#fff}
+  .gate-msg{margin-top:14px; font-weight:600; display:none}
+  .gate-msg.show{display:block}
+  .gate-msg.bad{color:var(--amber)}
+  .gate-msg.good{color:var(--ok)}
+  .ticket{margin-top:14px; display:none}
+  .ticket.show{display:block}
+
+  /* differentiated practice */
+  .filterbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:6px 0 22px}
+  .filterbar .lbl{font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint)}
+  .chip{font-family:var(--display); font-weight:600; font-size:.86rem; cursor:pointer; border-radius:999px;
+    padding:7px 15px; border:1.5px solid var(--grid-strong); background:#fff; color:var(--ink-soft);
+    display:inline-flex; align-items:center; gap:8px; transition:.15s}
+  .chip .lt{width:11px;height:11px;border-radius:50%}
+  .chip[data-f="all"] .lt{background:linear-gradient(90deg,var(--green),var(--amber),var(--red))}
+  .chip[data-f="green"] .lt{background:var(--green)}
+  .chip[data-f="amber"] .lt{background:var(--amber)}
+  .chip[data-f="red"] .lt{background:var(--red)}
+  .chip.on{color:var(--ink); border-color:var(--ink); box-shadow:var(--shadow)}
+
+  .activity{border-radius:var(--radius); border:1px solid var(--grid-strong); background:#fff;
+    box-shadow:var(--shadow); padding:0; overflow:hidden; margin-bottom:18px}
+  .activity.hide{display:none}
+  .activity .head{padding:16px 22px; display:flex; align-items:center; gap:12px; color:#fff; flex-wrap:wrap}
+  .activity .head .tier{font-family:var(--display); font-weight:700; font-size:1.15rem; letter-spacing:.2px}
+  .activity .head .tag{margin-left:auto; font-family:var(--mono); font-size:.72rem; letter-spacing:.1em;
+    text-transform:uppercase; background:rgba(255,255,255,.22); padding:5px 10px; border-radius:999px}
+  .activity[data-tier="green"] .head{background:var(--green)}
+  .activity[data-tier="amber"] .head{background:var(--amber)}
+  .activity[data-tier="red"] .head{background:var(--red)}
+  .activity .body{padding:20px 22px}
+  .activity[data-tier="green"] .body{background:var(--green-bg)}
+  .activity[data-tier="amber"] .body{background:var(--amber-bg)}
+  .activity[data-tier="red"] .body{background:var(--red-bg)}
+  .activity .scenario{background:#fff}
+  .activity[data-tier="amber"] .answer h5{color:var(--amber)}
+  .activity[data-tier="red"] .answer h5{color:var(--red)}
+  .muted{color:var(--ink-soft)}
+
+  footer{padding:34px 0 60px; color:var(--ink-faint); font-size:.85rem; text-align:center}
+
+  :focus-visible{outline:3px solid var(--accent); outline-offset:2px; border-radius:6px}
+
+  /* ===== Anatomy of a pictograph ===== */
+  .anat-graph{background:#fff; border:1.5px solid var(--grid-strong); border-radius:14px; padding:18px 20px; margin:14px 0}
+  .anat-title{font-family:var(--display); font-weight:700; font-size:1.15rem; color:var(--ink); display:inline-flex; align-items:center; gap:9px}
+  .anat-rows{display:grid; grid-template-columns:auto 1fr; gap:10px 16px; align-items:center; margin:14px 0 2px}
+  .anat-colmark{display:flex; justify-content:flex-start; align-items:flex-end; padding-bottom:2px}
+  .anat-cat{font-family:var(--display); font-weight:700; color:var(--ink); display:inline-flex; align-items:center; gap:9px}
+  .anat-icons{display:flex; gap:7px; align-items:center; flex-wrap:wrap}
+  .anat-key{margin-top:12px; padding-top:12px; border-top:1px dashed var(--grid-strong);
+    display:inline-flex; align-items:center; gap:9px; color:var(--ink-soft); font-family:var(--display); font-weight:700}
+  .anat-badge{width:23px; height:23px; border-radius:50%; color:#fff; font-family:var(--display); font-weight:700;
+    font-size:.82rem; display:inline-grid; place-items:center; flex:0 0 auto; box-shadow:0 1px 3px rgba(24,35,63,.2)}
+  .anat-badge.n1{background:var(--c-blue)} .anat-badge.n2{background:var(--c-green)}
+  .anat-badge.n3{background:var(--c-orange)} .anat-badge.n4{background:var(--mode)}
+  .anat-legend{display:grid; grid-template-columns:1fr 1fr; gap:11px 18px; margin-top:16px}
+  @media(max-width:560px){.anat-legend{grid-template-columns:1fr}}
+  .anat-leg{display:flex; gap:10px; align-items:flex-start; font-size:.95rem; color:var(--ink)}
+  .anat-leg b{font-family:var(--display)}
+
+  /* ===== The key teaching section ===== */
+  .keycard{background:linear-gradient(180deg,#fff, #FFF7FB); border:1.5px solid var(--grid-strong)}
+  .keycard .buildhead{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px}
+  .keycard .buildhead .spark{font-size:1.4rem; animation:wiggle 2.4s ease-in-out infinite}
+  .keyvis{display:flex; align-items:center; justify-content:center; gap:20px; flex-wrap:wrap;
+    background:var(--accent-soft); border:1.5px solid var(--accent); border-radius:14px; padding:18px 20px; margin:14px 0}
+  .keyvis .kv-one, .keyvis .kv-many{display:flex; flex-direction:column; align-items:center; gap:8px}
+  .keyvis .kv-eq{font-family:var(--display); font-weight:700; font-size:1.05rem; color:var(--accent); text-transform:uppercase; letter-spacing:.05em}
+  .keyvis .kv-cap{font-family:var(--display); font-weight:700; font-size:.85rem; color:var(--ink-soft)}
+  .keyvis .kv-dots{display:grid; grid-template-columns:repeat(5,1fr); gap:5px}
+  .keyvis .kv-dot{width:13px; height:13px; border-radius:50%; background:#E3695F; border:1.5px solid #b84e44}
+  .keycount{display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;
+    background:#fff; border:1.5px solid var(--grid-strong); border-radius:12px; padding:14px 16px; margin:14px 0 4px}
+  .keycount .kc-btn{width:42px; height:42px; border-radius:11px; border:1.5px solid var(--accent); background:var(--accent);
+    color:#fff; font-family:var(--display); font-weight:700; font-size:1.5rem; cursor:pointer; display:grid; place-items:center; line-height:1; flex:0 0 auto}
+  .keycount .kc-btn.minus{background:#fff; color:var(--accent)}
+  .keycount .kc-btn:disabled{opacity:.35; cursor:default}
+  .keycount .kc-pics{display:flex; gap:7px; align-items:center; flex-wrap:wrap; justify-content:center; flex:1 1 150px; min-height:34px}
+  .keycount .kc-eq{flex:1 1 100%; text-align:center; font-family:var(--display); font-weight:700; font-size:1.1rem; color:var(--ink); margin:4px 0 0}
+  .keycount .kc-eq b{color:var(--mode); font-size:1.35rem}
+
+  /* ===== Build-a-pictograph (sliders) ===== */
+  .builder{background:linear-gradient(180deg,#fff, var(--accent-soft)); border:1.5px solid var(--grid-strong)}
+  .builder .buildhead{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px}
+  .builder .buildhead .spark{font-size:1.4rem; animation:wiggle 2.4s ease-in-out infinite}
+  @keyframes wiggle{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+  .keybar{display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:#fff; border:1.5px solid var(--accent);
+    border-radius:12px; padding:12px 16px; margin:12px 0 18px}
+  .keybar .klabel{font-family:var(--display); font-weight:700; color:var(--accent); display:flex; align-items:center; gap:8px}
+  .keybar .kval{font-family:var(--mono); font-weight:700; background:var(--accent); color:#fff; border-radius:999px;
+    padding:3px 12px; font-size:.9rem}
+  .slrow{display:grid; grid-template-columns:74px 150px 1fr auto; align-items:center; gap:14px;
+    background:#fff; border:1.5px solid var(--grid-strong); border-radius:12px; padding:10px 14px; margin-bottom:10px}
+  @media(max-width:640px){.slrow{grid-template-columns:60px 1fr; grid-template-areas:"lab val" "sld sld" "ico ico"; gap:8px 12px}
+    .slrow .s-lab{grid-area:lab}.slrow .s-val{grid-area:val;justify-self:end}.slrow input[type=range]{grid-area:sld}.slrow .s-ico{grid-area:ico}}
+  .slrow .s-lab{font-family:var(--display); font-weight:700; font-size:1rem; color:var(--ink)}
+  .slrow .s-ico{display:flex; gap:6px; align-items:center; flex-wrap:wrap; min-height:30px}
+  .slrow .s-val{font-family:var(--mono); font-weight:700; font-size:.95rem; color:var(--accent); white-space:nowrap; text-align:right}
+  .slrow .s-val b{color:var(--ink)}
+  .buildtotal{font-family:var(--display); font-weight:700; font-size:1.15rem; margin-top:6px; color:var(--ink)}
+  .buildtotal .big{color:var(--mode); font-size:1.4rem}
+
+  input[type=range].slider{-webkit-appearance:none; appearance:none; height:8px; border-radius:999px; width:100%;
+    background:linear-gradient(90deg,var(--accent) var(--fill,40%), var(--grid) var(--fill,40%)); cursor:pointer; margin:0}
+  input[type=range].slider::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:24px; height:24px;
+    border-radius:50%; background:#fff; border:3px solid var(--accent); box-shadow:0 2px 6px rgba(24,35,63,.25); cursor:grab; transition:transform .1s}
+  input[type=range].slider::-webkit-slider-thumb:active{cursor:grabbing; transform:scale(1.15)}
+  input[type=range].slider::-moz-range-thumb{width:24px; height:24px; border-radius:50%; background:#fff;
+    border:3px solid var(--accent); box-shadow:0 2px 6px rgba(24,35,63,.25); cursor:grab}
+  input[type=range].slider.key{background:linear-gradient(90deg,var(--mode) var(--fill,40%), var(--grid) var(--fill,40%))}
+  input[type=range].slider.key::-webkit-slider-thumb{border-color:var(--mode)}
+  input[type=range].slider.key::-moz-range-thumb{border-color:var(--mode)}
+</style>
+</head>
+<body class="teacher">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="ic-apple" viewBox="0 0 512 512">
+      <path d="M256 170 C236 142 206 130 177 134 C106 142 62 202 60 279 C58 360 105 439 177 455 C212 463 236 451 256 443 C276 451 300 463 335 455 C407 439 454 360 452 279 C450 202 406 142 335 134 C306 130 276 142 256 170 Z" fill="#E3695F" stroke="#111" stroke-width="16" stroke-linejoin="round"/>
+      <path d="M248 150 C206 104 150 100 132 124 C121 139 139 160 188 159 C223 158 243 154 248 150 Z" fill="#79C46F" stroke="#111" stroke-width="14" stroke-linejoin="round"/>
+      <path d="M258 158 C262 116 286 86 328 82 C349 80 356 96 344 106 C328 118 296 128 276 158 Z" fill="#9E7F5E" stroke="#111" stroke-width="14" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="ic-notepad" viewBox="0 0 24 24">
+      <rect x="4" y="4" width="16" height="18" rx="2.5" fill="currentColor"/>
+      <path d="M7.5 9.5h9M7.5 13h9M7.5 16.5h6" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M8 2v4M12 2v4M16 2v4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="ic-pencil" viewBox="0 0 24 24">
+      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor"/>
+      <path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor" opacity=".75"/>
+    </symbol>
+    <symbol id="ic-star" viewBox="0 0 24 24">
+      <path d="M12 2l2.75 6.4 6.95.55-5.3 4.55 1.65 6.8L12 17.3 5.95 20.85l1.65-6.8-5.3-4.55 6.95-.55z" fill="currentColor"/>
+    </symbol>
+    <symbol id="ic-book" viewBox="0 0 24 24">
+      <path d="M6 3h12a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V4a1 1 0 0 1 1-1z" fill="currentColor"/>
+      <path d="M9 3v17" stroke="#fff" stroke-width="1.4"/>
+      <path d="M12 7.5h4M12 10.5h4" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="bar">
+  <div class="bar-inner">
+    <div class="brand">
+      <svg class="glyph" viewBox="0 0 24 19" aria-hidden="true">
+        <g fill="var(--c-orange)"><rect x="0" y="0" width="4.5" height="4.5" rx="1.2"/><rect x="6.5" y="0" width="4.5" height="4.5" rx="1.2"/><rect x="13" y="0" width="4.5" height="4.5" rx="1.2"/></g>
+        <g fill="var(--c-green)"><rect x="0" y="7.25" width="4.5" height="4.5" rx="1.2"/><rect x="6.5" y="7.25" width="4.5" height="4.5" rx="1.2"/><rect x="13" y="7.25" width="4.5" height="4.5" rx="1.2"/><rect x="19.5" y="7.25" width="4.5" height="4.5" rx="1.2"/></g>
+        <g fill="var(--c-magenta)"><rect x="0" y="14.5" width="4.5" height="4.5" rx="1.2"/><rect x="6.5" y="14.5" width="4.5" height="4.5" rx="1.2"/></g>
+      </svg>
+      4.1 Interpreting Pictographs</div>
+    <nav class="jump">
+      <a href="#learn">Pictograph</a>
+      <a href="#practice">Practice</a>
+      <a href="#exit">Reflection</a>
+      <a href="#exitticket">Exit ticket</a>
+    </nav>
+    <button class="tview" id="tview" aria-pressed="true">
+      <span class="dot"></span><span id="tviewlabel">Teacher notes: on</span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="wrap hero">
+  <div class="eyebrow-row">
+    <div class="eyebrow">Learning Intention</div>
+    <a class="curric-link" href="https://f10.vcaa.vic.edu.au/learning-areas/mathematics/curriculum?level=4#VC2M4ST01" target="_blank" rel="noopener">VC2M4ST01 · Victorian Curriculum 2.0 ↗</a>
+  </div>
+  <h1>4.1 <span class="green">Interpreting</span> <span class="pink">Pictographs</span></h1>
+  <p class="lead">We are revising our knowledge on Pictographs and Frequency Tables.</p>
+
+  <div class="card">
+    <div class="part-tag" style="margin-bottom:12px">Success criteria</div>
+    <div class="reflect" id="criteriaList"></div>
+  </div>
+</div>
+
+<!-- PICTOGRAPH -->
+<section id="learn" class="wrap">
+  <div class="part-tag">Big idea 1</div>
+  <h2>What is a pictograph?</h2>
+  <div class="card define">
+    A <b>pictograph</b> is a way of showing data using images. Each image stands for a certain number of things.
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">The parts of a pictograph</h3>
+    <p style="margin:0 0 4px">Every pictograph is built from the same four parts. Here is one to look at — match each number to the list below.</p>
+
+    <div class="anat-graph">
+      <div class="anat-title"><span class="anat-badge n1">1</span>Stickers Collected</div>
+      <div class="anat-rows">
+        <span class="anat-colmark"><span class="anat-badge n2">2</span></span>
+        <span class="anat-colmark"><span class="anat-badge n3">3</span></span>
+        <span class="anat-cat">Amy</span>
+        <span class="anat-icons" id="anatAmy"></span>
+        <span class="anat-cat">Ben</span>
+        <span class="anat-icons" id="anatBen"></span>
+        <span class="anat-cat">Cara</span>
+        <span class="anat-icons" id="anatCara"></span>
+      </div>
+      <div class="anat-key"><span class="anat-badge n4">4</span><span id="anatKey"></span></div>
+    </div>
+
+    <div class="anat-legend">
+      <div class="anat-leg"><span class="anat-badge n1">1</span><div><b>Title</b> — tells you what the pictograph is about.</div></div>
+      <div class="anat-leg"><span class="anat-badge n2">2</span><div><b>Labels</b> — the categories or groups (here, each person's name).</div></div>
+      <div class="anat-leg"><span class="anat-badge n3">3</span><div><b>Symbols</b> — the pictures that stand for the data.</div></div>
+      <div class="anat-leg"><span class="anat-badge n4">4</span><div><b>Key</b> — tells you how many things one picture is worth.</div></div>
+    </div>
+  </div>
+
+  <div class="card keycard" style="margin-top:18px">
+    <div class="buildhead"><span class="spark">🔑</span><h3 style="margin:0">The key — one picture can mean many!</h3></div>
+    <p style="margin:0 0 4px">In a pictograph, one picture does <b>not</b> always mean just <b>one</b> thing. A little note called the <span class="keyword">key</span> tells you how many things <b>one picture</b> is worth.</p>
+
+    <div class="keyvis">
+      <div class="kv-one">
+        <svg width="44" height="44" viewBox="0 0 512 512" style="color:#E3695F" aria-hidden="true"><use href="#ic-apple"></use></svg>
+        <span class="kv-cap">1 picture</span>
+      </div>
+      <div class="kv-eq">really means</div>
+      <div class="kv-many">
+        <div class="kv-dots" id="keyDots" aria-hidden="true"></div>
+        <span class="kv-cap">10 real apples</span>
+      </div>
+    </div>
+
+    <p style="margin:0 0 4px">So to find the total you <b>don't count the pictures</b> — you <b>multiply</b> the number of pictures by the key. Try it: add or take away apple pictures and watch the total change.</p>
+
+    <div class="keycount">
+      <button class="kc-btn minus" id="kcMinus" type="button" aria-label="Take away a picture">−</button>
+      <span class="kc-pics" id="kcPics"></span>
+      <button class="kc-btn" id="kcPlus" type="button" aria-label="Add a picture">+</button>
+      <p class="kc-eq" id="kcEq"></p>
+    </div>
+
+    <p style="margin:6px 0 0">And a <b>half picture</b> is worth <b>half the key</b>. If one apple = 10, then half an apple = <b>5</b>.</p>
+    <div class="teacher-note"><span class="pill">Teacher</span><b>Name the misconception.</b> Many students count the <i>pictures</i> (e.g. "3 apples") instead of using the key ("3 × 10 = 30"). Say the key out loud together before every question, and point to it each time the graph changes.</div>
+  </div>
+
+  <div class="two example-pair" style="margin-top:18px">
+    <div class="card">
+      <h3>Example: Apples Sold</h3>
+      <p class="lead" style="margin:0 0 6px">Here is a pictograph of how many apples were sold at the local shop over 4 months:</p>
+      <div id="picApples"></div>
+      <p class="hintline" style="font-style:normal; color:var(--ink-soft); margin-top:14px">Note that each picture of an apple means <b>10 apples</b> (and the half-apple picture means <b>5 apples</b>).</p>
+    </div>
+
+    <div class="card" style="margin-top:0">
+      <div class="scenario" style="background:#fff">
+        <h4>Your turn — type each answer, then press Check</h4>
+        <p class="hintline" style="margin-top:0">Read the pictograph shown. Count the whole apples (×10), then add any half-apple (5).</p>
+        <div id="appleQuiz"></div>
+      </div>
+      <div class="teacher-note"><span class="pill">Teacher</span><b>Point to the key first.</b> Before counting pictures, make sure students reread the legend — the half-apple picture is the most common place students make an error. Get them to tap each month above to self-check.</div>
+    </div>
+  </div>
+
+  <div class="card builder">
+    <div class="buildhead">
+      <span class="spark">🍏</span>
+      <h3 style="margin:0">Build your own pictograph — drag the sliders!</h3>
+    </div>
+    <p class="hintline" style="font-style:normal; color:var(--ink-soft); margin-top:0">
+      Slide each fruit stall up and down and watch the apples appear. Then drag the <b style="color:var(--mode)">key slider</b> to change what one apple is worth — see how the totals change even though the pictures stay the same!</p>
+
+    <div class="keybar">
+      <span class="klabel">🔑 One <svg width="20" height="20" viewBox="0 0 512 512" style="color:#E3695F;vertical-align:-4px"><use href="#ic-apple"></use></svg> apple =</span>
+      <input type="range" class="slider key" id="keySlider" min="2" max="10" step="2" value="10" aria-label="Value of one apple">
+      <span class="kval" id="keyVal">10 apples</span>
+    </div>
+
+    <div id="buildRows"></div>
+    <p class="buildtotal">Total apples sold: <span class="big" id="buildTotal">0</span></p>
+    <div class="teacher-note"><span class="pill">Teacher</span><b>Make the key matter.</b> Set every stall, then change only the key slider. Ask: "the pictures didn't move — why did the total change?" This is the core idea of a scaled pictograph.</div>
+  </div>
+
+</section>
+
+<!-- CONTEXT -->
+<section id="context" class="wrap">
+  <div class="part-tag">Putting knowledge in context</div>
+  <h2>Where do we see this in real life?</h2>
+  <div class="card">
+    <p class="lead" style="margin:0">Pictographs and frequency tables aren't just classroom exercises. Shops use frequency tables to plan staff rosters, and news reports use pictographs to make big numbers easy to understand at a glance. Whenever someone needs to turn a pile of data into a quick, clear picture, one of these tools is usually behind it.</p>
+  </div>
+</section>
+
+<!-- DIFFERENTIATED PRACTICE -->
+<section id="practice" class="wrap">
+  <div class="part-tag">Differentiated practice</div>
+  <h2>Must Complete Work</h2>
+
+  <div class="filterbar">
+    <span class="lbl">Show tier:</span>
+    <button class="chip on" data-f="all"><span class="lt"></span>All</button>
+    <button class="chip" data-f="green"><span class="lt"></span>Green</button>
+    <button class="chip" data-f="amber"><span class="lt"></span>Amber</button>
+    <button class="chip" data-f="red"><span class="lt"></span>Red</button>
+  </div>
+
+  <!-- GREEN -->
+  <div class="activity" data-tier="green">
+    <div class="head"><span class="tier">🟢 Green</span> Understanding &amp; fluency <span class="tag">Pizza pictograph · quarters</span></div>
+    <div class="body">
+      <div class="scenario">
+        <h4>Favourite Pizza Flavour</h4>
+        <p class="muted" style="margin:0 0 10px">Answer questions 1 to 4 based on the pictograph below.</p>
+        <div id="picPizza"></div>
+      </div>
+      <div class="scenario">
+        <h4>Interpret the pictograph — type each answer, then press Check</h4>
+        <div id="pizzaQuiz"></div>
+      </div>
+      <div class="btnrow"><button class="btn sm reveal" data-target="ansPizza">Reveal answers</button></div>
+      <div class="answer" id="ansPizza"><div class="inner">
+        <h5>✓ Answers</h5>
+        <ul>
+          <li><b>Margherita:</b> 2 whole pizzas (8) + three-quarters of a pizza (3) = <b>11 children</b>.</li>
+          <li><b>Most popular:</b> Cheese — it has the most pizza pictures (15 children).</li>
+          <li><b>Pepperoni vs BBQ Chicken:</b> 9 − 5 = <b>4 more children</b>.</li>
+          <li><b>Altogether:</b> 15 + 9 + 11 + 5 = <b>40 children</b>.</li>
+        </ul>
+      </div></div>
+      <div class="teacher-note"><span class="pill">Teacher</span><b>Watch the fractions.</b> One whole pizza = 4 children, so a quarter = 1 child and three-quarters = 3 children. Get students to say the part-pizza value out loud before adding.</div>
+    </div>
+  </div>
+
+  <!-- AMBER -->
+  <div class="activity" data-tier="amber">
+    <div class="head"><span class="tier">🟠 Amber</span> Reasoning <span class="tag">Frequency table</span></div>
+    <div class="body">
+      <div class="scenario">
+        <div class="tablescroll">
+          <table class="freq" id="shopTable">
+            <caption>Customers Visiting the Shop Each Weekday</caption>
+            <thead><tr><th>Day</th><th>Number of Customers</th><th>Frequency</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="scenario">
+        <h4>Interpret the frequency table — type each answer, then press Check</h4>
+        <div id="freqQuiz"></div>
+      </div>
+      <div class="btnrow"><button class="btn sm reveal" data-target="ansTable">Reveal answers</button></div>
+      <div class="answer" id="ansTable"><div class="inner">
+        <h5>✓ Answers</h5>
+        <ul>
+          <li><b>Monday:</b> <b>18 customers</b>.</li>
+          <li><b>Busiest day:</b> Saturday, with the highest frequency (27 customers).</li>
+          <li><b>Quietest day:</b> Tuesday, with the lowest frequency (13 customers).</li>
+          <li><b>Part-time employee:</b> Saturday (27), Sunday (26) and Friday (21) — these are the three busiest days, so the shop needs the most extra help then.</li>
+        </ul>
+      </div></div>
+      <div class="teacher-note"><span class="pill">Teacher</span><b>Push the "why".</b> Question 4 has no single right list of days without a reason — accept any answer that correctly ranks the days by customer count and explains that more customers means more help is needed.</div>
+    </div>
+  </div>
+
+  <!-- RED -->
+  <div class="activity" data-tier="red">
+    <div class="head"><span class="tier">🔴 Red</span> Problem solving <span class="tag">Two keys · two scales</span></div>
+    <div class="body">
+      <p class="muted" style="margin:0 0 12px">Count how many notepads and pencils were sold by each shop, then solve the problems. <b>Watch out — the two graphs use different keys.</b></p>
+      <div class="two">
+        <div class="card">
+          <h4 style="margin-top:0">Number of Notepads</h4>
+          <div id="picNotepads"></div>
+        </div>
+        <div class="card">
+          <h4 style="margin-top:0">Number of Pencils</h4>
+          <div id="picPencils"></div>
+        </div>
+      </div>
+      <div class="scenario" style="margin-top:14px">
+        <h4>Solve the problems — type each answer, then press Check</h4>
+        <div id="notepadQuiz"></div>
+      </div>
+      <div class="btnrow"><button class="btn sm reveal" data-target="ansNote">Reveal answers</button></div>
+      <div class="answer" id="ansNote"><div class="inner">
+        <h5>✓ Answers</h5>
+        <ul>
+          <li><b>Shop B notepads:</b> 2 whole notepads = <b>100 notepads</b>.</li>
+          <li><b>125 notepads:</b> Shop D — 2 whole (100) + 1 half (25) = 125.</li>
+          <li><b>Shop C vs Shop A:</b> 225 − 150 = <b>75 more notepads</b>.</li>
+          <li><b>Fewest pencils:</b> Shop A and Shop D — both sold <b>50 pencils</b>.</li>
+          <li><b>Total pencils:</b> 50 + 100 + 60 + 50 = <b>260 pencils</b>.</li>
+          <li><b>Same number of each:</b> Shop B — 100 notepads and 100 pencils.</li>
+        </ul>
+      </div></div>
+      <div class="teacher-note"><span class="pill">Teacher</span><b>Two keys, two scales.</b> The notepad key (1 picture = 50) is different from the pencil key (1 picture = 20). A common slip is using one key for both graphs — remind students to check the key each time.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROS & CONS REFLECTION -->
+<section class="wrap">
+  <div class="card">
+    <div class="scenario">
+      <h4>Reflection: what are the pros and cons of using a pictograph?</h4>
+      <div class="two" style="margin-top:10px">
+        <div>
+          <label for="prosBox" style="font-weight:700; display:block; margin-bottom:6px; color:var(--ok)">Pros</label>
+          <textarea id="prosBox" class="pc-box" placeholder="e.g. easy to read at a glance, visually engaging…"></textarea>
+        </div>
+        <div>
+          <label for="consBox" style="font-weight:700; display:block; margin-bottom:6px; color:var(--red)">Cons</label>
+          <textarea id="consBox" class="pc-box" placeholder="e.g. hard to show exact values, part-pictures can be confusing…"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REFLECTION + EXIT TICKET -->
+<section id="exit" class="wrap">
+  <div class="part-tag">Reflection · how did you go?</div>
+  <h2>Check yourself</h2>
+  <div class="card">
+    <div class="reflect" id="reflectList"></div>
+    <div class="talk"><b>Talk to your partner:</b> which is easier to read at a glance — a pictograph or a frequency table? Explain your thinking using the words “key” and “value”.</div>
+  </div>
+</section>
+
+<!-- EXIT TICKET -->
+<section id="exitticket" class="wrap">
+  <div class="part-tag">Exit ticket</div>
+  <h2>Your exit ticket</h2>
+  <div class="card">
+    <p class="lead" style="margin:0 0 6px">Once you have finished and marked your tasks, click the link below to complete your exit ticket on Mathspace.</p>
+    <div class="btnrow"><a class="btn" href="https://mathspace.co/student/tasks/SubtopicCustomTask-2075588/" target="_blank" rel="noopener">Open exit ticket on Mathspace ↗</a></div>
+  </div>
+</section>
+
+<footer class="wrap">
+  4.1 Interpreting Pictographs · Revising pictographs &amp; frequency tables
+  <div class="curric">Aligned to Victorian Curriculum 2.0 · Statistics</div>
+  <div style="margin-top:12px">
+    <a class="curric-link" href="https://f10.vcaa.vic.edu.au/learning-areas/mathematics/curriculum?level=4#VC2M4ST01" target="_blank" rel="noopener">VC2M4ST01 — acquire, represent &amp; interpret data ↗</a>
+    <a class="curric-link" href="https://f10.vcaa.vic.edu.au/learning-areas/mathematics/curriculum?level=4" target="_blank" rel="noopener">All Level 4 Mathematics ↗</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const PALETTE = ['var(--c-orange)','var(--c-green)','var(--c-magenta)','var(--c-blue)','var(--c-purple)','var(--c-teal)','var(--c-red)'];
+
+  /* ---- fraction-clip icon (apple / notepad / pencil) ---- */
+  function clipIcon(symbolId, vb, w, h, frac, color){
+    const span=document.createElement('span');
+    span.style.display='inline-block';
+    span.style.height=h+'px';
+    span.style.width=(w*frac)+'px';
+    span.style.overflow='hidden';
+    span.style.verticalAlign='middle';
+    span.innerHTML='<svg width="'+w+'" height="'+h+'" viewBox="'+vb+'" style="color:'+color+';display:block"><use href="#'+symbolId+'"></use></svg>';
+    return span;
+  }
+
+  /* ---- fractional pizza (pie sector) ---- */
+  function pizzaIcon(frac, color){
+    const size=28, c=size/2, r=12;
+    const span=document.createElement('span');
+    span.style.display='inline-block'; span.style.lineHeight='0'; span.style.verticalAlign='middle';
+    let inner;
+    if(frac>=1){
+      inner='<circle cx="'+c+'" cy="'+c+'" r="'+r+'" fill="'+color+'" stroke="rgba(24,35,63,.28)" stroke-width="1.4"/>'+
+            '<circle cx="'+(c-3)+'" cy="'+(c-2)+'" r="1.6" fill="rgba(255,255,255,.75)"/>'+
+            '<circle cx="'+(c+3)+'" cy="'+(c+3)+'" r="1.6" fill="rgba(255,255,255,.75)"/>'+
+            '<circle cx="'+(c+4)+'" cy="'+(c-3)+'" r="1.4" fill="rgba(255,255,255,.75)"/>';
+    } else {
+      const a=frac*2*Math.PI;
+      const x=c+r*Math.sin(a), y=c-r*Math.cos(a);
+      const large=frac>0.5?1:0;
+      inner='<path d="M'+c+' '+c+' L'+c+' '+(c-r)+' A'+r+' '+r+' 0 '+large+' 1 '+x.toFixed(2)+' '+y.toFixed(2)+' Z" fill="'+color+'" stroke="rgba(24,35,63,.28)" stroke-width="1.4" stroke-linejoin="round"/>';
+    }
+    span.innerHTML='<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="display:block">'+inner+'</svg>';
+    return span;
+  }
+
+  const ICONS = {
+    apple:  {kind:'clip', sym:'ic-apple',   vb:'0 0 512 512', w:26, h:26},
+    notepad:{kind:'clip', sym:'ic-notepad', vb:'0 0 24 24', w:24, h:24},
+    pencil: {kind:'clip', sym:'ic-pencil',  vb:'0 0 24 24', w:24, h:24},
+    star:   {kind:'clip', sym:'ic-star',    vb:'0 0 24 24', w:24, h:24},
+    book:   {kind:'clip', sym:'ic-book',    vb:'0 0 24 24', w:22, h:24},
+    pizza:  {kind:'pizza'}
+  };
+  function makeIcon(type, frac, color){
+    const cfg=ICONS[type];
+    if(cfg.kind==='pizza') return pizzaIcon(frac,color);
+    return clipIcon(cfg.sym,cfg.vb,cfg.w,cfg.h,frac,color);
+  }
+
+  /* ---- render a pictograph ---- */
+  function renderPictograph(mountId, opts){
+    const mount=document.getElementById(mountId);
+    const grid=document.createElement('div'); grid.className='pictograph';
+    opts.rows.forEach((r,i)=>{
+      const lab=document.createElement('div'); lab.className='row-label'; lab.textContent=r.label;
+      const icons=document.createElement('div'); icons.className='row-icons';
+      const color=opts.colorByIndex ? PALETTE[i%PALETTE.length] : (r.color||PALETTE[i%PALETTE.length]);
+      const full=Math.floor(r.value/opts.unit);
+      const frac=(r.value-full*opts.unit)/opts.unit;
+      for(let k=0;k<full;k++) icons.appendChild(makeIcon(opts.icon,1,color));
+      if(frac>0.0001) icons.appendChild(makeIcon(opts.icon,frac,color));
+      icons.setAttribute('aria-label', r.label+': '+r.value+' '+(opts.thing||''));
+      grid.appendChild(lab); grid.appendChild(icons);
+    });
+    mount.appendChild(grid);
+
+    const legend=document.createElement('div'); legend.className='picto-legend';
+    opts.legend.forEach(L=>{
+      const item=document.createElement('span'); item.className='legend-item';
+      item.appendChild(makeIcon(opts.icon,L.frac,'var(--ink-soft)'));
+      const t=document.createElement('span'); t.textContent='= '+L.text; item.appendChild(t);
+      legend.appendChild(item);
+    });
+    mount.appendChild(legend);
+  }
+
+  /* ---- anatomy of a pictograph (labelled example) ---- */
+  (function(){
+    const STAR='#E6A817';
+    function fill(id,n){ const el=document.getElementById(id); if(!el) return; for(let i=0;i<n;i++) el.appendChild(makeIcon('star',1,STAR)); }
+    fill('anatAmy',3); fill('anatBen',2); fill('anatCara',4);
+    const key=document.getElementById('anatKey');
+    if(key){ key.appendChild(makeIcon('star',1,STAR)); const t=document.createElement('span'); t.textContent='= 2 stickers'; key.appendChild(t); }
+  })();
+
+  /* ---- the key: visual dots + interactive counter ---- */
+  (function(){
+    const APPLE='#E3695F', KEY=10, MAX=6;
+    const dots=document.getElementById('keyDots');
+    if(dots){ for(let i=0;i<KEY;i++){ const d=document.createElement('span'); d.className='kv-dot'; dots.appendChild(d); } }
+    const pics=document.getElementById('kcPics'), eq=document.getElementById('kcEq'),
+          minus=document.getElementById('kcMinus'), plus=document.getElementById('kcPlus');
+    if(!pics) return;
+    let n=3;
+    function render(){
+      pics.innerHTML='';
+      if(n===0){ const z=document.createElement('span'); z.style.color='var(--ink-faint)'; z.style.fontWeight='600'; z.textContent='no pictures'; pics.appendChild(z); }
+      for(let i=0;i<n;i++) pics.appendChild(makeIcon('apple',1,APPLE));
+      eq.innerHTML=n+' picture'+(n===1?'':'s')+' × '+KEY+' = <b>'+(n*KEY)+' apples</b>';
+      minus.disabled=n<=0; plus.disabled=n>=MAX;
+    }
+    minus.addEventListener('click',()=>{ if(n>0){ n--; render(); } });
+    plus.addEventListener('click',()=>{ if(n<MAX){ n++; render(); } });
+    render();
+  })();
+
+  /* ---- interactive Apples example ---- */
+  (function(){
+    const APPLE='#E3695F';
+    const rows=[
+      {label:'Jan', value:10},
+      {label:'Feb', value:40},
+      {label:'Mar', value:25},
+      {label:'Apr', value:20}
+    ];
+    const mount=document.getElementById('picApples');
+    const hint=document.createElement('div'); hint.className='ipicto-hint';
+    hint.innerHTML='<span>👆</span> Tap a month to check how many apples were sold';
+    mount.appendChild(hint);
+
+    rows.forEach(r=>{
+      const row=document.createElement('button'); row.type='button'; row.className='ipicto-row'; row.setAttribute('aria-pressed','false');
+      const lab=document.createElement('span'); lab.className='ipicto-label'; lab.textContent=r.label;
+      const icons=document.createElement('span'); icons.className='ipicto-icons';
+      const full=Math.floor(r.value/10), frac=(r.value-full*10)/10;
+      for(let k=0;k<full;k++) icons.appendChild(makeIcon('apple',1,APPLE));
+      if(frac>0.0001) icons.appendChild(makeIcon('apple',frac,APPLE));
+      const right=document.createElement('span');
+      const tap=document.createElement('span'); tap.className='ipicto-tapmark'; tap.textContent='tap to check';
+      const badge=document.createElement('span'); badge.className='ipicto-badge'; badge.textContent=r.value+' apples';
+      right.appendChild(tap); right.appendChild(badge);
+      row.appendChild(lab); row.appendChild(icons); row.appendChild(right);
+      row.addEventListener('click',()=>{
+        const on=row.classList.toggle('on'); row.setAttribute('aria-pressed',String(on));
+        if(on){ icons.style.animation='none'; void icons.offsetWidth; icons.style.animation='applePop .45s ease'; }
+      });
+      mount.appendChild(row);
+    });
+
+    const legend=document.createElement('div'); legend.className='picto-legend';
+    [[1,'10 apples'],[0.5,'5 apples']].forEach(L=>{
+      const item=document.createElement('span'); item.className='legend-item';
+      item.appendChild(makeIcon('apple',L[0],APPLE));
+      const t=document.createElement('span'); t.textContent='= '+L[1]; item.appendChild(t);
+      legend.appendChild(item);
+    });
+    mount.appendChild(legend);
+
+    /* interactive check quiz */
+    const quiz=[
+      {q:'How many apples were sold in January?', a:10, work:'1 whole apple × 10 = 10.'},
+      {q:'How many apples were sold in February?', a:40, work:'4 whole apples × 10 = 40.'},
+      {q:'How many apples were sold in March?', a:25, work:'2 whole apples (20) + 1 half-apple (5) = 25.'}
+    ];
+    const qmount=document.getElementById('appleQuiz');
+    const state=quiz.map(()=>false);
+    const overall=document.createElement('div'); overall.className='qc-overall';
+    function updateOverall(){
+      if(state.every(Boolean)){ overall.className='qc-overall win'; overall.textContent='🎉 All correct! You can read a pictograph.'; }
+      else { overall.className='qc-overall'; overall.textContent=''; }
+    }
+    const refs=[];
+    quiz.forEach((item,i)=>{
+      const row=document.createElement('div'); row.className='qcheck';
+      const num=document.createElement('span'); num.className='qc-num'; num.textContent=(i+1);
+      const txt=document.createElement('span'); txt.className='qc-text'; txt.textContent=item.q;
+      const input=document.createElement('input'); input.type='number'; input.min='0'; input.placeholder='?'; input.setAttribute('aria-label',item.q);
+      const btn=document.createElement('button'); btn.className='btn sm'; btn.textContent='Check';
+      const fb=document.createElement('span'); fb.className='qc-fb';
+      function check(){
+        if(input.value.trim()==='') return;
+        const n=Number(input.value);
+        if(n===item.a){ row.classList.remove('wrong'); row.classList.add('correct'); fb.textContent='✓ Correct! '+item.work; state[i]=true; }
+        else { row.classList.remove('correct'); row.classList.add('wrong');
+          fb.textContent = n<item.a ? 'Too low — count the whole apples (×10), then add any half (5).'
+                                    : 'Too high — a whole apple is 10 and a half is only 5. Recount.';
+          state[i]=false; }
+        updateOverall();
+      }
+      btn.addEventListener('click',check);
+      input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); check(); } });
+      input.addEventListener('input',()=>{ row.classList.remove('correct','wrong'); fb.textContent=''; state[i]=false; updateOverall(); });
+      const ans=document.createElement('div'); ans.className='qc-answer'; ans.appendChild(input); ans.appendChild(btn);
+      row.appendChild(num); row.appendChild(txt); row.appendChild(ans); row.appendChild(fb);
+      qmount.appendChild(row);
+      refs.push({item,input,row,fb});
+    });
+    qmount.appendChild(overall);
+    const ctrl=document.createElement('div'); ctrl.className='btnrow';
+    const showBtn=document.createElement('button'); showBtn.className='btn ghost sm'; showBtn.textContent='Show me';
+    showBtn.addEventListener('click',()=>{
+      refs.forEach((r,i)=>{ r.input.value=r.item.a; r.row.classList.remove('wrong'); r.row.classList.add('correct'); r.fb.textContent='✓ '+r.item.work; state[i]=true; });
+      updateOverall();
+    });
+    ctrl.appendChild(showBtn);
+    qmount.appendChild(ctrl);
+  })();
+
+  renderPictograph('picPizza', {
+    icon:'pizza', unit:4, thing:'children', colorByIndex:true,
+    legend:[{frac:1,text:'4 children'},{frac:0.25,text:'1 child'}],
+    rows:[
+      {label:'Cheese', value:15},
+      {label:'Pepperoni', value:9},
+      {label:'Margherita', value:11},
+      {label:'BBQ Chicken', value:5}
+    ]
+  });
+
+  /* ---- reusable type-in answer quiz (used by all three tiers) ---- */
+  function makeAnswerQuiz(mountId, quiz, winMsg){
+    const qmount=document.getElementById(mountId);
+    if(!qmount) return;
+    /* pull the standalone shop letters (a/b/c/d) out of a written answer */
+    function shopSet(s){ const m=s.toLowerCase().match(/\b([abcd])\b/g)||[]; return [...new Set(m)].sort().join(''); }
+    function correct(item,v){
+      const s=v.trim().toLowerCase();
+      if(item.type==='number') return Number(v)===item.a;
+      if(item.type==='shops')  return shopSet(v)===item.a;
+      return (Array.isArray(item.a)?item.a:[item.a]).some(x=>String(x).toLowerCase()===s); /* text */
+    }
+    const genericWrong={
+      number:'Not quite — recount with the key, then work it out again.',
+      shops:'Not quite — check the graph again (write it like "Shop D").',
+      text:'Not quite — look carefully at the graph.'
+    };
+    /* state: null = not auto-checked (open answers), otherwise true/false */
+    const state=quiz.map(it=>it.type==='open'?null:false);
+    const overall=document.createElement('div'); overall.className='qc-overall';
+    function updateOverall(){
+      const checkable=state.filter(s=>s!==null);
+      if(checkable.length && checkable.every(Boolean)){ overall.className='qc-overall win'; overall.textContent=winMsg||'🎉 All correct! Great pictograph reading.'; }
+      else { overall.className='qc-overall'; overall.textContent=''; }
+    }
+    quiz.forEach((item,i)=>{
+      const row=document.createElement('div'); row.className='qcheck';
+      const num=document.createElement('span'); num.className='qc-num'; num.textContent=(i+1);
+      const txt=document.createElement('span'); txt.className='qc-text'; txt.textContent=item.q;
+      row.appendChild(num); row.appendChild(txt);
+
+      if(item.type==='open'){
+        const ta=document.createElement('textarea'); ta.className='qc-open';
+        ta.placeholder=item.placeholder||'Write your answer and your reason…';
+        ta.setAttribute('aria-label',item.q);
+        row.appendChild(ta);
+        qmount.appendChild(row);
+        return;
+      }
+
+      const input=document.createElement('input');
+      if(item.type==='number'){ input.type='number'; input.min='0'; input.placeholder='?'; }
+      else { input.type='text'; input.className='txt'; input.placeholder=item.type==='shops'?'Shop __':'type…'; }
+      input.setAttribute('aria-label',item.q);
+      const btn=document.createElement('button'); btn.className='btn sm'; btn.textContent='Check';
+      const fb=document.createElement('span'); fb.className='qc-fb';
+      function check(){
+        if(input.value.trim()==='') return;
+        if(correct(item,input.value)){ row.classList.remove('wrong'); row.classList.add('correct'); fb.textContent='✓ Correct! '+(item.work||''); state[i]=true; }
+        else { row.classList.remove('correct'); row.classList.add('wrong'); fb.textContent=item.wrong||genericWrong[item.type]; state[i]=false; }
+        updateOverall();
+      }
+      btn.addEventListener('click',check);
+      input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); check(); } });
+      input.addEventListener('input',()=>{ row.classList.remove('correct','wrong'); fb.textContent=''; state[i]=false; updateOverall(); });
+      const ans=document.createElement('div'); ans.className='qc-answer'; ans.appendChild(input); ans.appendChild(btn);
+      row.appendChild(ans); row.appendChild(fb);
+      qmount.appendChild(row);
+    });
+    qmount.appendChild(overall);
+  }
+
+  /* green tier — pizza */
+  makeAnswerQuiz('pizzaQuiz', [
+    {q:'How many children wanted to have Margherita pizza?', a:11, type:'number',
+     work:'2 whole pizzas (8) + three-quarters (3) = 11.',
+     wrong:'Not quite — count the whole pizzas (×4), then add the part-pizza (a quarter = 1).'},
+    {q:'Which pizza flavour was the most popular?', a:'Cheese', type:'text',
+     work:'Cheese has the most pizza pictures (15 children).',
+     wrong:'Not quite — which flavour has the longest row of pizza pictures?'},
+    {q:'How many more children wanted Pepperoni than BBQ Chicken?', a:4, type:'number',
+     work:'9 − 5 = 4.',
+     wrong:'Not quite — work out Pepperoni (9) and BBQ Chicken (5), then subtract.'},
+    {q:'How many children were having pizza altogether?', a:40, type:'number',
+     work:'15 + 9 + 11 + 5 = 40.',
+     wrong:'Not quite — add all four flavours together: 15 + 9 + 11 + 5.'}
+  ], '🎉 All correct! Great pictograph reading.');
+
+  /* amber tier — frequency table */
+  makeAnswerQuiz('freqQuiz', [
+    {q:'How many customers visited the shop on Monday?', a:18, type:'number',
+     work:'Monday = 18 customers.',
+     wrong:'Not quite — read the frequency for Monday (18).'},
+    {q:'Which weekday is the busiest?', a:['saturday','sat'], type:'text',
+     work:'Saturday — the highest frequency (27).',
+     wrong:'Not quite — which day has the highest frequency?'},
+    {q:'Which day is the quietest day in the week?', a:['tuesday','tue','tues'], type:'text',
+     work:'Tuesday — the lowest frequency (13).',
+     wrong:'Not quite — which day has the lowest frequency?'},
+    {q:'If the shop owner is looking for a new part-time employee, which 3 days should the person be working in the shop? Why?',
+     type:'open', placeholder:'e.g. Saturday, Sunday and Friday — because they are the busiest days…'}
+  ], '🎉 Nice work reading the frequency table!');
+
+  /* red tier — notepads & pencils */
+  makeAnswerQuiz('notepadQuiz', [
+    {q:'How many notepads were sold by Shop B?', a:100, type:'number',
+     work:'2 whole notepads × 50 = 100.',
+     wrong:'Not quite — each notepad picture = 50.'},
+    {q:'Which shop sold a total of 125 notepads?', a:'d', type:'shops',
+     work:'Shop D — 2 whole (100) + 1 half (25) = 125.',
+     wrong:'Not quite — find 2 whole + 1 half notepad (write it like "Shop D").'},
+    {q:'How many more notepads were sold by Shop C than Shop A?', a:75, type:'number',
+     work:'225 − 150 = 75.',
+     wrong:'Not quite — work out Shop C (225) and Shop A (150), then subtract.'},
+    {q:'Which shop sold the fewest pencils?', a:'ad', type:'shops',
+     work:'Shop A and Shop D — both sold 50 pencils.',
+     wrong:'Not quite — two shops are tied for the fewest. Write both, like "Shop A and Shop D".'},
+    {q:'What is the total number of pencils sold by all the shops?', a:260, type:'number',
+     work:'50 + 100 + 60 + 50 = 260.',
+     wrong:'Not quite — add all four pencil totals: 50 + 100 + 60 + 50.'},
+    {q:'Which shop sold the same number of notepads and pencils?', a:'b', type:'shops',
+     work:'Shop B — 100 notepads and 100 pencils.',
+     wrong:'Not quite — find the shop with equal notepads and pencils (write it like "Shop B").'}
+  ], '🎉 All correct! You checked both keys carefully.');
+
+  renderPictograph('picNotepads', {
+    icon:'notepad', unit:50, thing:'notepads', colorByIndex:true,
+    legend:[{frac:1,text:'50 notepads'},{frac:0.5,text:'25 notepads'}],
+    rows:[
+      {label:'Shop A', value:150},
+      {label:'Shop B', value:100},
+      {label:'Shop C', value:225},
+      {label:'Shop D', value:125}
+    ]
+  });
+
+  renderPictograph('picPencils', {
+    icon:'pencil', unit:20, thing:'pencils', colorByIndex:true,
+    legend:[{frac:1,text:'20 pencils'},{frac:0.5,text:'10 pencils'}],
+    rows:[
+      {label:'Shop A', value:50},
+      {label:'Shop B', value:100},
+      {label:'Shop C', value:60},
+      {label:'Shop D', value:50}
+    ]
+  });
+
+  /* ---- tally marks ---- */
+  function tallyGroup(count, full){
+    const w=count*5+3, h=20;
+    let lines='';
+    for(let i=0;i<count;i++){ const x=2+i*5; lines+='<line x1="'+x+'" y1="2" x2="'+x+'" y2="18" stroke="#6FB544" stroke-width="2.2" stroke-linecap="round"/>'; }
+    if(full){ lines+='<line x1="-1" y1="17" x2="'+(count*5-1)+'" y2="3" stroke="#6FB544" stroke-width="2.2" stroke-linecap="round"/>'; }
+    const span=document.createElement('span'); span.style.lineHeight='0';
+    span.innerHTML='<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="display:block">'+lines+'</svg>';
+    return span;
+  }
+  function tallyMarks(n){
+    const box=document.createElement('div'); box.className='tallygroups';
+    const groups=Math.floor(n/5), rem=n%5;
+    for(let g=0;g<groups;g++) box.appendChild(tallyGroup(4,true));
+    if(rem>0) box.appendChild(tallyGroup(rem,false));
+    return box;
+  }
+
+  /* frequency table */
+  const shopData=[
+    {day:'Monday', count:18},
+    {day:'Tuesday', count:13},
+    {day:'Wednesday', count:20},
+    {day:'Thursday', count:14},
+    {day:'Friday', count:21},
+    {day:'Saturday', count:27},
+    {day:'Sunday', count:26}
+  ];
+  const tbody=document.querySelector('#shopTable tbody');
+  shopData.forEach((d,i)=>{
+    const tr=document.createElement('tr');
+    const td1=document.createElement('td');
+    td1.innerHTML='<span class="swatch" style="background:'+PALETTE[i%PALETTE.length]+'"></span>'+d.day;
+    const td2=document.createElement('td'); td2.className='tally'; td2.appendChild(tallyMarks(d.count));
+    const td3=document.createElement('td'); td3.className='num'; td3.textContent=d.count;
+    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tbody.appendChild(tr);
+  });
+
+  /* reveal answers */
+  document.querySelectorAll('.reveal').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const t=document.getElementById(btn.dataset.target);
+      const open=t.classList.toggle('open');
+      btn.textContent=open?'Hide answers':'Reveal answers';
+    });
+  });
+
+  /* tier filter */
+  const chips=document.querySelectorAll('.chip');
+  chips.forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      chips.forEach(c=>c.classList.remove('on'));
+      chip.classList.add('on');
+      const f=chip.dataset.f;
+      document.querySelectorAll('.activity').forEach(a=>{
+        a.classList.toggle('hide', !(f==='all'||a.dataset.tier===f));
+      });
+    });
+  });
+
+  /* teacher notes toggle */
+  const tv=document.getElementById('tview'), lbl=document.getElementById('tviewlabel');
+  tv.addEventListener('click',()=>{
+    const studentMode=document.body.classList.toggle('students');
+    document.body.classList.toggle('teacher',!studentMode);
+    tv.setAttribute('aria-pressed',String(!studentMode));
+    lbl.textContent=studentMode?'Teacher notes: off':'Teacher notes: on';
+  });
+
+  /* success criteria list */
+  const criteria=[
+    'I can interpret a Pictograph',
+    'I can interpret a Frequency Table'
+  ];
+  const iCan=document.getElementById('criteriaList');
+  criteria.forEach(c=>{
+    const row=document.createElement('div'); row.className='rrow';
+    row.innerHTML='<span class="dotmark"></span><span class="txt">'+c+'</span>';
+    iCan.appendChild(row);
+  });
+
+  /* reflection: rate yourself */
+  const refl=document.getElementById('reflectList');
+  criteria.forEach(c=>{
+    const row=document.createElement('div'); row.className='rrow';
+    const txt=document.createElement('span'); txt.className='txt'; txt.textContent=c;
+    const rate=document.createElement('span'); rate.className='rate';
+    [['got','Got it'],['near','Nearly'],['help','Need help']].forEach(pair=>{
+      const b=document.createElement('button'); b.className=pair[0]; b.textContent=pair[1];
+      b.addEventListener('click',()=>{ rate.querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); });
+      rate.appendChild(b);
+    });
+    row.appendChild(txt); row.appendChild(rate); refl.appendChild(row);
+  });
+
+  /* ===== Build-a-pictograph with sliders ===== */
+  (function(){
+    const APPLE='#E3695F';
+    const stalls=[
+      {label:'Mon', pics:2},
+      {label:'Tue', pics:3.5},
+      {label:'Wed', pics:1.5},
+      {label:'Thu', pics:4}
+    ];
+    const mount=document.getElementById('buildRows');
+    const keySlider=document.getElementById('keySlider');
+    const keyVal=document.getElementById('keyVal');
+    const totalEl=document.getElementById('buildTotal');
+    function setFill(el){ const min=+el.min, max=+el.max; el.style.setProperty('--fill', ((el.value-min)/(max-min)*100)+'%'); }
+    const keyv=()=>+keySlider.value;
+    const rows=[];
+    stalls.forEach(st=>{
+      const row=document.createElement('div'); row.className='slrow';
+      const lab=document.createElement('span'); lab.className='s-lab'; lab.textContent=st.label;
+      const sld=document.createElement('input'); sld.type='range'; sld.className='slider';
+      sld.min='0'; sld.max='6'; sld.step='0.5'; sld.value=st.pics; sld.setAttribute('aria-label',st.label+' apples sold');
+      const ico=document.createElement('span'); ico.className='s-ico';
+      const val=document.createElement('span'); val.className='s-val';
+      row.appendChild(lab); row.appendChild(sld); row.appendChild(ico); row.appendChild(val);
+      mount.appendChild(row);
+      rows.push({sld,ico,val});
+      sld.addEventListener('input',()=>{ setFill(sld); render(); });
+      setFill(sld);
+    });
+    function render(){
+      let total=0;
+      rows.forEach(r=>{
+        const pics=+r.sld.value, value=pics*keyv();
+        total+=value;
+        r.ico.innerHTML='';
+        const full=Math.floor(pics), frac=pics-full;
+        for(let k=0;k<full;k++) r.ico.appendChild(makeIcon('apple',1,APPLE));
+        if(frac>0.0001) r.ico.appendChild(makeIcon('apple',frac,APPLE));
+        if(pics===0){ const z=document.createElement('span'); z.style.color='var(--ink-faint)'; z.style.fontSize='.85rem'; z.textContent='none sold'; r.ico.appendChild(z); }
+        r.val.innerHTML='= <b>'+value+'</b>';
+      });
+      totalEl.textContent=total;
+    }
+    keySlider.addEventListener('input',()=>{ setFill(keySlider); keyVal.textContent=keyv()+' apples'; render(); });
+    setFill(keySlider); render();
+  })();
+})();
+</script>
+</body>
+</html>
