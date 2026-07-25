@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year 5 Data Unit · Interactive Review Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F8FC;
+    --grid:#E1E8F2;
+    --grid-strong:#CFDAEC;
+    --ink:#18233F;
+    --ink-soft:#5A6783;
+    --ink-faint:#8A95AD;
+    --accent:#4F46E5;
+    --accent-soft:#EAE9FF;
+    --mode:#DB2777;
+    --mode-soft:#FCE7F1;
+    --ok:#16A34A;            --ok-soft:#E7F6EC;  --ok-line:#B7E4C6;
+    --amber:#D97706;         --amber-soft:#FCF1E1;
+    --red:#DC2626;           --red-soft:#FBEAEA; --red-line:#F2C2C2;
+    --c-orange:#F0862E; --c-green:#6FB544; --c-magenta:#D94FB0;
+    --c-blue:#3E9AE6; --c-purple:#8B6FE0; --c-teal:#2FB6A8; --c-red:#E8604C;
+    --card:#FFFFFF;
+    --shadow:0 1px 2px rgba(24,35,63,.05), 0 10px 30px -18px rgba(24,35,63,.25);
+    --radius:18px;
+    --maxw:820px;
+    --display:'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+    --body:'Nunito', system-ui, -apple-system, sans-serif;
+    --mono:'Space Mono', ui-monospace, 'Courier New', monospace;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink); font-family:var(--body);
+    font-size:17px; line-height:1.6;
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:26px 26px;
+    background-position:-1px -1px;
+  }
+  body.students .teacher-note{display:none !important}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 20px}
+
+  /* ---------- top bar ---------- */
+  header.bar{
+    position:sticky; top:0; z-index:40;
+    background:rgba(246,248,252,.88); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--grid-strong);
+  }
+  .bar-inner{max-width:var(--maxw); margin:0 auto; padding:10px 20px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .brand{font-family:var(--display); font-weight:700; font-size:1.05rem; letter-spacing:.2px;
+    display:flex; align-items:center; gap:9px; margin-right:auto; color:var(--ink)}
+  .brand .glyph{display:inline-grid; grid-template-columns:repeat(3,5px); gap:2px; align-items:end; height:18px}
+  .brand .glyph i{border-radius:1px; display:block; width:5px}
+  .brand .glyph i:nth-child(1){height:8px;background:var(--c-orange)}
+  .brand .glyph i:nth-child(2){height:16px;background:var(--c-green)}
+  .brand .glyph i:nth-child(3){height:12px;background:var(--c-magenta)}
+  .backlink{font-family:var(--display); font-weight:500; font-size:.82rem; text-decoration:none;
+    color:var(--ink-soft); padding:6px 10px; border-radius:999px}
+  .backlink:hover{color:var(--ink); background:var(--accent-soft)}
+  .tview{font-family:var(--display); font-weight:600; font-size:.8rem; cursor:pointer;
+    border:1.5px solid var(--accent); color:var(--accent); background:transparent;
+    padding:6px 13px; border-radius:999px; display:inline-flex; align-items:center; gap:7px}
+  .tview .dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+  body.students .tview{border-color:var(--ink-faint); color:var(--ink-soft)}
+  body.students .tview .dot{background:var(--ink-faint)}
+
+  /* ---------- hero ---------- */
+  .hero{padding:46px 0 22px}
+  .eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--accent); font-weight:700}
+  .hero h1{font-family:var(--display); font-weight:700; line-height:1.02;
+    font-size:clamp(2.2rem,6vw,3.8rem); margin:.25em 0 .15em; letter-spacing:-.5px}
+  .hero h1 .pink{color:var(--mode)} .hero h1 .green{color:var(--c-green)}
+  .lead{font-size:1.08rem; color:var(--ink-soft); margin:.2em 0 1.2em}
+  .walt{display:inline-block; background:var(--ink); color:#fff; font-family:var(--display);
+    font-weight:500; padding:10px 16px; border-radius:12px; margin-top:4px; font-size:1rem}
+  .walt b{color:#FFD24A; font-weight:700}
+
+  /* ---------- quiz card ---------- */
+  section{padding:14px 0 40px}
+  .quizcard{background:var(--card); border:1px solid var(--grid-strong); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:22px 24px 24px; overflow:hidden}
+
+  /* status row */
+  .status{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:6px}
+  .qcount{font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); font-weight:700}
+  .topicpill{font-family:var(--display); font-weight:600; font-size:.78rem; color:var(--accent);
+    background:var(--accent-soft); padding:4px 12px; border-radius:999px}
+  .scorebadge{margin-left:auto; font-family:var(--display); font-weight:700; font-size:.85rem; color:var(--ink);
+    display:flex; align-items:center; gap:6px}
+  .streak{font-family:var(--display); font-weight:700; font-size:.85rem; color:var(--c-orange);
+    display:none; align-items:center; gap:3px}
+  .streak.show{display:inline-flex}
+
+  /* progress */
+  .progress{height:9px; background:var(--grid); border-radius:999px; overflow:hidden; margin:8px 0 20px}
+  .progress .fill{height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--mode));
+    border-radius:999px; transition:width .4s cubic-bezier(.2,.7,.3,1)}
+
+  .qtext{font-family:var(--display); font-weight:600; font-size:1.32rem; line-height:1.25; margin:0 0 4px; color:var(--ink)}
+
+  /* figure */
+  .figbox{margin:16px 0 4px; background:var(--paper); border:1px solid var(--grid-strong);
+    border-radius:14px; padding:14px 12px 8px; text-align:center}
+  .figcap{font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-faint); margin-bottom:6px}
+  .figbox svg{width:100%; max-width:420px; height:auto; display:block; margin:0 auto}
+
+  /* options */
+  .options{display:grid; gap:10px; margin-top:18px}
+  .opt{display:flex; align-items:center; gap:12px; text-align:left; width:100%; cursor:pointer;
+    font-family:var(--body); font-weight:700; font-size:1.02rem; color:var(--ink);
+    background:#fff; border:1.5px solid var(--grid-strong); border-radius:12px; padding:13px 16px;
+    transition:border-color .15s, background .15s, transform .08s}
+  .opt:hover:not(:disabled){border-color:var(--accent); background:var(--accent-soft)}
+  .opt:active:not(:disabled){transform:translateY(1px)}
+  .opt .key{flex:0 0 auto; width:28px; height:28px; border-radius:8px; background:var(--paper);
+    border:1.5px solid var(--grid-strong); color:var(--ink-soft); font-family:var(--display); font-weight:700;
+    display:grid; place-items:center; font-size:.95rem; transition:.15s}
+  .opt .mk{margin-left:auto; font-weight:800; font-size:1.15rem; opacity:0; transition:opacity .15s}
+  .opt:disabled{cursor:default}
+  .opt.correct{border-color:var(--ok); background:var(--ok-soft)}
+  .opt.correct .key{background:var(--ok); border-color:var(--ok); color:#fff}
+  .opt.correct .mk{opacity:1; color:var(--ok)}
+  .opt.wrong{border-color:var(--red); background:var(--red-soft)}
+  .opt.wrong .key{background:var(--red); border-color:var(--red); color:#fff}
+  .opt.wrong .mk{opacity:1; color:var(--red)}
+  .opt.dim{opacity:.5}
+
+  /* explanation */
+  .explain{margin-top:16px; border-radius:12px; padding:0 16px; max-height:0; opacity:0; overflow:hidden;
+    transition:max-height .35s ease, opacity .25s ease, padding .25s ease;
+    border-left:4px solid var(--accent); background:var(--accent-soft)}
+  .explain.open{max-height:400px; opacity:1; padding:14px 16px}
+  .explain.good{border-left-color:var(--ok); background:var(--ok-soft)}
+  .explain.bad{border-left-color:var(--amber); background:var(--amber-soft)}
+  .explain h5{font-family:var(--display); font-weight:700; margin:0 0 4px; font-size:1rem; display:flex; align-items:center; gap:8px}
+  .explain.good h5{color:var(--ok)} .explain.bad h5{color:var(--amber)}
+  .explain p{margin:0; font-size:.98rem; color:var(--ink)}
+
+  .navrow{display:flex; justify-content:flex-end; margin-top:18px}
+  .btn{font-family:var(--display); font-weight:600; font-size:1rem; cursor:pointer; border-radius:10px;
+    padding:11px 22px; border:1.5px solid var(--accent); background:var(--accent); color:#fff;
+    transition:transform .1s, filter .15s, opacity .15s; display:inline-flex; align-items:center; gap:8px}
+  .btn:hover{filter:brightness(1.06)} .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent; color:var(--accent)}
+  .btn:disabled{opacity:.4; cursor:default}
+  .btn.hidden{display:none}
+
+  /* ---------- results ---------- */
+  .results{text-align:center; padding:10px 6px 6px}
+  .medal{font-size:4.4rem; line-height:1; margin-bottom:6px; animation:pop .5s cubic-bezier(.2,1.3,.4,1) both}
+  @keyframes pop{0%{transform:scale(.3);opacity:0} 100%{transform:scale(1);opacity:1}}
+  .results h2{font-family:var(--display); font-weight:700; font-size:2rem; margin:.1em 0 .1em}
+  .bigscore{font-family:var(--display); font-weight:700; font-size:3.4rem; letter-spacing:-1px; color:var(--accent); line-height:1}
+  .bigscore small{font-size:1.5rem; color:var(--ink-faint)}
+  .pct{font-family:var(--mono); font-weight:700; color:var(--ink-soft); margin-top:2px}
+  .rmsg{font-size:1.05rem; color:var(--ink-soft); max-width:44ch; margin:12px auto 6px}
+  .review{display:grid; gap:7px; margin:20px 0 4px; text-align:left}
+  .rrow{background:#fff; border:1px solid var(--grid-strong); border-radius:11px; padding:10px 14px;
+    display:flex; align-items:center; gap:11px; font-size:.94rem}
+  .rrow .ic{flex:0 0 auto; font-weight:800}
+  .rrow.y{border-color:var(--ok-line)} .rrow.y .ic{color:var(--ok)}
+  .rrow.n{border-color:var(--red-line)} .rrow.n .ic{color:var(--red)}
+  .rrow .tp{font-family:var(--display); font-weight:600; color:var(--ink)}
+  .rrow .ls{margin-left:auto; font-family:var(--mono); font-size:.72rem; color:var(--ink-faint)}
+  .results .btn{margin-top:20px; font-size:1.05rem; padding:12px 26px}
+
+  .teacher-note{background:#FFFBEA; border:1px solid #F2E2A6; border-radius:12px;
+    padding:12px 16px; margin-top:18px; font-size:.93rem; color:#6b5d18}
+  .teacher-note b{font-family:var(--display); color:#8a6d00}
+  .teacher-note .pill{font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
+    background:#8a6d00; color:#fff; padding:3px 8px; border-radius:999px; margin-right:8px; vertical-align:1px}
+
+  footer{padding:30px 0 60px; color:var(--ink-faint); font-size:.85rem; text-align:center}
+  .curric{font-family:var(--mono); font-size:.72rem; color:var(--ink-faint); margin-top:4px}
+
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important} html{scroll-behavior:auto} }
+  :focus-visible{outline:3px solid var(--accent); outline-offset:2px; border-radius:6px}
+</style>
+</head>
+<body class="teacher">
+
+<header class="bar">
+  <div class="bar-inner">
+    <div class="brand"><span class="glyph"><i></i><i></i><i></i></span> Data Unit · Review Quiz</div>
+    <a class="backlink" href="index.html">← All lessons</a>
+    <button class="tview" id="tview" aria-pressed="true">
+      <span class="dot"></span><span id="tviewlabel">Teacher notes: on</span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="wrap hero">
+  <div class="eyebrow">Year 5 Mathematics · Statistics · Whole-unit review</div>
+  <h1>Data <span class="pink">Detective</span> <span class="green">Quiz</span> 🔍</h1>
+  <p class="lead">Ten questions covering everything in the unit — pictographs, column graphs, dot plots, types of data, mode &amp; shape, line graphs, range and spotting dodgy graphs. Pick an answer, get instant feedback, and see how big a streak you can build!</p>
+</div>
+
+<!-- QUIZ -->
+<section class="wrap">
+  <div class="quizcard" id="quizcard">
+    <!-- injected by JS -->
+  </div>
+  <div class="teacher-note"><span class="pill">Teacher</span><b>How to use.</b> A no-login, self-marking review across all nine lessons (4.1–6.2). Great as a warm-up, a fast-finisher task, or an exit ticket on the interactive whiteboard. Options are shuffled every attempt, and the results screen shows which topics to revisit — send students back to the matching lesson for any red rows.</div>
+</section>
+
+<footer class="wrap">
+  Year 5 Data Unit · Interactive review quiz
+  <div class="curric">Aligned to Victorian Curriculum 2.0 · Statistics · VC2M4ST01–VC2M6ST02</div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const PALETTE = ['var(--c-orange)','var(--c-green)','var(--c-magenta)','var(--c-blue)','var(--c-purple)','var(--c-teal)','var(--c-red)'];
+  function el(n,a,txt){const e=document.createElementNS(SVGNS,n); if(a) for(const k in a) e.setAttribute(k,a[k]); if(txt!=null) e.textContent=txt; return e;}
+  function newSvg(w,h){ return el('svg',{viewBox:'0 0 '+w+' '+h,role:'img'}); }
+
+  /* ---------- figure drawers (each returns an <svg>) ---------- */
+  function figColumn(data,maxVal){
+    const W=400,H=230, padL=34,padR=14,padT=20,padB=36;
+    const svg=newSvg(W,H); const plotW=W-padL-padR, plotH=H-padT-padB, baseY=padT+plotH;
+    const max=maxVal||Math.max.apply(null,data.map(d=>d.value));
+    for(let i=0;i<=max;i++){ const y=baseY-plotH*(i/max);
+      svg.appendChild(el('line',{x1:padL,y1:y,x2:padL+plotW,y2:y,stroke:'#EBF0F8','stroke-width':1}));
+      svg.appendChild(el('text',{x:padL-6,y:y+4,'text-anchor':'end','font-family':'Space Mono, monospace','font-size':10,fill:'var(--ink-faint)'},i)); }
+    svg.appendChild(el('line',{x1:padL,y1:baseY,x2:padL+plotW,y2:baseY,stroke:'var(--grid-strong)','stroke-width':2}));
+    svg.appendChild(el('line',{x1:padL,y1:padT,x2:padL,y2:baseY,stroke:'var(--grid-strong)','stroke-width':2}));
+    const n=data.length, slot=plotW/n, gap=0.34, bw=slot*(1-gap);
+    data.forEach((d,i)=>{ const h=plotH*(d.value/max), x=padL+slot*i+(slot-bw)/2;
+      svg.appendChild(el('rect',{x:x,y:baseY-h,width:bw,height:h,rx:4,fill:d.color||PALETTE[i%PALETTE.length]}));
+      svg.appendChild(el('text',{x:x+bw/2,y:baseY+15,'text-anchor':'middle','font-family':'Nunito, sans-serif','font-size':11,'font-weight':700,fill:'var(--ink-soft)'},d.label)); });
+    return svg;
+  }
+  function figDot(groups,maxLabel){
+    // groups: [{v:value, n:count}] along a number line 0..maxLabel
+    const W=400,H=210, padL=24,padR=18,padT=14,padB=34;
+    const svg=newSvg(W,H); const plotW=W-padL-padR, axisY=H-padB;
+    const min=0, max=maxLabel;
+    const xFor=v=> padL + plotW*((v-min)/(max-min));
+    svg.appendChild(el('line',{x1:padL,y1:axisY,x2:padL+plotW,y2:axisY,stroke:'var(--grid-strong)','stroke-width':2}));
+    for(let v=min; v<=max; v++){ const x=xFor(v);
+      svg.appendChild(el('line',{x1:x,y1:axisY,x2:x,y2:axisY+5,stroke:'var(--grid-strong)','stroke-width':1.5}));
+      svg.appendChild(el('text',{x:x,y:axisY+18,'text-anchor':'middle','font-family':'Space Mono, monospace','font-size':11,'font-weight':700,fill:'var(--ink-soft)'},v)); }
+    const r=6, step=15;
+    groups.forEach(g=>{ const x=xFor(g.v); for(let k=0;k<g.n;k++){ const cy=axisY-10-step*k;
+      svg.appendChild(el('circle',{cx:x,cy:cy,r:r,fill:'var(--accent)',stroke:'#fff','stroke-width':1.5})); } });
+    return svg;
+  }
+  function figLine(pts,xLabels,maxVal){
+    const W=400,H=220, padL=34,padR=16,padT=16,padB=40;
+    const svg=newSvg(W,H); const plotW=W-padL-padR, plotH=H-padT-padB, baseY=padT+plotH;
+    const max=maxVal, n=pts.length;
+    for(let i=0;i<=max;i+=Math.max(1,Math.round(max/5))){ const y=baseY-plotH*(i/max);
+      svg.appendChild(el('line',{x1:padL,y1:y,x2:padL+plotW,y2:y,stroke:'#EBF0F8','stroke-width':1}));
+      svg.appendChild(el('text',{x:padL-6,y:y+4,'text-anchor':'end','font-family':'Space Mono, monospace','font-size':10,fill:'var(--ink-faint)'},i)); }
+    svg.appendChild(el('line',{x1:padL,y1:baseY,x2:padL+plotW,y2:baseY,stroke:'var(--grid-strong)','stroke-width':2}));
+    svg.appendChild(el('line',{x1:padL,y1:padT,x2:padL,y2:baseY,stroke:'var(--grid-strong)','stroke-width':2}));
+    const xFor=i=> padL + (n>1? plotW*(i/(n-1)) : plotW/2);
+    const yFor=v=> baseY - plotH*(v/max);
+    let d=''; pts.forEach((v,i)=>{ d+=(i?'L':'M')+xFor(i)+' '+yFor(v)+' '; });
+    svg.appendChild(el('path',{d:d,fill:'none',stroke:'var(--mode)','stroke-width':3,'stroke-linejoin':'round','stroke-linecap':'round'}));
+    pts.forEach((v,i)=>{ svg.appendChild(el('circle',{cx:xFor(i),cy:yFor(v),r:4.5,fill:'#fff',stroke:'var(--mode)','stroke-width':3}));
+      svg.appendChild(el('text',{x:xFor(i),y:baseY+16,'text-anchor':'middle','font-family':'Nunito, sans-serif','font-size':10.5,'font-weight':700,fill:'var(--ink-soft)'},xLabels[i])); });
+    return svg;
+  }
+  function figPictograph(rows,per,symbol){
+    // rows: [{label, count}] count = number of symbols
+    const W=400, rowH=34, top=8, keyH=26;
+    const H=top + rows.length*rowH + keyH+10;
+    const svg=newSvg(W,H); const labelW=70, startX=labelW+8;
+    rows.forEach((r,i)=>{ const y=top+i*rowH;
+      svg.appendChild(el('text',{x:labelW,y:y+rowH/2+5,'text-anchor':'end','font-family':'Nunito, sans-serif','font-size':13,'font-weight':700,fill:'var(--ink)'},r.label));
+      for(let k=0;k<r.count;k++){ svg.appendChild(el('text',{x:startX+k*26+13,y:y+rowH/2+9,'text-anchor':'middle','font-size':22},symbol)); } });
+    const ky=top+rows.length*rowH+6;
+    svg.appendChild(el('line',{x1:8,y1:ky,x2:W-8,y2:ky,stroke:'var(--grid-strong)','stroke-width':1.5}));
+    svg.appendChild(el('text',{x:8,y:ky+20,'font-family':'Nunito, sans-serif','font-size':13,'font-weight':700,fill:'var(--ink-soft)'},'Key: '+symbol+' = '+per));
+    return svg;
+  }
+
+  /* ================= QUESTION BANK ================= */
+  const QUESTIONS = [
+    { topic:'Pictographs', lesson:'4.1',
+      q:'Each 📕 stands for 5 books. How many books did Year 4 read?',
+      fig:()=>figPictograph([{label:'Year 3',count:4},{label:'Year 4',count:6},{label:'Year 5',count:5}],'5 books','📕'),
+      cap:'Books read this month',
+      options:[{t:'6 books',ok:false},{t:'30 books',ok:true},{t:'11 books',ok:false},{t:'35 books',ok:false}],
+      why:'Year 4 has 6 symbols and each symbol = 5 books, so 6 × 5 = 30 books. With a pictograph key, always multiply the number of symbols by what one symbol is worth.' },
+
+    { topic:'Column graphs', lesson:'4.2',
+      q:'How many more students chose Apple than chose Grapes?',
+      fig:()=>figColumn([{label:'Apple',value:8},{label:'Banana',value:5},{label:'Grapes',value:3},{label:'Orange',value:6}],10),
+      cap:'Favourite fruit',
+      options:[{t:'5 students',ok:true},{t:'11 students',ok:false},{t:'3 students',ok:false},{t:'8 students',ok:false}],
+      why:'Apple is 8 and Grapes is 3. “How many more” means subtract: 8 − 3 = 5 students.' },
+
+    { topic:'Constructing graphs', lesson:'4.3',
+      q:'Your biggest value is 45. Which scale keeps the graph a sensible height?',
+      fig:null,
+      options:[{t:'1 square = 5 units',ok:true},{t:'1 square = 1 unit',ok:false},{t:'1 square = 50 units',ok:false},{t:'1 square = 100 units',ok:false}],
+      why:'Find the largest value first. At 1 square = 1 you would need 45 squares (way too tall); at 1 square = 50 the whole graph is under one square (too flat). 1 square = 5 gives about 9 squares — just right.' },
+
+    { topic:'Dot plots', lesson:'5.1',
+      q:'This dot plot shows goals scored per game. What is the mode?',
+      fig:()=>figDot([{v:0,n:1},{v:1,n:3},{v:2,n:5},{v:3,n:2},{v:4,n:1}],4),
+      cap:'Goals scored per game',
+      options:[{t:'2 goals',ok:true},{t:'5 goals',ok:false},{t:'1 goal',ok:false},{t:'4 goals',ok:false}],
+      why:'The mode is the value with the most dots. The tallest stack is above 2 (five dots), so the mode is 2 goals. (The 5 is how many games — not the mode.)' },
+
+    { topic:'Types of data', lesson:'5.2',
+      q:'A student records the eye colour of everyone in the class. What kind of data is this?',
+      fig:null,
+      options:[{t:'Categorical · nominal',ok:true},{t:'Numerical · discrete',ok:false},{t:'Numerical · continuous',ok:false},{t:'Categorical · ordinal',ok:false}],
+      why:'Eye colour is a label/name, not a number, so it is categorical. The groups have no natural order (brown isn’t “more” than blue), which makes it nominal.' },
+
+    { topic:'Types of data', lesson:'5.2',
+      q:'A gardener measures the height of each plant in centimetres. What kind of data is this?',
+      fig:null,
+      options:[{t:'Numerical · continuous',ok:true},{t:'Numerical · discrete',ok:false},{t:'Categorical · nominal',ok:false},{t:'Categorical · ordinal',ok:false}],
+      why:'Height is a measurement, so it is numerical. Because it can take any value in between (12.4 cm, 12.45 cm…) it is continuous. Discrete data is counted in whole steps, like number of pets.' },
+
+    { topic:'Mode & shape', lesson:'5.3',
+      q:'How would you best describe the shape of this data?',
+      fig:()=>figDot([{v:1,n:0},{v:2,n:1},{v:3,n:2},{v:4,n:1},{v:5,n:0},{v:6,n:0},{v:7,n:0},{v:8,n:1}],8),
+      cap:'Minutes late to class',
+      options:[{t:'It has an outlier',ok:true},{t:'It is symmetric',ok:false},{t:'It is uniform (flat)',ok:false},{t:'It has two peaks',ok:false}],
+      why:'Most values cluster around 2–4, but there is one lonely dot way out at 8. A value sitting far from the rest of the data is called an outlier.' },
+
+    { topic:'Line graphs', lesson:'5.4',
+      q:'Looking at the temperature from 6 am to 12 pm, what is the trend?',
+      fig:()=>figLine([8,11,14,17,19,21],['6am','8am','9am','10am','11am','12pm'],25),
+      cap:'Temperature during the morning (°C)',
+      options:[{t:'It rises steadily',ok:true},{t:'It falls steadily',ok:false},{t:'It stays the same',ok:false},{t:'It rises then falls',ok:false}],
+      why:'Each point is higher than the one before and the line climbs the whole way, so the temperature rises steadily. On a line graph, a line going up from left to right means the value is increasing over time.' },
+
+    { topic:'Data range', lesson:'6.1',
+      q:'A netball team scored: 12, 8, 15, 6, 20. What is the range?',
+      fig:null,
+      options:[{t:'14',ok:true},{t:'20',ok:false},{t:'6',ok:false},{t:'12',ok:false}],
+      why:'Range = highest − lowest. The highest score is 20 and the lowest is 6, so the range is 20 − 6 = 14. The range tells you how spread out the scores are.' },
+
+    { topic:'Critiquing graphs', lesson:'6.2',
+      q:'A graph’s vertical axis starts at 90 instead of 0, so a tiny difference looks enormous. What is the problem?',
+      fig:null,
+      options:[{t:'The scale is misleading',ok:true},{t:'It has no title',ok:false},{t:'The colours are wrong',ok:false},{t:'There are too many bars',ok:false}],
+      why:'When the axis doesn’t start at 0 (a “truncated” axis), small differences get exaggerated and the graph misleads the reader. A fair column graph should start its scale at 0.' }
+  ];
+
+  /* ================= ENGINE ================= */
+  const card = document.getElementById('quizcard');
+  let idx=0, score=0, streak=0, bestStreak=0, answered=false;
+  const results=[]; // {topic, lesson, correct}
+
+  function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+  const RIGHT=['Nice work! 🎉','Spot on! ✅','Exactly right! 🌟','You got it! 👏','Great reading! 🔍'];
+  const WRONG=['Not quite — take a look:','Close! Here’s the trick:','Good try — here’s why:'];
+
+  function renderQuestion(){
+    answered=false;
+    const Q=QUESTIONS[idx];
+    const opts=shuffle(Q.options);
+    const keys=['A','B','C','D'];
+
+    let html='';
+    html+='<div class="status">';
+    html+='<span class="qcount">Question '+(idx+1)+' of '+QUESTIONS.length+'</span>';
+    html+='<span class="topicpill">'+Q.lesson+' · '+Q.topic+'</span>';
+    html+='<span class="streak" id="streak">🔥 <span id="streaknum">'+streak+'</span></span>';
+    html+='<span class="scorebadge">⭐ <span id="scorenum">'+score+'</span>/'+QUESTIONS.length+'</span>';
+    html+='</div>';
+    html+='<div class="progress"><div class="fill" id="pfill"></div></div>';
+    html+='<p class="qtext">'+Q.q+'</p>';
+    html+='<div class="figholder"></div>';
+    html+='<div class="options" id="options"></div>';
+    html+='<div class="explain" id="explain"></div>';
+    html+='<div class="navrow"><button class="btn hidden" id="nextbtn">Next →</button></div>';
+    card.innerHTML=html;
+
+    // figure
+    if(Q.fig){ const box=document.createElement('div'); box.className='figbox';
+      if(Q.cap){ const c=document.createElement('div'); c.className='figcap'; c.textContent=Q.cap; box.appendChild(c); }
+      box.appendChild(Q.fig()); card.querySelector('.figholder').appendChild(box); }
+
+    // options
+    const optWrap=card.querySelector('#options');
+    opts.forEach((o,i)=>{
+      const b=document.createElement('button'); b.className='opt'; b.type='button';
+      b.innerHTML='<span class="key">'+keys[i]+'</span><span class="lbl">'+o.t+'</span><span class="mk"></span>';
+      b.addEventListener('click',()=>choose(b,o,opts,Q));
+      optWrap.appendChild(b);
+    });
+
+    // streak visibility + progress
+    const st=card.querySelector('#streak'); if(streak>=2) st.classList.add('show');
+    requestAnimationFrame(()=>{ card.querySelector('#pfill').style.width=(idx/QUESTIONS.length*100)+'%'; });
+  }
+
+  function choose(btn,opt,opts,Q){
+    if(answered) return; answered=true;
+    const buttons=[...card.querySelectorAll('.opt')];
+    buttons.forEach((b,i)=>{
+      b.disabled=true;
+      if(opts[i].ok){ b.classList.add('correct'); b.querySelector('.mk').textContent='✓'; }
+      else b.classList.add('dim');
+    });
+    const correct=opt.ok;
+    if(!correct){ btn.classList.remove('dim'); btn.classList.add('wrong'); btn.querySelector('.mk').textContent='✗'; }
+
+    if(correct){ score++; streak++; bestStreak=Math.max(bestStreak,streak); }
+    else streak=0;
+    results.push({topic:Q.topic, lesson:Q.lesson, correct:correct});
+
+    // update badges
+    card.querySelector('#scorenum').textContent=score;
+    const st=card.querySelector('#streak'); const sn=card.querySelector('#streaknum');
+    if(sn) sn.textContent=streak;
+    if(streak>=2) st.classList.add('show'); else st.classList.remove('show');
+    card.querySelector('#pfill').style.width=((idx+1)/QUESTIONS.length*100)+'%';
+
+    // explanation
+    const ex=card.querySelector('#explain');
+    ex.className='explain '+(correct?'good':'bad');
+    const head=correct? RIGHT[Math.floor(Math.random()*RIGHT.length)] : WRONG[Math.floor(Math.random()*WRONG.length)];
+    ex.innerHTML='<h5>'+head+'</h5><p>'+Q.why+'</p>';
+    requestAnimationFrame(()=>ex.classList.add('open'));
+
+    const nb=card.querySelector('#nextbtn'); nb.classList.remove('hidden');
+    nb.textContent = (idx===QUESTIONS.length-1)?'See my results →':'Next →';
+    nb.focus();
+    nb.addEventListener('click',()=>{ idx++; if(idx<QUESTIONS.length) renderQuestion(); else renderResults(); },{once:true});
+  }
+
+  function renderResults(){
+    const pct=Math.round(score/QUESTIONS.length*100);
+    let medal,msg;
+    if(score>=9){ medal='🏆'; msg='Outstanding! You read, represent and critique data like a true data detective.'; }
+    else if(score>=7){ medal='🥈'; msg='Great effort! You’ve got a strong grip on the unit — just polish the topics below.'; }
+    else if(score>=5){ medal='🥉'; msg='Good going! You’re over halfway. Revisit the red topics and have another crack.'; }
+    else { medal='💪'; msg='Nice start — every detective practises! Head back to the lessons for the red topics, then try again.'; }
+
+    let html='<div class="results">';
+    html+='<div class="medal">'+medal+'</div>';
+    html+='<div class="bigscore">'+score+'<small>/'+QUESTIONS.length+'</small></div>';
+    html+='<div class="pct">'+pct+'%  ·  best streak '+bestStreak+' 🔥</div>';
+    html+='<h2>'+(score>=9?'Data Detective!':score>=7?'Well done!':score>=5?'Good work!':'Keep going!')+'</h2>';
+    html+='<p class="rmsg">'+msg+'</p>';
+    html+='<div class="review">';
+    results.forEach(r=>{
+      html+='<div class="rrow '+(r.correct?'y':'n')+'"><span class="ic">'+(r.correct?'✓':'✗')+'</span>'
+          +'<span class="tp">'+r.topic+'</span><span class="ls">Lesson '+r.lesson+'</span></div>';
+    });
+    html+='</div>';
+    html+='<button class="btn" id="again">↻ Play again</button>';
+    html+='</div>';
+    card.innerHTML=html;
+    card.querySelector('#again').addEventListener('click',()=>{ idx=0; score=0; streak=0; bestStreak=0; results.length=0; renderQuestion(); });
+    if(!reduce) card.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  renderQuestion();
+
+  /* ---------- teacher notes toggle ---------- */
+  const tv=document.getElementById('tview'), lbl=document.getElementById('tviewlabel');
+  tv.addEventListener('click',()=>{
+    const studentMode=document.body.classList.toggle('students');
+    document.body.classList.toggle('teacher',!studentMode);
+    tv.setAttribute('aria-pressed',String(!studentMode));
+    lbl.textContent=studentMode?'Teacher notes: off':'Teacher notes: on';
+  });
+})();
+</script>
+</body>
+</html>
