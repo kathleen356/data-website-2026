@@ -1,133 +1,1107 @@
-<!-- Year 5 Data Unit — homepage / index of lessons -->
+<!doctype html>
+<html lang="en-AU">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Year 5 Data Unit</title>
+<title>5.4 Interpreting Line Graphs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --ink:#16243A; --ink-soft:#4a5a72; --paper:#EAEFF6; --card:#ffffff; --line:#D7DEEA;
-  --detective:#E11D74;
-  --good:#0E8C86;
-  --display:'Space Grotesk',ui-rounded,'Segoe UI',system-ui,sans-serif;
-  --body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --mono:'Space Mono',ui-monospace,Menlo,Consolas,monospace;
-  --shadow:0 1px 2px rgba(22,36,58,.06),0 8px 24px rgba(22,36,58,.07);
-}
-*{box-sizing:border-box}
-html,body{margin:0}
-body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.5;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:var(--display);line-height:1.12;margin:0}
-a{color:inherit;text-decoration:none}
+  :root{
+    --paper:#F6F8FC;
+    --grid:#E1E8F2;
+    --grid-strong:#CFDAEC;
+    --ink:#18233F;
+    --ink-soft:#5A6783;
+    --ink-faint:#8A95AD;
+    --accent:#4F46E5;        /* interactive / primary */
+    --accent-soft:#EAE9FF;
+    --mode:#DB2777;          /* highlight */
+    --mode-soft:#FCE7F1;
+    --tail:#0EA5E9;
+    --ok:#16A34A;            /* correct */
+    --ok-soft:#E7F6EC;
+    --green:#16A34A; --green-bg:#E7F6EC; --green-line:#B7E4C6;
+    --amber:#D97706; --amber-bg:#FCF1E1; --amber-line:#F3D9AE;
+    --red:#DC2626;   --red-bg:#FBEAEA;   --red-line:#F2C2C2;
+    /* line-graph series palette */
+    --c-blue:#3E9AE6; --c-red:#E8604C; --c-green:#6FB544; --c-purple:#8B6FE0;
+    --c-orange:#F0862E; --c-teal:#2FB6A8; --c-magenta:#D94FB0;
+    --card:#FFFFFF;
+    --shadow:0 1px 2px rgba(24,35,63,.05), 0 10px 30px -18px rgba(24,35,63,.25);
+    --radius:18px;
+    --maxw:1020px;
+    --display:'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+    --body:'Nunito', system-ui, -apple-system, sans-serif;
+    --mono:'Space Mono', ui-monospace, 'Courier New', monospace;
+  }
 
-.wrap{max-width:920px;margin:0 auto;padding:48px 24px 80px}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink); font-family:var(--body);
+    font-size:17px; line-height:1.6;
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:26px 26px;
+    background-position:-1px -1px;
+  }
+  body.students .teacher-note{display:none !important}
 
-.hero{background:linear-gradient(135deg,#16243A,#243a5e);color:#fff;border-radius:20px;padding:44px 38px;box-shadow:var(--shadow)}
-.eyebrow{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ff8ec2;margin-bottom:10px}
-.hero h1{font-size:clamp(30px,5vw,48px);letter-spacing:-.015em;margin-bottom:12px}
-.hero p{font-size:16.5px;color:#cdd8ea;max-width:60ch}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 20px}
 
-.lessons{margin-top:32px;display:grid;gap:16px}
-.lesson{display:flex;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow);transition:border-color .12s,transform .12s;min-height:116px;box-sizing:border-box}
-a.lesson:hover{border-color:var(--detective);transform:translateY(-1px)}
-.lesson .num{flex:none;width:44px;height:44px;border-radius:12px;background:var(--detective);color:#fff;font-family:var(--mono);font-weight:700;font-size:15px;display:grid;place-items:center}
-.lesson .body{flex:1;min-width:0}
-.lesson h3{font-size:18px;margin-bottom:4px}
-.lesson p{margin:0;font-size:13.7px;color:var(--ink-soft)}
-.lesson .tag{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--good);background:#e6f5f3;border-radius:6px;padding:3px 8px;display:inline-block;margin-bottom:6px}
-.lesson .arrow{flex:none;font-size:20px;color:var(--ink-soft);transition:transform .12s,color .12s}
-a.lesson:hover .arrow{transform:translateX(3px);color:var(--detective)}
+  /* ---------- top bar ---------- */
+  header.bar{
+    position:sticky; top:0; z-index:40;
+    background:rgba(246,248,252,.88); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--grid-strong);
+  }
+  .bar-inner{max-width:var(--maxw); margin:0 auto; padding:10px 20px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .brand{font-family:var(--display); font-weight:700; font-size:1.05rem; letter-spacing:.2px;
+    display:flex; align-items:center; gap:9px; margin-right:auto}
+  .brand .glyph{display:inline-block; width:22px; height:18px}
+  nav.jump{display:flex; gap:4px; flex-wrap:wrap}
+  nav.jump a{font-family:var(--display); font-weight:500; font-size:.82rem; text-decoration:none;
+    color:var(--ink-soft); padding:6px 10px; border-radius:999px}
+  nav.jump a:hover{color:var(--ink); background:var(--accent-soft)}
+  .tview{font-family:var(--display); font-weight:600; font-size:.8rem; cursor:pointer;
+    border:1.5px solid var(--accent); color:var(--accent); background:transparent;
+    padding:6px 13px; border-radius:999px; display:inline-flex; align-items:center; gap:7px}
+  .tview .dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+  body.students .tview{border-color:var(--ink-faint); color:var(--ink-soft)}
+  body.students .tview .dot{background:var(--ink-faint)}
 
-.placeholder{display:flex;gap:18px;align-items:center;background:transparent;border:1.5px dashed var(--line);border-radius:16px;padding:20px 22px;color:var(--ink-soft);min-height:116px;box-sizing:border-box}
-.placeholder .num{flex:none;width:44px;height:44px;border-radius:12px;border:1.5px dashed var(--line);color:var(--ink-soft);font-family:var(--mono);font-weight:700;font-size:14px;display:grid;place-items:center}
-.placeholder .body{flex:1;min-width:0}
-.placeholder h3{font-size:16.5px;margin-bottom:2px;color:var(--ink-soft);font-weight:600}
-.placeholder p{margin:0;font-size:12.5px}
+  /* ---------- hero ---------- */
+  .hero{padding:54px 0 30px}
+  .eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--accent); font-weight:700}
+  .eyebrow-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .curric-link{font-family:var(--display); font-weight:700; font-size:.72rem; cursor:pointer; text-decoration:none;
+    padding:7px 16px; border-radius:999px; border:1.5px solid var(--grid-strong);
+    background:var(--card); color:var(--accent); transition:transform .1s, border-color .15s, color .15s;
+    display:inline-block}
+  .curric-link:hover{border-color:var(--accent); color:var(--accent)}
+  .curric-link:active{transform:translateY(1px)}
+  .hero h1{font-family:var(--display); font-weight:700; line-height:1.02;
+    font-size:clamp(2.3rem,6vw,4.2rem); margin:.25em 0 .15em; letter-spacing:-.5px}
+  .hero h1 .pink{color:var(--mode)} .hero h1 .blue{color:var(--c-blue)}
+  .walt{display:inline-block; background:var(--ink); color:#fff; font-family:var(--display);
+    font-weight:500; padding:10px 16px; border-radius:12px; margin-top:8px; font-size:1.02rem}
+  .walt b{color:#FFD24A; font-weight:700}
+  .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:30px; align-items:start; margin-top:26px}
+  @media(max-width:760px){.hero-grid{grid-template-columns:1fr}}
+  .hero-chart{background:var(--card); border:1px solid var(--grid-strong); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:14px 16px 8px}
+  .hero-chart .cap{font-family:var(--mono); font-size:.7rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.12em}
 
-.footer{margin-top:40px;font-size:12.5px;color:var(--ink-soft);text-align:center}
+  /* ---------- sections ---------- */
+  section{padding:38px 0; scroll-margin-top:64px}
+  .part-tag{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:.72rem;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:700; margin-bottom:6px}
+  .part-tag::before{content:""; width:22px; height:2px; background:var(--accent); display:inline-block}
+  h2{font-family:var(--display); font-weight:700; font-size:clamp(1.7rem,3.5vw,2.5rem);
+    margin:.1em 0 .35em; letter-spacing:-.3px; line-height:1.08}
+  h3{font-family:var(--display); font-weight:600; font-size:1.25rem; margin:0 0 .4em}
+  .lead{font-size:1.08rem; color:var(--ink-soft); max-width:none; margin:.2em 0 1.2em}
+
+  .card{background:var(--card); border:1px solid var(--grid-strong); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:24px}
+  .card + .card{margin-top:18px}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:stretch}
+  .two > .card{margin-top:0}
+  @media(max-width:720px){.two{grid-template-columns:1fr}}
+
+  .keyword{color:var(--mode); font-weight:800}
+  .define{background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:10px;
+    padding:14px 16px; font-size:1.05rem}
+  .define b{color:var(--accent)}
+
+  /* steps */
+  ol.steps{counter-reset:s; list-style:none; padding:0; margin:14px 0 0; display:grid; gap:10px}
+  ol.steps li{counter-increment:s; display:flex; gap:12px; align-items:flex-start}
+  ol.steps li::before{content:counter(s); flex:0 0 auto; width:28px; height:28px; border-radius:8px;
+    background:var(--accent); color:#fff; font-family:var(--display); font-weight:700;
+    display:grid; place-items:center; font-size:.95rem}
+
+  /* data table */
+  table.freq{border-collapse:collapse; width:100%; max-width:420px; font-family:var(--body);
+    background:#fff; border-radius:12px; overflow:hidden; border:1px solid var(--grid-strong)}
+  table.freq caption{font-family:var(--display); font-weight:700; font-size:1.02rem; text-align:left;
+    padding:0 0 8px; color:var(--ink)}
+  table.freq th, table.freq td{padding:9px 14px; text-align:left; border-bottom:1px solid var(--grid)}
+  table.freq thead th{background:var(--accent); color:#fff; font-family:var(--display); font-weight:600; font-size:.95rem}
+  table.freq tbody tr:last-child td{border-bottom:0}
+  table.freq td.num{font-family:var(--mono); font-weight:700; text-align:center; width:80px; color:var(--ink)}
+  table.freq tbody tr:nth-child(even){background:var(--paper)}
+
+  /* reference card */
+  .ref{display:grid; grid-template-columns:1fr 1fr; gap:0; border-radius:var(--radius); overflow:hidden;
+    border:1px solid var(--grid-strong)}
+  @media(max-width:600px){.ref{grid-template-columns:1fr}}
+  .ref .cell{padding:18px 20px; background:#fff; border-top:1px solid var(--grid); border-right:1px solid var(--grid)}
+  .ref .cell h4{font-family:var(--display); font-weight:700; margin:0 0 4px; color:var(--accent); font-size:1.05rem;
+    display:flex; align-items:center; gap:8px}
+  .ref .cell p{margin:0; font-size:.96rem; color:var(--ink-soft)}
+  .ref .cell .pin{font-size:.85rem; color:var(--ink-faint); margin-top:6px; font-style:italic}
+
+  /* buttons */
+  .btn{font-family:var(--display); font-weight:600; font-size:.9rem; cursor:pointer; border-radius:10px;
+    padding:9px 16px; border:1.5px solid var(--accent); background:var(--accent); color:#fff;
+    transition:transform .1s, filter .15s}
+  .btn:hover{filter:brightness(1.06)} .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent; color:var(--accent)}
+  .btn.sm{font-size:.82rem; padding:7px 13px}
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; align-items:center}
+
+  /* ---------- line-graph builder & figures ---------- */
+  .builder{background:#fff; border:1px solid var(--grid-strong); border-radius:14px; padding:18px 18px 14px}
+  .builder-grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(210px,240px); gap:18px; align-items:start}
+  .builder-grid.has-table{grid-template-columns:minmax(170px,205px) minmax(0,1fr) minmax(205px,235px)}
+  @media(max-width:860px){.builder-grid,.builder-grid.has-table{grid-template-columns:1fr}}
+  .datatag{font-family:var(--mono); font-size:.64rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); font-weight:700; margin-bottom:7px}
+  .builder .freq{max-width:none; font-size:.9rem}
+  .builder .freq th{padding:7px 10px; font-size:.78rem; vertical-align:top}
+  .builder .freq td{padding:6px 10px; font-size:.9rem}
+  .builder .freq td.num{width:auto; min-width:44px; padding-left:6px; padding-right:10px}
+  .graphfig{display:flex; flex-direction:column; align-items:center; max-width:480px; width:100%; margin:0 auto}
+  .gtitle{font-family:var(--display); font-weight:700; font-size:1.02rem; text-align:center; margin-bottom:6px; color:var(--ink); min-height:1.2em}
+  .gbody{display:flex; align-items:stretch; width:100%}
+  .ylabel{writing-mode:vertical-rl; transform:rotate(180deg); font-family:var(--display); font-weight:600;
+    font-size:.85rem; color:var(--ink-soft); text-align:center; padding:0 2px 26px 0; align-self:center}
+  .gsvg{flex:1 1 auto; min-width:0}
+  .buildchart{width:100%; height:auto; display:block; touch-action:none; cursor:pointer}
+  .readchart{width:100%; height:auto; display:block}
+  .xlabel{font-family:var(--display); font-weight:600; font-size:.85rem; color:var(--ink-soft); margin-top:2px}
+
+  .steppers{display:flex; flex-direction:column; gap:8px; margin-top:4px}
+  .stepper{display:flex; align-items:center; gap:10px; background:var(--paper); border:1px solid var(--grid-strong);
+    border-radius:10px; padding:6px 8px 6px 12px}
+  .stepper .nm{flex:1 1 auto; font-weight:700; font-size:.9rem; display:flex; align-items:center; gap:7px}
+  .stepper .dotmark{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
+  .stepper .val{font-family:var(--mono); font-weight:700; font-size:1rem; width:34px; text-align:center; color:var(--ink)}
+  .stepbtn{width:30px; height:30px; border-radius:8px; border:1.5px solid var(--grid-strong); background:#fff;
+    font-family:var(--display); font-weight:700; font-size:1.1rem; line-height:1; color:var(--accent); cursor:pointer}
+  .stepbtn:hover{border-color:var(--accent)} .stepbtn:active{transform:translateY(1px)}
+
+  .controls{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top:14px}
+  .feedback{margin-top:12px; font-family:var(--display); font-weight:600; font-size:1rem; min-height:1.4em}
+  .feedback.good{color:var(--ok)} .feedback.bad{color:var(--amber)}
+  .checklist{list-style:none; margin:10px 0 0; padding:0; display:grid; gap:5px}
+  .checklist li{font-size:.9rem; color:var(--ink-soft); display:flex; gap:8px; align-items:center}
+  .checklist li .mk{font-weight:700}
+  .checklist li.ok .mk{color:var(--ok)} .checklist li.no .mk{color:var(--amber)}
+  .hintline{font-size:.86rem; color:var(--ink-faint); margin:8px 0 0}
+
+  /* read-a-graph figure (static, for questions) */
+  .readfig{background:#fff; border:1px solid var(--grid-strong); border-radius:14px; padding:16px 16px 10px; max-width:520px}
+  .readfig .gtitle{font-size:1.05rem}
+
+  /* graph + question side by side */
+  .graph-aside{display:flex; gap:24px; align-items:center; flex-wrap:wrap}
+  .graph-aside .ga-graph{flex:1 1 340px; min-width:0}
+  .graph-aside .ga-graph .readfig{margin:0; max-width:none}
+  .graph-aside .ga-q{flex:1 1 300px; min-width:250px}
+  .graph-aside .ga-q .mcq{margin-top:10px}
+
+  /* multiple-choice / tick questions */
+  .mcq{display:grid; gap:8px; margin:8px 0 0}
+  .opt{display:flex; align-items:center; gap:10px; background:#fff; border:1.5px solid var(--grid-strong);
+    border-radius:10px; padding:9px 13px; cursor:pointer; font-weight:600; font-size:.95rem; transition:.12s; text-align:left; font-family:var(--body); color:var(--ink)}
+  .opt:hover{border-color:var(--accent)}
+  .opt .box{width:20px;height:20px;border-radius:6px;border:2px solid var(--grid-strong); flex:0 0 auto; display:grid; place-items:center; font-size:.8rem; color:#fff}
+  .opt.pick{border-color:var(--accent); background:var(--accent-soft)}
+  .opt.correct{border-color:var(--ok); background:var(--ok-soft)} .opt.correct .box{background:var(--ok); border-color:var(--ok)}
+  .opt.wrong{border-color:var(--red); background:var(--red-bg)} .opt.wrong .box{background:var(--red); border-color:var(--red)}
+
+  /* ---------- activities ---------- */
+  .filterbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:6px 0 22px}
+  .filterbar .lbl{font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint)}
+  .chip{font-family:var(--display); font-weight:600; font-size:.86rem; cursor:pointer; border-radius:999px;
+    padding:7px 15px; border:1.5px solid var(--grid-strong); background:#fff; color:var(--ink-soft);
+    display:inline-flex; align-items:center; gap:8px; transition:.15s}
+  .chip .lt{width:11px;height:11px;border-radius:50%}
+  .chip[data-f="all"] .lt{background:linear-gradient(90deg,var(--green),var(--amber),var(--red))}
+  .chip[data-f="green"] .lt{background:var(--green)}
+  .chip[data-f="amber"] .lt{background:var(--amber)}
+  .chip[data-f="red"] .lt{background:var(--red)}
+  .chip.on{color:var(--ink); border-color:var(--ink); box-shadow:var(--shadow)}
+
+  .activity{border-radius:var(--radius); border:1px solid var(--grid-strong); background:#fff;
+    box-shadow:var(--shadow); padding:0; overflow:hidden; margin-bottom:18px}
+  .activity.hide{display:none}
+  .activity .head{padding:16px 22px; display:flex; align-items:center; gap:12px; color:#fff}
+  .activity .head .tier{font-family:var(--display); font-weight:700; font-size:1.15rem; letter-spacing:.2px}
+  .activity .head .tag{margin-left:auto; font-family:var(--mono); font-size:.72rem; letter-spacing:.1em;
+    text-transform:uppercase; background:rgba(255,255,255,.22); padding:5px 10px; border-radius:999px}
+  .activity[data-tier="green"] .head{background:var(--green)}
+  .activity[data-tier="amber"] .head{background:var(--amber)}
+  .activity[data-tier="red"] .head{background:var(--red)}
+  .activity .body{padding:20px 22px}
+  .activity[data-tier="green"] .body{background:var(--green-bg)}
+  .activity[data-tier="amber"] .body{background:var(--amber-bg)}
+  .activity[data-tier="red"] .body{background:var(--red-bg)}
+  .scenario{background:#fff; border-radius:12px; padding:16px 18px; border:1px solid rgba(0,0,0,.05)}
+  .scenario + .scenario{margin-top:14px}
+  .scenario h4{font-family:var(--display); font-weight:700; margin:0 0 8px; font-size:1.05rem}
+  .qlist{margin:.4em 0 0; padding-left:1.25em} .qlist li{margin:9px 0}
+
+  /* typed answer fields */
+  .ans-field{display:block; width:100%; max-width:540px; margin:7px 0 2px;
+    font-family:var(--body); font-size:.95rem; color:var(--ink);
+    border:1.5px solid var(--grid-strong); border-radius:9px; padding:8px 11px; background:#fff}
+  .ans-field::placeholder{color:var(--ink-faint); font-style:italic}
+  .ans-field:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+  .ans-field.lines{resize:vertical; min-height:46px; line-height:1.5}
+  .ans-field.short{max-width:300px}
+  .star{color:var(--amber); font-weight:800}
+  .muted{color:var(--ink-soft)}
+
+  .answer{margin-top:14px; border-radius:12px; border:1px solid var(--grid-strong); background:#fff;
+    overflow:hidden; max-height:0; opacity:0; transition:max-height .35s ease, opacity .25s ease}
+  .answer.open{max-height:1800px; opacity:1}
+  .answer .inner{padding:14px 18px}
+  .answer h5{font-family:var(--display); font-weight:700; margin:0 0 6px; color:var(--green);
+    font-size:.95rem; display:flex; align-items:center; gap:8px}
+  .activity[data-tier="amber"] .answer h5{color:var(--amber)}
+  .activity[data-tier="red"] .answer h5{color:var(--red)}
+  .answer ul{margin:.2em 0; padding-left:1.2em} .answer li{margin:2px 0; font-size:.96rem}
+
+  /* teacher note */
+  .teacher-note{background:#FFFBEA; border:1px solid #F2E2A6; border-radius:12px;
+    padding:12px 16px; margin-top:16px; font-size:.93rem; color:#6b5d18}
+  .teacher-note b{font-family:var(--display); color:#8a6d00}
+  .teacher-note .pill{font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
+    background:#8a6d00; color:#fff; padding:3px 8px; border-radius:999px; margin-right:8px; vertical-align:1px}
+
+  /* exit ticket */
+  .exit{margin-top:18px; background:var(--ink); color:#fff; border-radius:var(--radius); padding:22px 24px;
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+  .exit .em{font-size:2rem; line-height:1}
+  .exit .txt{flex:1 1 240px}
+  .exit h3{color:#fff; margin:0 0 3px}
+  .exit p{margin:0; color:#C7CEDE; font-size:.95rem}
+  .exit a.btn{background:#FFD24A; border-color:#FFD24A; color:var(--ink); text-decoration:none}
+  .exit a.btn:hover{filter:brightness(1.03)}
+
+  /* reflection */
+  .reflect{display:grid; gap:10px}
+  .rrow{background:#fff; border:1px solid var(--grid-strong); border-radius:12px; padding:12px 16px;
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .rrow .txt{flex:1 1 220px; font-weight:600}
+  .rate{display:inline-flex; gap:6px}
+  .rate button{font-family:var(--display); font-weight:600; font-size:.8rem; border:1.5px solid var(--grid-strong);
+    background:#fff; color:var(--ink-soft); border-radius:999px; padding:5px 12px; cursor:pointer}
+  .rate button.got.on{background:var(--green); border-color:var(--green); color:#fff}
+  .rate button.near.on{background:var(--amber); border-color:var(--amber); color:#fff}
+  .rate button.help.on{background:var(--red); border-color:var(--red); color:#fff}
+  .talk{margin-top:18px; background:var(--ink); color:#fff; border-radius:var(--radius); padding:18px 22px}
+  .talk b{color:#FFD24A; font-family:var(--display)}
+
+  footer{padding:34px 0 60px; color:var(--ink-faint); font-size:.85rem; text-align:center}
+  .curric{font-family:var(--mono); font-size:.72rem; color:var(--ink-faint); margin-top:4px}
+  .workshop{font-family:var(--mono); font-size:.72rem; color:var(--ink-faint)}
+  .workshop b{color:var(--ink-soft)}
+
+  .line-anim{transition:stroke-dashoffset 1.1s ease}
+  @media (prefers-reduced-motion: reduce){ .line-anim{transition:none} html{scroll-behavior:auto} }
+  :focus-visible{outline:3px solid var(--accent); outline-offset:2px; border-radius:6px}
 </style>
+</head>
+<body class="teacher">
 
-<div class="wrap">
-  <div class="hero">
-    <div class="eyebrow">Mathematics · Statistics</div>
-    <h1>Year 5 Data Unit</h1>
-    <p>A collection of interactive lessons on reading, representing, and critiquing data. Pick a lesson below to get started.</p>
-  </div>
-
-  <div class="lessons">
-    <a class="lesson" href="interpreting-pictographs.html">
-      <span class="num">4.1</span>
-      <span class="body">
-        <span class="tag">VC2M4ST01</span>
-        <h3>Interpreting Pictographs</h3>
-        <p>Read and interpret data displayed in pictographs, including keys where one symbol stands for many.</p>
-      </span>
-      <span class="arrow">→</span>
-    </a>
-    <a class="lesson" href="interpreting-column-graphs.html">
-      <span class="num">4.2</span>
-      <span class="body">
-        <span class="tag">VC2M5ST01</span>
-        <h3>Interpreting Column Graphs</h3>
-        <p>Read and interpret data displayed in column graphs.</p>
-      </span>
-      <span class="arrow">→</span>
-    </a>
-    <a class="lesson" href="constructing-graphs.html">
-      <span class="num">4.3</span>
-      <span class="body">
-        <span class="tag">VC2M5ST01</span>
-        <h3>Constructing Graphs</h3>
-        <p>Build graphs to represent and display collected data.</p>
-      </span>
-      <span class="arrow">→</span>
-    </a>
-    <div class="placeholder">
-      <span class="num">5.1</span>
-      <span class="body"><h3>Interpreting Dot Plots</h3><p>Coming soon.</p></span>
+<header class="bar">
+  <div class="bar-inner">
+    <div class="brand">
+      <svg class="glyph" viewBox="0 0 22 18" aria-hidden="true"><polyline points="1,15 6,9 12,11 21,2" fill="none" stroke="#4F46E5" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="1" cy="15" r="2" fill="#F0862E"/><circle cx="6" cy="9" r="2" fill="#6FB544"/><circle cx="12" cy="11" r="2" fill="#D94FB0"/><circle cx="21" cy="2" r="2" fill="#3E9AE6"/></svg>
+      Interpreting Line Graphs
     </div>
-    <a class="lesson" href="types-of-data.html">
-      <span class="num">5.2</span>
-      <span class="body">
-        <span class="tag">VC2M5ST01</span>
-        <h3>Types of Data</h3>
-        <p>Identify data as categorical or numerical, and sort it into nominal, ordinal, discrete or continuous.</p>
-      </span>
-      <span class="arrow">→</span>
-    </a>
-    <a class="lesson" href="mode-and-shape.html">
-      <span class="num">5.3</span>
-      <span class="body">
-        <span class="tag">VC2M5ST01</span>
-        <h3>Mode and Shape of Data</h3>
-        <p>Find the mode in a data set and describe the shape of its distribution.</p>
-      </span>
-      <span class="arrow">→</span>
-    </a>
-    <div class="placeholder">
-      <span class="num">5.4</span>
-      <span class="body"><h3>Interpreting Line Graphs</h3><p>Coming soon.</p></span>
-    </div>
-    <a class="lesson" href="finding-the-range.html">
-      <span class="num">6.1</span>
-      <span class="body">
-        <span class="tag">VC2M6ST02</span>
-        <h3>Data Range</h3>
-        <p>Find the range of a data set to describe how spread out it is.</p>
-      </span>
-      <span class="arrow">→</span>
-    </a>
-    <a class="lesson" href="critiquing-data-representations.html">
-      <span class="num">6.2</span>
-      <span class="body">
-        <span class="tag">VC2M6ST02</span>
-        <h3>Critiquing Data Representations</h3>
-        <p>Spot errors in graphs, back them up with evidence, and judge whether the conclusion is fair.</p>
-      </span>
-      <span class="arrow">→</span>
-    </a>
+    <nav class="jump">
+      <a href="#learn">Learn</a>
+      <a href="#parts">Features</a>
+      <a href="#read">Read values</a>
+      <a href="#draw">Draw one</a>
+      <a href="#activities">Tasks</a>
+      <a href="#reflect">Reflection</a>
+    </nav>
+    <button class="tview" id="tview" aria-pressed="true">
+      <span class="dot"></span><span id="tviewlabel">Teacher notes: on</span>
+    </button>
   </div>
+</header>
 
-  <div class="footer">Year 5 Data Unit</div>
+<!-- HERO -->
+<div class="wrap hero">
+  <div class="eyebrow-row">
+    <div class="eyebrow">Grade 5 Mathematics · Statistics</div>
+    <a class="curric-link" href="https://f10.vcaa.vic.edu.au/learning-areas/mathematics/curriculum?level=5#VC2M5ST02" target="_blank" rel="noopener">VC2M5ST02 · Victorian Curriculum 2.0 ↗</a>
+  </div>
+  <h1>5.4 Interpreting <span class="blue">Line</span> <span class="pink">Graphs</span></h1>
+
+  <div class="hero-grid">
+    <div>
+      <p class="lead" style="margin-top:22px">A line graph shows how one thing <b>changes over time</b>. Each dot is a reading, and the line joining the dots lets us spot when values go <b>up</b>, <b>down</b>, or stay the same — all in one glance. Read the dots, follow the line, and answer the questions.</p>
+      <div class="btnrow">
+        <a class="btn" href="#read">Practise reading values</a>
+        <a class="btn ghost" href="#parts">See the features</a>
+      </div>
+    </div>
+    <div class="hero-chart">
+      <div class="cap">Temperature on Monday</div>
+      <svg id="heroChart" class="readchart" viewBox="0 0 380 240" role="img" aria-label="Line graph of temperature on Monday rising then falling"></svg>
+    </div>
+  </div>
 </div>
+
+<!-- SUCCESS CRITERIA -->
+<section id="intent" class="wrap">
+  <div class="part-tag">Success criteria · I can…</div>
+  <h2>What we’re aiming for</h2>
+  <div class="card">
+    <div class="reflect" id="iCanList"></div>
+    <div class="teacher-note"><span class="pill">Teacher</span><b>Read together.</b> Green = identifying the features of a line graph (title, axes, plot points, the line). Amber = adding missing features to complete a graph. Red = interpreting the data to answer worded questions. Point out the tools below let students practise all three before their books.</div>
+  </div>
+</section>
+
+<!-- LEARN -->
+<section id="learn" class="wrap">
+  <div class="part-tag">Big idea 1</div>
+  <h2>What is a line graph?</h2>
+
+  <div class="two">
+    <div class="card">
+      <h3>What is a line graph?</h3>
+      <p style="margin-top:0;color:var(--ink-soft)">A line graph uses <b>points joined by lines</b> to show how a value changes over time. We plot each reading as a <b>point</b>, then join the points in order from left to right.</p>
+      <div class="card define" style="margin:6px 0 0">
+        Line graphs are best for data that <b>changes over time</b> — like temperature through a day, or a plant growing each week.
+      </div>
+    </div>
+    <div class="card">
+      <h3>When should I use one?</h3>
+      <p style="margin-top:0;color:var(--ink-soft)">Use a line graph when the horizontal axis is something <b>continuous</b> that flows in order — hours, days, weeks, months. If the categories are just separate groups (favourite colour, eye colour), a <b>column graph</b> fits better.</p>
+      <p class="hintline">Ask: “Does it make sense to join these points with a line?” If yes → line graph.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PARTS -->
+<section id="parts" class="wrap">
+  <div class="part-tag">Big idea 2</div>
+  <h2>The features of a line graph</h2>
+  <p class="lead">Every line graph should have these parts. A graph is only finished when someone else can read it <i>without asking you a single question.</i></p>
+
+  <div class="card" style="margin-bottom:22px">
+    <div class="ref">
+      <div class="cell"><h4>🏷️ Title</h4><p>Tells us what the graph is about.</p><p class="pin">e.g. “Temperature on Monday”.</p></div>
+      <div class="cell"><h4>↔️ Horizontal axis (x-axis)</h4><p>Usually shows the time — the thing that changes along the bottom.</p><p class="pin">e.g. Time, Day, Week, Month.</p></div>
+      <div class="cell"><h4>↕️ Vertical axis (y-axis)</h4><p>Shows what is being measured, with an even scale.</p><p class="pin">e.g. Temperature (°C), Snowfall (cm).</p></div>
+      <div class="cell"><h4>⚫ Plot points</h4><p>A dot marks each reading, where the two values meet.</p><p class="pin">Not “dots” or “circles” — <b>plot points</b>.</p></div>
+      <div class="cell"><h4>📈 The line</h4><p>Joins the plot points in order to show the trend.</p></div>
+      <div class="cell"><h4>🔎 Even scale</h4><p>Numbers go up the y-axis in equal steps (0, 2, 4, 6…).</p></div>
+    </div>
+    <div class="teacher-note"><span class="pill">Teacher</span>Common exam question: “What are the dots on this graph called?” → <b>plot points</b>. Drill the vocabulary: title, axes, scale, plot points, line.</div>
+  </div>
+
+  <h3 style="font-size:1.5rem; margin-bottom:.35em">Spot the features</h3>
+  <p class="lead" style="margin-top:0">Tap each button to highlight that feature on the graph.</p>
+  <div class="card">
+    <div id="spotter"></div>
+  </div>
+</section>
+
+<!-- READ VALUES -->
+<section id="read" class="wrap">
+  <div class="part-tag">Big idea 3</div>
+  <h2>Reading a value off the line</h2>
+  <p class="lead">To read a point: start on the <b>horizontal axis</b>, go straight <b>up</b> to the line, then straight <b>across</b> to the <b>vertical axis</b> to read the number.</p>
+  <div class="card">
+    <ol class="steps">
+      <li>Find the time you want on the <b>horizontal axis</b>.</li>
+      <li>Move your finger straight <b>up</b> until you reach the plotted point.</li>
+      <li>Move straight <b>across</b> to the vertical axis and read the value.</li>
+      <li>To find a <b>difference</b> or <b>total</b>, read each value first, then add or subtract.</li>
+    </ol>
+    <div class="teacher-note"><span class="pill">Teacher</span>Model the “up then across” finger trace on the board once. It stops the most common error — reading the wrong axis.</div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3>Have a go — read the snowfall</h3>
+    <p class="hintline" style="margin-top:0">Hover or tap a point to check the value, then answer beside the graph.</p>
+    <div class="graph-aside">
+      <div id="readSnow" class="ga-graph"></div>
+      <div id="snowQuiz" class="ga-q"></div>
+    </div>
+  </div>
+</section>
+
+<!-- DRAW ONE (signature interactive) -->
+<section id="draw" class="wrap">
+  <div class="part-tag">Signature tool · try it</div>
+  <h2>Complete the line graph</h2>
+  <p class="lead">Here is the ice-cream parlour data. Tap the graph at the right height for each day, or use the <b>+ / −</b> buttons. The points join up automatically. When every point matches the table, press <b>Check my graph</b>.</p>
+  <div class="card">
+    <div id="drawIce"></div>
+    <div class="teacher-note"><span class="pill">Teacher</span>Model Monday together (tap at the 42 line), then let students finish. Note Wednesday’s dip to 3 — a great lead-in to Task 3’s “give a possible reason” question.</div>
+  </div>
+</section>
+
+<!-- ACTIVITIES -->
+<section id="activities" class="wrap">
+  <div class="part-tag">Must-complete work</div>
+  <h2>Your tasks</h2>
+  <p class="lead" style="margin-top:0">Work through the conceptual questions first (green &amp; amber), then the context problem (red). Mark each task before moving on.</p>
+
+  <div class="filterbar">
+    <span class="lbl">Show tier:</span>
+    <button class="chip on" data-f="all"><span class="lt"></span>All</button>
+    <button class="chip" data-f="green"><span class="lt"></span>Green</button>
+    <button class="chip" data-f="amber"><span class="lt"></span>Amber</button>
+    <button class="chip" data-f="red"><span class="lt"></span>Red</button>
+  </div>
+
+  <!-- GREEN -->
+  <div class="activity" data-tier="green">
+    <div class="head"><span class="tier">🟢 Green</span> Conceptual · simple one-step questions <span class="tag">Read and interpret</span></div>
+    <div class="body">
+
+      <div class="scenario">
+        <h4>1a · What were the highest and lowest temperatures recorded?</h4>
+        <div id="readTemp"></div>
+        <ol class="qlist" style="margin-top:12px">
+          <li>What was the <b>highest</b> temperature recorded, and at what time?
+            <input class="ans-field short" id="ans-1a-high" placeholder="Your answer…"></li>
+          <li>What was the <b>lowest</b> temperature recorded, and at what time?
+            <input class="ans-field short" id="ans-1a-low" placeholder="Your answer…"></li>
+        </ol>
+      </div>
+
+      <div class="scenario">
+        <h4>1b · How much snow fell between Friday and Saturday?</h4>
+        <div id="readSnow1b"></div>
+        <ol class="qlist" style="margin-top:12px">
+          <li>How much snow fell <b>between Friday and Saturday</b>?
+            <input class="ans-field short" id="ans-1b" placeholder="Your answer…"></li>
+        </ol>
+      </div>
+
+      <div class="scenario">
+        <h4>2a · Which months saw more than 4 mm of rain?</h4>
+        <div id="readRain"></div>
+        <ol class="qlist" style="margin-top:12px">
+          <li>Which months saw <b>more than 4&nbsp;mm</b> of rain?
+            <input class="ans-field" id="ans-2a" placeholder="Your answer…"></li>
+        </ol>
+      </div>
+
+      <div class="scenario">
+        <h4>2b · In which weeks were the temperatures 30&nbsp;°C or above?</h4>
+        <div id="readHoliday"></div>
+        <ol class="qlist" style="margin-top:12px">
+          <li>In which weeks were the temperatures <b>30&nbsp;°C or above</b>?
+            <input class="ans-field" id="ans-2b" placeholder="Your answer…"></li>
+        </ol>
+      </div>
+
+      <div class="btnrow"><button class="btn sm reveal" data-target="ansGreen">Reveal answers</button></div>
+      <div class="answer" id="ansGreen"><div class="inner">
+        <h5>✓ Answers</h5>
+        <ul>
+          <li><b>1a Highest / lowest:</b> highest = 24&nbsp;°C at 15:00 (3&nbsp;pm); lowest = 10&nbsp;°C at 6:00 (6&nbsp;am).</li>
+          <li><b>1b Fri → Sat:</b> Friday 16&nbsp;cm, Saturday 16&nbsp;cm → 16 − 16 = <b>0&nbsp;cm</b> (no new snow fell — the line is flat).</li>
+          <li><b>2a Rain &gt; 4 mm:</b> January (10), February (13), March (8), September (5), November (5) and December (8). Values of 4 or below do not count.</li>
+          <li><b>2b 30 °C or above:</b> Week 2 (30), Week 5 (30) and Week 6 (32).</li>
+        </ul>
+      </div></div>
+      <div class="teacher-note"><span class="pill">Teacher</span>1b is the classic trap — a flat line means <i>no change</i>, not “16 cm”. Push students to read both points and subtract. For 2a, “more than 4” vs “4 or more” is a language point — link it to &gt; and ≥.</div>
+    </div>
+  </div>
+
+  <!-- AMBER -->
+  <div class="activity" data-tier="amber">
+    <div class="head"><span class="tier">🟠 Amber</span> Identifying the features of a line graph <span class="tag">Name &amp; complete features</span></div>
+    <div class="body">
+      <div class="scenario">
+        <h4>Growth of a newborn cavoodle puppy</h4>
+        <div id="readCavoodle"></div>
+        <ol class="qlist" style="margin-top:12px">
+          <li>Fill in the <b>feature that is missing</b> from this line graph.
+            <input class="ans-field" id="ans-cav-missing" placeholder="Your answer…"></li>
+          <li>What is the <b>title</b> of this graph?
+            <input class="ans-field" id="ans-cav-title" placeholder="Your answer…"></li>
+          <li>What are the <b>dots</b> on this graph called?</li>
+          <li>Which of the following data sets would be suitable for a <b>line graph</b>? Tick all that apply.</li>
+        </ol>
+        <div id="dotsQuiz" style="margin-top:10px"></div>
+        <div id="suitQuiz" style="margin-top:14px"></div>
+      </div>
+      <div class="btnrow"><button class="btn sm reveal" data-target="ansAmber">Reveal answers</button></div>
+      <div class="answer" id="ansAmber"><div class="inner">
+        <h5>✓ Answers &amp; guidance</h5>
+        <ul>
+          <li><b>1 Missing feature:</b> the <b>line joining the plot points</b> is missing — the points have been plotted but not connected. (A finished line graph joins the points in order from left to right.)</li>
+          <li><b>2 Title:</b> “Growth of newborn cavoodle puppy”.</li>
+          <li><b>3 The dots:</b> they are called <b>plot points</b> (not “dot points” or “circles”).</li>
+          <li><b>4 Line-graph data:</b> “The daily temperature in Darwin in July”, “How many pies are ordered from the canteen each month”, and “Growth of a sunflower plant in three weeks” — these change over time. Favourite colour and eye colour are <i>categories</i>, so a column graph suits them better.</li>
+        </ul>
+      </div></div>
+      <div class="teacher-note"><span class="pill">Teacher</span>The missing feature here is the <b>line</b> — the points are plotted but not joined. This is the “add missing features to complete a line graph” success criterion. Drill the vocabulary: <b>plot points</b>, not dots/circles.</div>
+    </div>
+  </div>
+
+  <!-- RED -->
+  <div class="activity" data-tier="red">
+    <div class="head"><span class="tier">🔴 Red</span> Putting knowledge in context <span class="tag">Draw → interpret → reason</span></div>
+    <div class="body">
+      <div class="scenario">
+        <h4>The ice cream parlour</h4>
+        <p class="muted" style="margin:0 0 10px">The table shows the number of customers each lunchtime at an ice cream parlour.</p>
+        <table class="freq" style="margin-bottom:6px">
+          <caption>Lunchtime customers</caption>
+          <thead><tr><th>Day</th><th>Customers</th></tr></thead>
+          <tbody>
+            <tr><td>Monday</td><td class="num">42</td></tr>
+            <tr><td>Tuesday</td><td class="num">47</td></tr>
+            <tr><td>Wednesday</td><td class="num">3</td></tr>
+            <tr><td>Thursday</td><td class="num">36</td></tr>
+            <tr><td>Friday</td><td class="num">40</td></tr>
+            <tr><td>Saturday</td><td class="num">31</td></tr>
+          </tbody>
+        </table>
+        <p class="hintline">(a) Draw the line graph using the tool in the “Draw one” section above, then answer these:</p>
+        <ol class="qlist">
+          <li>(b) On which day did the ice cream parlour have the <b>most</b> customers?
+            <input class="ans-field short" id="ans-ice-b" placeholder="Your answer…"></li>
+          <li>(c) Work out how many customers visited the ice cream parlour <b>in total</b>.
+            <input class="ans-field short" id="ans-ice-c" placeholder="Your answer…"></li>
+          <li>(d) Give a <b>possible reason</b> why there were only 3 visitors on Wednesday.
+            <textarea class="ans-field lines" id="ans-ice-d" rows="2" placeholder="Your answer…"></textarea></li>
+        </ol>
+      </div>
+      <div class="btnrow"><button class="btn sm reveal" data-target="ansRed">Reveal answers</button></div>
+      <div class="answer" id="ansRed"><div class="inner">
+        <h5>✓ Answers &amp; guidance</h5>
+        <ul>
+          <li><b>(a) Graph:</b> plot points at Mon 42, Tue 47, Wed 3, Thu 36, Fri 40, Sat 31 and join them in order. A scale of 1 square = 5 keeps it readable (largest value 47). Don’t forget a title and both axis labels.</li>
+          <li><b>(b) Most customers:</b> <b>Tuesday</b> (47) — the highest point on the graph.</li>
+          <li><b>(c) Total:</b> 42 + 47 + 3 + 36 + 40 + 31 = <b>199 customers</b>.</li>
+          <li><b>(d) Possible reason (any sensible one):</b> the parlour may have been closed part of Wednesday, the weather was cold/rainy, a public holiday, roadworks, or a staff shortage. Accept any reason that would reduce customers.</li>
+        </ul>
+      </div></div>
+      <div class="teacher-note"><span class="pill">Teacher</span>Part (c) is 2 marks — students must total <i>all six</i> days (199), not just read the graph. Part (d) accepts any reasonable real-world explanation; look for a link between the reason and fewer customers.</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKING + EXIT TICKET -->
+<section id="exit" class="wrap">
+  <div class="part-tag">Before you finish</div>
+  <h2>Have you marked all your tasks?</h2>
+  <div class="card">
+    <p style="margin-top:0"><b>If no</b> — go back and mark your work using the “Reveal answers” buttons.<br><b>If yes</b> — complete your exit ticket.</p>
+    <div class="exit">
+      <span class="em">🎟️</span>
+      <div class="txt">
+        <h3>Exit ticket</h3>
+        <p>Show what you learned about interpreting line graphs.</p>
+      </div>
+      <a class="btn" href="https://mathspace.co/student/tasks/SubtopicCustomTask-2075645/" target="_blank" rel="noopener">Open exit ticket ↗</a>
+    </div>
+    <div class="teacher-note"><span class="pill">Teacher</span>Exit ticket link: Mathspace SubtopicCustomTask-2075645.</div>
+  </div>
+</section>
+
+<!-- REFLECTION -->
+<section id="reflect" class="wrap">
+  <div class="part-tag">Reflection · how did you go?</div>
+  <h2>Check yourself</h2>
+  <div class="card">
+    <div class="reflect" id="reflectList"></div>
+    <div class="talk"><b>Talk to your partner:</b> a line goes flat, then rises steeply. In your own words, what is happening to the data? Use the words “stays the same” and “increases”.</div>
+    <div class="teacher-note"><span class="pill">Teacher</span>Exit check. Listen for “flat = no change”, “up = increasing”, “down = decreasing”, and correct use of <b>plot points</b>.</div>
+  </div>
+</section>
+
+<footer class="wrap">
+  Grade 5 Mathematics · Interpreting data from line graphs
+  <div class="curric">Learning intention: We are learning to interpret line graphs.</div>
+  <div class="workshop" style="margin-top:8px">Ochre workshop slides: <b>MATM-y5t1u1L6 SLI — Interpreting line graphs.pptx</b></div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const el = (n,a)=>{const e=document.createElementNS(SVGNS,n); if(a) for(const k in a) e.setAttribute(k,a[k]); return e;};
+
+  /* ---------- niceMax: round a max up to a friendly axis top ---------- */
+  function axis(maxVal){
+    // choose step so we get ~5-8 gridlines
+    const targets=[1,2,5,10,20,25,50,100,200];
+    let step=1;
+    for(const t of targets){ if(maxVal/t<=8){ step=t; break; } step=t; }
+    let top=Math.ceil(maxVal/step)*step;
+    if(top===maxVal) top+=step;           // headroom
+    return {step, top};
+  }
+
+  /* =========================================================
+     STATIC LINE GRAPH (for hero + reading questions)
+     cfg = {svg, data:[{x,y}], xLabels, color, yStep, yTop,
+            xTitle, yTitle, showValues, interactive}
+     ========================================================= */
+  function drawLine(cfg){
+    const svg = typeof cfg.svg==='string'?document.getElementById(cfg.svg):cfg.svg;
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const vb=svg.getAttribute('viewBox').split(' ').map(Number);
+    const W=vb[2],H=vb[3];
+    const padL=44,padR=18,padT=16,padB=40;
+    const plotW=W-padL-padR, plotH=H-padT-padB, baseY=padT+plotH;
+    const vals=cfg.data.map(d=>d.y);
+    const a = (cfg.yStep&&cfg.yTop)?{step:cfg.yStep,top:cfg.yTop}:axis(Math.max.apply(null,vals));
+    const step=a.step, top=a.top;
+    const n=cfg.data.length;
+    const xAt=i=> padL + (plotW)*( n===1?0.5 : (i/(n-1)) ) * (cfg.inset?0.9:1) + (cfg.inset?plotW*0.05:0);
+    const yAt=v=> baseY - plotH*(v/top);
+    const color=cfg.color||'var(--c-blue)';
+
+    // gridlines + y ticks
+    for(let v=0; v<=top+0.0001; v+=step){
+      const y=yAt(v);
+      svg.appendChild(el('line',{x1:padL,y1:y,x2:padL+plotW,y2:y,stroke:v===0?'var(--grid-strong)':'#EBF0F8','stroke-width':v===0?2:1}));
+      svg.appendChild(el('text',{x:padL-7,y:y+4,'text-anchor':'end','font-family':'Space Mono, monospace','font-size':10,'font-weight':700,fill:'var(--ink-faint)'})).textContent=v;
+    }
+    // faint vertical gridlines at each x
+    cfg.data.forEach((d,i)=>{
+      const x=xAt(i);
+      svg.appendChild(el('line',{x1:x,y1:padT,x2:x,y2:baseY,stroke:'#F1F5FB','stroke-width':1}));
+    });
+    // axes
+    svg.appendChild(el('line',{x1:padL,y1:padT,x2:padL,y2:baseY,stroke:'var(--grid-strong)','stroke-width':2}));
+    svg.appendChild(el('line',{x1:padL,y1:baseY,x2:padL+plotW,y2:baseY,stroke:'var(--grid-strong)','stroke-width':2}));
+
+    // the line (omitted when noLine — e.g. the "missing feature" cavoodle graph)
+    if(!cfg.noLine){
+      const pts=cfg.data.map((d,i)=>xAt(i)+','+yAt(d.y)).join(' ');
+      const poly=el('polyline',{points:pts,fill:'none',stroke:color,'stroke-width':2.6,'stroke-linejoin':'round','stroke-linecap':'round',class:'line-anim'});
+      svg.appendChild(poly);
+      if(!reduce){
+        const len=poly.getTotalLength ? poly.getTotalLength() : 1000;
+        poly.style.strokeDasharray=len; poly.style.strokeDashoffset=len;
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{ poly.style.strokeDashoffset=0; }));
+      }
+    }
+
+    // x labels
+    cfg.data.forEach((d,i)=>{
+      const x=xAt(i);
+      svg.appendChild(el('text',{x:x,y:baseY+15,'text-anchor':'middle','font-family':'Nunito, sans-serif','font-size':9.5,'font-weight':700,fill:'var(--ink-soft)'})).textContent=(cfg.xLabels?cfg.xLabels[i]:d.x);
+    });
+
+    // points (+ optional hover value)
+    const tip=el('g',{opacity:0}); // tooltip built lazily
+    cfg.data.forEach((d,i)=>{
+      const x=xAt(i), y=yAt(d.y);
+      const c=el('circle',{cx:x,cy:y,r:3.6,fill:color,stroke:'#fff','stroke-width':1.6});
+      if(cfg.showValues){
+        svg.appendChild(el('text',{x:x,y:y-8,'text-anchor':'middle','font-family':'Space Mono, monospace','font-size':9,'font-weight':700,fill:color})).textContent=d.y;
+      }
+      if(cfg.interactive){
+        const hit=el('circle',{cx:x,cy:y,r:12,fill:'transparent',style:'cursor:pointer'});
+        const show=()=>{
+          c.setAttribute('r',5.4);
+          while(tip.firstChild) tip.removeChild(tip.firstChild);
+          const label=(cfg.xLabels?cfg.xLabels[i]:d.x)+': '+d.y+(cfg.unit||'');
+          const tw=label.length*5.6+14;
+          let tx=x-tw/2; tx=Math.max(padL, Math.min(padL+plotW-tw, tx));
+          const ty=Math.max(padT, y-30);
+          tip.appendChild(el('rect',{x:tx,y:ty,width:tw,height:19,rx:6,fill:'var(--ink)'}));
+          tip.appendChild(el('text',{x:tx+tw/2,y:ty+13,'text-anchor':'middle','font-family':'Nunito, sans-serif','font-size':10,'font-weight':700,fill:'#fff'})).textContent=label;
+          tip.setAttribute('opacity',1);
+        };
+        const hide=()=>{ c.setAttribute('r',3.6); tip.setAttribute('opacity',0); };
+        hit.addEventListener('mouseenter',show); hit.addEventListener('mouseleave',hide);
+        hit.addEventListener('touchstart',e=>{show(); e.preventDefault();},{passive:false});
+        hit.addEventListener('touchend',hide);
+        svg.appendChild(c); svg.appendChild(hit);
+      } else {
+        svg.appendChild(c);
+      }
+    });
+    if(cfg.interactive) svg.appendChild(tip);
+  }
+
+  /* helper to build a titled read-figure into a mount */
+  function readFigure(mount, cfg){
+    const m=typeof mount==='string'?document.getElementById(mount):mount;
+    const fig=document.createElement('div'); fig.className='readfig';
+    if(cfg.title!==null){ const t=document.createElement('div'); t.className='gtitle'; t.textContent=cfg.title||''; fig.appendChild(t); }
+    else { const t=document.createElement('div'); t.className='gtitle'; t.style.color='var(--red)'; t.textContent='(title missing)'; fig.appendChild(t); }
+    const body=document.createElement('div'); body.className='gbody';
+    const yl=document.createElement('div'); yl.className='ylabel'; yl.textContent=cfg.yTitle||''; body.appendChild(yl);
+    const wrap=document.createElement('div'); wrap.className='gsvg';
+    const svg=el('svg',{viewBox:'0 0 400 250',class:'readchart',role:'img','aria-label':(cfg.title||'line graph')});
+    wrap.appendChild(svg); body.appendChild(wrap);
+    fig.appendChild(body);
+    const xl=document.createElement('div'); xl.className='xlabel'; xl.textContent=cfg.xTitle||''; fig.appendChild(xl);
+    m.appendChild(fig);
+    cfg.svg=svg;
+    drawLine(cfg);
+    return svg;
+  }
+
+  /* =========================================================
+     DATA
+     ========================================================= */
+  const TEMP={ title:'Temperature on Monday', xTitle:'Time', yTitle:'Temperature (°C)', unit:'°C', color:'var(--c-blue)',
+    yStep:2, yTop:26, xLabels:['6:00','9:00','12:00','15:00','18:00'],
+    data:[{y:10},{y:14},{y:22},{y:24},{y:18}] };
+  const SNOW={ title:'Snowfall Accumulation', xTitle:'Day', yTitle:'Snowfall (cm)', unit:' cm', color:'var(--c-red)',
+    yStep:2, yTop:20, xLabels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    data:[{y:6},{y:6},{y:8},{y:12},{y:16},{y:16},{y:18}] };
+  const RAIN={ title:'Average Rainfall in Death Valley (USA)', xTitle:'Month', yTitle:'Rain (mm)', unit:' mm', color:'var(--c-green)',
+    yStep:2, yTop:14, xLabels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    data:[{y:10},{y:13},{y:8},{y:3},{y:0},{y:1},{y:2},{y:3},{y:5},{y:2},{y:5},{y:8}] };
+  const HOLIDAY={ title:'Average Temperature During the School Holidays', xTitle:'Week', yTitle:'Temperature (°C)', unit:'°C', color:'var(--c-blue)',
+    yStep:2, yTop:34, xLabels:['1','2','3','4','5','6'],
+    data:[{y:26},{y:30},{y:24},{y:20},{y:30},{y:32}] };
+  const CAVOODLE={ title:'Growth of newborn cavoodle puppy', xTitle:'Weeks', yTitle:'Weight in grams', unit:' g', color:'var(--c-blue)',
+    yStep:200, yTop:1600, noLine:true, xLabels:['1','2','3','4','6','7','8','9','11','12'],
+    data:[{y:200},{y:400},{y:520},{y:520},{y:700},{y:700},{y:800},{y:1000},{y:1500},{y:1600}] };
+
+  /* ---------- hero ---------- */
+  drawLine(Object.assign({svg:'heroChart', showValues:true}, TEMP, {yTop:26,yStep:4}));
+
+  /* ---------- read figures ---------- */
+  readFigure('readSnow', Object.assign({interactive:true}, SNOW));
+  readFigure('readSnow1b', Object.assign({interactive:true}, SNOW));
+  readFigure('readCavoodle', Object.assign({interactive:true}, CAVOODLE));
+  readFigure('readTemp', Object.assign({interactive:true}, TEMP));
+  readFigure('readRain', Object.assign({interactive:true}, RAIN));
+  readFigure('readHoliday', Object.assign({interactive:true}, HOLIDAY));
+
+  /* =========================================================
+     FEATURE SPOTTER  (highlight parts of a graph)
+     ========================================================= */
+  function spotter(mountId){
+    const mount=document.getElementById(mountId);
+    const wrap=document.createElement('div');
+    const btns=document.createElement('div'); btns.className='btnrow'; btns.style.marginTop='0';
+    const feats=[['title','🏷️ Title'],['yaxis','↕️ Y-axis'],['xaxis','↔️ X-axis'],['points','⚫ Plot points'],['line','📈 The line']];
+    const fig=document.createElement('div'); fig.className='readfig'; fig.style.marginTop='14px';
+    const svg=el('svg',{viewBox:'0 0 420 250',class:'readchart'});
+    fig.appendChild(svg);
+    feats.forEach(([k,label],i)=>{
+      const b=document.createElement('button'); b.className='btn ghost sm'; b.textContent=label;
+      b.addEventListener('click',()=>{ btns.querySelectorAll('button').forEach(x=>x.classList.remove('_on')); b.classList.add('_on'); draw(k); });
+      btns.appendChild(b);
+    });
+    wrap.appendChild(btns); wrap.appendChild(fig); mount.appendChild(wrap);
+
+    const d=SNOW;
+    function draw(hi){
+      while(svg.firstChild) svg.removeChild(svg.firstChild);
+      const W=420,H=250,padL=48,padR=18,padT=30,padB=40;
+      const plotW=W-padL-padR, plotH=H-padT-padB, baseY=padT+plotH, top=20,step=4;
+      const n=d.data.length;
+      const xAt=i=>padL+plotW*(i/(n-1));
+      const yAt=v=>baseY-plotH*(v/top);
+      // gridlines
+      for(let v=0;v<=top;v+=step){ const y=yAt(v);
+        svg.appendChild(el('line',{x1:padL,y1:y,x2:padL+plotW,y2:y,stroke:v===0?'var(--grid-strong)':'#EBF0F8','stroke-width':v===0?2:1}));
+        svg.appendChild(el('text',{x:padL-7,y:y+4,'text-anchor':'end','font-family':'Space Mono, monospace','font-size':10,'font-weight':700,fill:'var(--ink-faint)'})).textContent=v;
+      }
+      const glow=c=> (hi&&c)?'#FFD24A':null;
+      // y axis
+      svg.appendChild(el('line',{x1:padL,y1:padT,x2:padL,y2:baseY,stroke:hi==='yaxis'?'var(--accent)':'var(--grid-strong)','stroke-width':hi==='yaxis'?4:2}));
+      // x axis
+      svg.appendChild(el('line',{x1:padL,y1:baseY,x2:padL+plotW,y2:baseY,stroke:hi==='xaxis'?'var(--accent)':'var(--grid-strong)','stroke-width':hi==='xaxis'?4:2}));
+      // line
+      const pts=d.data.map((p,i)=>xAt(i)+','+yAt(p.y)).join(' ');
+      svg.appendChild(el('polyline',{points:pts,fill:'none',stroke:hi==='line'?'var(--accent)':d.color,'stroke-width':hi==='line'?4.5:2.6,'stroke-linejoin':'round','stroke-linecap':'round'}));
+      // x labels
+      d.data.forEach((p,i)=>{ svg.appendChild(el('text',{x:xAt(i),y:baseY+15,'text-anchor':'middle','font-family':'Nunito, sans-serif','font-size':9.5,'font-weight':700,fill:'var(--ink-soft)'})).textContent=d.xLabels[i]; });
+      // points
+      d.data.forEach((p,i)=>{ const r=hi==='points'?5.6:3.6;
+        svg.appendChild(el('circle',{cx:xAt(i),cy:yAt(p.y),r:r,fill:hi==='points'?'var(--accent)':d.color,stroke:'#fff','stroke-width':1.6})); });
+      // title
+      svg.appendChild(el('text',{x:W/2,y:18,'text-anchor':'middle','font-family':'Fredoka, sans-serif','font-size':13,'font-weight':700,fill:hi==='title'?'var(--accent)':'var(--ink)'})).textContent=d.title;
+      // axis titles
+      svg.appendChild(el('text',{x:W/2,y:H-4,'text-anchor':'middle','font-family':'Fredoka, sans-serif','font-size':10,'font-weight':600,fill:hi==='xaxis'?'var(--accent)':'var(--ink-soft)'})).textContent='Day';
+      const yl=el('text',{x:14,y:H/2,'text-anchor':'middle','font-family':'Fredoka, sans-serif','font-size':10,'font-weight':600,fill:hi==='yaxis'?'var(--accent)':'var(--ink-soft)',transform:'rotate(-90 14 '+(H/2)+')'}); yl.textContent='Snowfall (cm)'; svg.appendChild(yl);
+    }
+    draw(null);
+  }
+  spotter('spotter');
+  // little active-state style for spotter buttons
+  const st=document.createElement('style'); st.textContent='.btn.ghost._on{background:var(--accent);color:#fff}'; document.head.appendChild(st);
+
+  /* =========================================================
+     INTERACTIVE "COMPLETE THE LINE GRAPH" (ice cream)
+     ========================================================= */
+  function makeLineBuilder(cfg){
+    const mount=typeof cfg.mount==='string'?document.getElementById(cfg.mount):cfg.mount;
+    const cats=cfg.cats;
+    const values=cats.map(()=>0);
+    const step=cfg.yStep, top=cfg.yTop;
+    const color=cfg.color||'var(--c-blue)';
+
+    const root=document.createElement('div'); root.className='builder';
+    const grid=document.createElement('div'); grid.className='builder-grid has-table';
+
+    // table column
+    const tcol=document.createElement('div');
+    const ttag=document.createElement('div'); ttag.className='datatag'; ttag.textContent='Data table'; tcol.appendChild(ttag);
+    const tbl=document.createElement('table'); tbl.className='freq';
+    tbl.innerHTML='<thead><tr><th>'+cfg.colCat+'</th><th>'+cfg.colVal+'</th></tr></thead>';
+    const tb=document.createElement('tbody');
+    cats.forEach(c=>{ const tr=document.createElement('tr'); tr.innerHTML='<td>'+c.label+'</td><td class="num">'+c.answer+'</td>'; tb.appendChild(tr); });
+    tbl.appendChild(tb); tcol.appendChild(tbl);
+
+    // figure column
+    const right=document.createElement('div');
+    const fig=document.createElement('div'); fig.className='graphfig';
+    const gt=document.createElement('div'); gt.className='gtitle'; gt.textContent=cfg.title; fig.appendChild(gt);
+    const gbody=document.createElement('div'); gbody.className='gbody';
+    const yl=document.createElement('div'); yl.className='ylabel'; yl.textContent=cfg.yTitle; gbody.appendChild(yl);
+    const svgWrap=document.createElement('div'); svgWrap.className='gsvg';
+    const svg=el('svg',{viewBox:'0 0 420 260',class:'buildchart',role:'img','aria-label':cfg.title+' builder'});
+    svgWrap.appendChild(svg); gbody.appendChild(svgWrap);
+    const xl=document.createElement('div'); xl.className='xlabel'; xl.textContent=cfg.xTitle;
+    fig.appendChild(gbody); fig.appendChild(xl); right.appendChild(fig);
+
+    // controls column
+    const left=document.createElement('div');
+    const itag=document.createElement('div'); itag.className='datatag'; itag.textContent='Set each point'; left.appendChild(itag);
+    const steppers=document.createElement('div'); steppers.className='steppers'; left.appendChild(steppers);
+    const controls=document.createElement('div'); controls.className='controls';
+    const checkBtn=document.createElement('button'); checkBtn.className='btn sm'; checkBtn.textContent='Check my graph';
+    const resetBtn=document.createElement('button'); resetBtn.className='btn ghost sm'; resetBtn.textContent='Reset';
+    controls.appendChild(checkBtn); controls.appendChild(resetBtn); left.appendChild(controls);
+    const feedback=document.createElement('div'); feedback.className='feedback'; left.appendChild(feedback);
+    const checklist=document.createElement('ul'); checklist.className='checklist'; left.appendChild(checklist);
+    const hint=document.createElement('div'); hint.className='hintline'; hint.textContent='Tip: tap the graph at the height you want, or use + / −.'; left.appendChild(hint);
+
+    grid.appendChild(tcol); grid.appendChild(right); grid.appendChild(left);
+    root.appendChild(grid); mount.appendChild(root);
+
+    // steppers
+    const valEls=[];
+    cats.forEach((c,i)=>{
+      const row=document.createElement('div'); row.className='stepper';
+      const nm=document.createElement('span'); nm.className='nm';
+      nm.innerHTML='<span class="dotmark" style="background:'+color+'"></span>'+c.label;
+      const minus=document.createElement('button'); minus.className='stepbtn'; minus.textContent='−'; minus.setAttribute('aria-label','decrease '+c.label);
+      const v=document.createElement('span'); v.className='val'; v.textContent='0';
+      const plus=document.createElement('button'); plus.className='stepbtn'; plus.textContent='+'; plus.setAttribute('aria-label','increase '+c.label);
+      minus.addEventListener('click',()=>setVal(i,values[i]-1));
+      plus.addEventListener('click',()=>setVal(i,values[i]+1));
+      row.appendChild(nm); row.appendChild(minus); row.appendChild(v); row.appendChild(plus);
+      steppers.appendChild(row); valEls.push(v);
+    });
+
+    let geo={};
+    function render(check){
+      while(svg.firstChild) svg.removeChild(svg.firstChild);
+      const W=420,H=260,padL=46,padR=16,padT=16,padB=42;
+      const plotW=W-padL-padR, plotH=H-padT-padB, baseY=padT+plotH;
+      const n=cats.length;
+      const xAt=i=>padL+plotW*(i/(n-1));
+      const yAt=v=>baseY-plotH*(Math.min(v,top)/top);
+      geo={padL,plotW,plotH,baseY,top,n,xAt};
+      // gridlines
+      for(let v=0;v<=top+0.0001;v+=step){ const y=yAt(v);
+        svg.appendChild(el('line',{x1:padL,y1:y,x2:padL+plotW,y2:y,stroke:v===0?'var(--grid-strong)':'#EBF0F8','stroke-width':v===0?2:1}));
+        svg.appendChild(el('text',{x:padL-7,y:y+4,'text-anchor':'end','font-family':'Space Mono, monospace','font-size':10,'font-weight':700,fill:'var(--ink-faint)'})).textContent=v;
+      }
+      cats.forEach((c,i)=>{ svg.appendChild(el('line',{x1:xAt(i),y1:padT,x2:xAt(i),y2:baseY,stroke:'#F1F5FB','stroke-width':1})); });
+      svg.appendChild(el('line',{x1:padL,y1:padT,x2:padL,y2:baseY,stroke:'var(--grid-strong)','stroke-width':2}));
+      svg.appendChild(el('line',{x1:padL,y1:baseY,x2:padL+plotW,y2:baseY,stroke:'var(--grid-strong)','stroke-width':2}));
+      // line through set points
+      const pts=cats.map((c,i)=>xAt(i)+','+yAt(values[i])).join(' ');
+      svg.appendChild(el('polyline',{points:pts,fill:'none',stroke:color,'stroke-width':2.6,'stroke-linejoin':'round','stroke-linecap':'round'}));
+      // x labels + points
+      cats.forEach((c,i)=>{
+        const x=xAt(i), y=yAt(values[i]);
+        svg.appendChild(el('text',{x:x,y:baseY+15,'text-anchor':'middle','font-family':'Nunito, sans-serif','font-size':10,'font-weight':700,fill:'var(--ink-soft)'})).textContent=c.label;
+        let fill=color;
+        const correct=check&&values[i]===c.answer;
+        if(check&&values[i]!==c.answer) fill='var(--amber)';
+        const cc=el('circle',{cx:x,cy:y,r:4.4,fill:fill,stroke:'#fff','stroke-width':1.6});
+        if(correct){ cc.setAttribute('stroke','var(--ok)'); cc.setAttribute('stroke-width',2.4); cc.setAttribute('r',5); }
+        svg.appendChild(cc);
+        if(values[i]>0||check){
+          svg.appendChild(el('text',{x:x,y:y-9,'text-anchor':'middle','font-family':'Space Mono, monospace','font-size':9.5,'font-weight':700,fill:check?(values[i]===c.answer?'var(--ok)':'var(--amber)'):'var(--ink-soft)'})).textContent=values[i];
+        }
+      });
+    }
+    function setVal(i,nv){
+      nv=Math.max(0,Math.min(top,Math.round(nv)));
+      values[i]=nv; valEls[i].textContent=nv;
+      feedback.textContent=''; feedback.className='feedback'; checklist.innerHTML='';
+      render(false);
+    }
+    // click/drag
+    function pointToVal(evt){
+      const pt=svg.createSVGPoint(); const src=evt.touches?evt.touches[0]:evt;
+      pt.x=src.clientX; pt.y=src.clientY; const ctm=svg.getScreenCTM(); if(!ctm) return null;
+      const loc=pt.matrixTransform(ctm.inverse());
+      const {padL,plotW,baseY,plotH,top,n}=geo;
+      let i=Math.round((loc.x-padL)/(plotW/(n-1)));
+      if(i<0||i>=n) return null;
+      let frac=(baseY-loc.y)/plotH; frac=Math.max(0,Math.min(1,frac));
+      return {i,val:Math.round(frac*top)};
+    }
+    let dragging=false;
+    const handle=e=>{ const r=pointToVal(e); if(r) setVal(r.i,r.val); };
+    svg.addEventListener('mousedown',e=>{dragging=true;handle(e);e.preventDefault();});
+    window.addEventListener('mousemove',e=>{if(dragging)handle(e);});
+    window.addEventListener('mouseup',()=>dragging=false);
+    svg.addEventListener('touchstart',e=>{dragging=true;handle(e);e.preventDefault();},{passive:false});
+    svg.addEventListener('touchmove',e=>{if(dragging){handle(e);e.preventDefault();}},{passive:false});
+    svg.addEventListener('touchend',()=>dragging=false);
+
+    checkBtn.addEventListener('click',()=>{
+      let all=true; checklist.innerHTML='';
+      cats.forEach((c,i)=>{
+        const ok=values[i]===c.answer; if(!ok) all=false;
+        const li=document.createElement('li'); li.className=ok?'ok':'no';
+        let msg = ok? c.label+' = '+c.answer+' ✓'
+                : values[i]<c.answer? c.label+': point too low (needs '+c.answer+')'
+                : c.label+': point too high (needs '+c.answer+')';
+        li.innerHTML='<span class="mk">'+(ok?'✓':'•')+'</span>'+msg; checklist.appendChild(li);
+      });
+      render(true);
+      if(all){ feedback.className='feedback good'; feedback.textContent='🎉 Perfect! Every point matches the table.'; }
+      else{ feedback.className='feedback bad'; feedback.textContent='Close! Fix the points marked below and check again.'; }
+    });
+    resetBtn.addEventListener('click',()=>{ cats.forEach((c,i)=>{values[i]=0;valEls[i].textContent='0';}); feedback.textContent=''; feedback.className='feedback'; checklist.innerHTML=''; render(false); });
+
+    render(false);
+  }
+
+  makeLineBuilder({ mount:'drawIce', title:'Lunchtime customers at the ice cream parlour',
+    xTitle:'Day', yTitle:'Number of customers', colCat:'Day', colVal:'Customers',
+    yStep:5, yTop:50, color:'var(--c-magenta)',
+    cats:[{label:'Mon',answer:42},{label:'Tue',answer:47},{label:'Wed',answer:3},{label:'Thu',answer:36},{label:'Fri',answer:40},{label:'Sat',answer:31}] });
+
+  /* =========================================================
+     QUIZZES  (tick / multiple choice)
+     ========================================================= */
+  function quiz(mountId, cfg){
+    const mount=document.getElementById(mountId);
+    const q=document.createElement('div');
+    if(cfg.q){ const h=document.createElement('p'); h.style.fontWeight='700'; h.style.margin='0 0 8px'; h.textContent=cfg.q; q.appendChild(h); }
+    const list=document.createElement('div'); list.className='mcq';
+    const multi=!!cfg.multi;
+    cfg.options.forEach((o,idx)=>{
+      const b=document.createElement('button'); b.className='opt'; b.type='button';
+      const box=document.createElement('span'); box.className='box';
+      const tx=document.createElement('span'); tx.textContent=o.t;
+      b.appendChild(box); b.appendChild(tx);
+      b.addEventListener('click',()=>{
+        if(!multi) list.querySelectorAll('.opt').forEach(x=>{x.classList.remove('pick','correct','wrong'); x.querySelector('.box').textContent='';});
+        const on=b.classList.toggle('pick');
+        b.querySelector('.box').textContent = on? '✓':'';
+      });
+      list.appendChild(b);
+    });
+    q.appendChild(list);
+    const row=document.createElement('div'); row.className='btnrow';
+    const check=document.createElement('button'); check.className='btn sm'; check.textContent='Check';
+    row.appendChild(check); q.appendChild(row);
+    check.addEventListener('click',()=>{
+      list.querySelectorAll('.opt').forEach((b,idx)=>{
+        const correct=cfg.options[idx].ok;
+        const picked=b.classList.contains('pick');
+        b.classList.remove('pick');
+        if(correct){ b.classList.add('correct'); b.querySelector('.box').textContent='✓'; }
+        else if(picked){ b.classList.add('wrong'); b.querySelector('.box').textContent='✗'; }
+        else { b.querySelector('.box').textContent=''; }
+      });
+    });
+    mount.appendChild(q);
+  }
+
+  quiz('snowQuiz',{ q:'How much snow fell between Friday and Saturday?',
+    options:[{t:'0 cm — the line is flat, so no new snow',ok:true},{t:'16 cm',ok:false},{t:'2 cm',ok:false},{t:'32 cm',ok:false}] });
+
+  quiz('dotsQuiz',{ q:'What are the dots on this graph called?',
+    options:[{t:'dot points',ok:false},{t:'circles',ok:false},{t:'plot points',ok:true}] });
+
+  quiz('suitQuiz',{ q:'Which of the following would be suitable for a line graph? (tick all that apply)', multi:true,
+    options:[
+      {t:'What is your favourite colour?',ok:false},
+      {t:'The daily temperature in Darwin in July',ok:true},
+      {t:'What is the colour of your eyes?',ok:false},
+      {t:'How many pies are ordered from the canteen each month',ok:true},
+      {t:'Growth of a sunflower plant in three weeks',ok:true}
+    ] });
+
+  /* ---------- persist typed answers (localStorage) ---------- */
+  document.querySelectorAll('.ans-field').forEach(f=>{
+    const key='ilg:'+f.id;
+    try{ const saved=localStorage.getItem(key); if(saved!=null) f.value=saved; }catch(e){}
+    f.addEventListener('input',()=>{ try{ localStorage.setItem(key,f.value); }catch(e){} });
+  });
+
+  /* ---------- reveal answers ---------- */
+  document.querySelectorAll('.reveal').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const t=document.getElementById(btn.dataset.target);
+      const open=t.classList.toggle('open');
+      btn.textContent=open?'Hide answers':'Reveal answers';
+    });
+  });
+
+  /* ---------- tier filter ---------- */
+  const chips=document.querySelectorAll('.chip');
+  chips.forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      chips.forEach(c=>c.classList.remove('on')); chip.classList.add('on');
+      const f=chip.dataset.f;
+      document.querySelectorAll('.activity').forEach(a=>a.classList.toggle('hide', !(f==='all'||a.dataset.tier===f)));
+    });
+  });
+
+  /* ---------- teacher notes toggle ---------- */
+  const tv=document.getElementById('tview'), lbl=document.getElementById('tviewlabel');
+  tv.addEventListener('click',()=>{
+    const studentMode=document.body.classList.toggle('students');
+    document.body.classList.toggle('teacher',!studentMode);
+    tv.setAttribute('aria-pressed',String(!studentMode));
+    lbl.textContent=studentMode?'Teacher notes: off':'Teacher notes: on';
+  });
+
+  /* ---------- success criteria & reflection ---------- */
+  const criteria=[
+    {t:'I can identify the features of a line graph.',tier:'green'},
+    {t:'I can add missing features to complete a line graph.',tier:'amber'},
+    {t:'I can interpret the data to answer questions about a line graph.',tier:'red'}
+  ];
+  const tierColor={green:'var(--green)',amber:'var(--amber)',red:'var(--red)'};
+  const iCan=document.getElementById('iCanList');
+  criteria.forEach(c=>{
+    const row=document.createElement('div'); row.className='rrow';
+    row.innerHTML='<span style="width:12px;height:12px;border-radius:3px;background:'+tierColor[c.tier]+';flex:0 0 auto"></span><span class="txt">'+c.t+'</span>';
+    iCan.appendChild(row);
+  });
+  const refl=document.getElementById('reflectList');
+  criteria.forEach(c=>{
+    const row=document.createElement('div'); row.className='rrow';
+    const txt=document.createElement('span'); txt.className='txt'; txt.textContent=c.t;
+    const rate=document.createElement('span'); rate.className='rate';
+    [['got','Got it'],['near','Nearly'],['help','Need help']].forEach(([k,label])=>{
+      const b=document.createElement('button'); b.className=k; b.textContent=label;
+      b.addEventListener('click',()=>{ rate.querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); });
+      rate.appendChild(b);
+    });
+    row.appendChild(txt); row.appendChild(rate); refl.appendChild(row);
+  });
+})();
+</script>
+</body>
+</html>
